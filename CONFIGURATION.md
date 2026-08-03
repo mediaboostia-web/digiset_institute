@@ -43,7 +43,7 @@ Aucun paiement en ligne, aucune fonctionnalité tierce complexe : la liste des c
 2. Nom suggéré : `digiset-institute-website`. Visibilité : **Private** (le code contient de la logique métier et, à terme, des données sensibles côté client — pas de raison de le rendre public).
 3. Ne pas cocher "Add a README" (le projet en a déjà un) ni ".gitignore" (déjà généré par `create-next-app`).
 4. Une fois le dépôt créé, GitHub affiche une URL du type `https://github.com/<votre-compte>/digiset-institute-website.git`.
-5. Depuis le dossier `site-web/` en local (un dépôt Git y est déjà initialisé avec un premier commit) :
+5. Depuis la racine du projet en local (un dépôt Git y est déjà initialisé avec un premier commit) :
 
    ```bash
    git remote add origin https://github.com/<votre-compte>/digiset-institute-website.git
@@ -51,6 +51,8 @@ Aucun paiement en ligne, aucune fonctionnalité tierce complexe : la liste des c
    git push -u origin main
    ```
 
+> **Avant de pousser** : le dossier `contenu local/` (assets, documents source du client) vit maintenant à l'intérieur de ce même dossier de projet, mais il est exclu via `.gitignore`. Lancer `git status` avant tout `git add` et vérifier qu'aucun fichier de `contenu local/` n'apparaît en `?? ` prêt à être ajouté — ce dossier ne doit jamais atterrir dans l'historique Git.
+>
 > **Ne pas exécuter cette étape sans confirmation si un assistant IA gère ce dépôt pour vous** — un push publie le code sur un service externe visible par d'autres personnes.
 
 ---
@@ -94,7 +96,7 @@ Le premier compte admin ne peut pas s'auto-inviter (il n'existe personne pour l'
 
 1. Sur [vercel.com](https://vercel.com), créer un compte (connexion via GitHub recommandée — simplifie l'étape suivante).
 2. **Add New... > Project**, puis sélectionner le dépôt GitHub créé à l'étape 3.
-3. Vercel détecte automatiquement Next.js — aucune configuration de build à modifier (le dossier racine du projet à déployer est `site-web/` si le dépôt contient d'autres dossiers ; sinon laisser vide).
+3. Vercel détecte automatiquement Next.js — aucune configuration de build à modifier (le projet Next.js est à la racine du dépôt, laisser le champ "Root Directory" vide dans Vercel).
 4. Avant de cliquer sur **Deploy**, ouvrir la section **Environment Variables** et saisir toutes les variables listées dans `.env.example` avec leurs vraies valeurs (Supabase, Resend, etc. — voir sections précédentes et suivantes).
 5. Cliquer **Deploy**. Vercel fournit une URL de prévisualisation du type `digiset-institute-website.vercel.app` — c'est déjà un site fonctionnel, avant même de connecter le nom de domaine.
 6. Pour chaque Pull Request ouverte sur GitHub par la suite, Vercel génère automatiquement une URL de preview distincte — pratique pour valider un changement avant de le mettre en ligne.

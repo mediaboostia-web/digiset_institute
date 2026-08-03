@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# contenu de référence client (assets, docx, logo) — jamais versionné avec le code
+/contenu local/
+
+# état local du harness Claude Code — pas pertinent pour le dépôt
+/.claude/

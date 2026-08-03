@@ -2,13 +2,15 @@
 
 Site institutionnel et back-office autonome pour Digi-SET Institute (Libreville, Gabon). Next.js 16 (App Router) + Supabase (base de données, SupaAuth, Storage) + Tailwind CSS v4 + shadcn/ui.
 
-Documents de référence (dossier parent `../`) :
+Documents de référence :
 
-- `00-Reference-projet/PRD-digiset-institute.md` — exigences produit complètes.
-- `00-Reference-projet/design-system-digiset-institute.md` — identité visuelle, tokens, composants.
-- `../liste-pages-sections-maquettes.md` — checklist des 35 écrans à concevoir (chaque écran a un fichier stub correspondant dans `src/app/`).
-- `../checklist-contenus-avant-maquettes.md` — contenus/assets à réunir.
+- `contenu local/00-Reference-projet/PRD-digiset-institute.md` — exigences produit complètes.
+- `contenu local/00-Reference-projet/design-system-digiset-institute.md` — identité visuelle, tokens, composants.
+- `liste-pages-sections-maquettes.md` — checklist des 35 écrans à concevoir (chaque écran a un fichier stub correspondant dans `src/app/`).
+- `checklist-contenus-avant-maquettes.md` — contenus/assets à réunir.
 - **`CONFIGURATION.md`** — sécurité, endpoints API, et tutoriel pas-à-pas pour créer les comptes/projets nécessaires (Supabase, Vercel, GitHub, Resend, Google Maps, Hostinger DNS).
+
+> Le dossier `contenu local/` (assets, docx source, logo) n'est **pas versionné** avec le code (cf. `.gitignore`) — il reste un espace de travail local, à part du dépôt Git qui ne doit contenir que le code.
 
 ## Démarrage rapide
 
@@ -32,7 +34,7 @@ Ouvrir [http://localhost:3000](http://localhost:3000). Le back-office est sur `/
 ## Structure du projet
 
 ```
-site-web/
+sitewebdigisetinstitute/        # racine du dépôt Git
 ├── src/
 │   ├── app/
 │   │   ├── (public)/         # Toutes les pages publiques (Header + Footer partagés)
