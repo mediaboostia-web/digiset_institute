@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digi-SET Institute — site web
 
-## Getting Started
+Site institutionnel et back-office autonome pour Digi-SET Institute (Libreville, Gabon). Next.js 16 (App Router) + Supabase (base de données, SupaAuth, Storage) + Tailwind CSS v4 + shadcn/ui.
 
-First, run the development server:
+Documents de référence (dossier parent `../`) :
+
+- `00-Reference-projet/PRD-digiset-institute.md` — exigences produit complètes.
+- `00-Reference-projet/design-system-digiset-institute.md` — identité visuelle, tokens, composants.
+- `../liste-pages-sections-maquettes.md` — checklist des 35 écrans à concevoir (chaque écran a un fichier stub correspondant dans `src/app/`).
+- `../checklist-contenus-avant-maquettes.md` — contenus/assets à réunir.
+- **`CONFIGURATION.md`** — sécurité, endpoints API, et tutoriel pas-à-pas pour créer les comptes/projets nécessaires (Supabase, Vercel, GitHub, Resend, Google Maps, Hostinger DNS).
+
+## Démarrage rapide
 
 ```bash
+npm install
+cp .env.example .env.local   # puis renseigner les valeurs — voir CONFIGURATION.md
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000). Le back-office est sur `/admin` (redirige vers `/admin/login` tant qu'aucun compte admin n'existe — voir CONFIGURATION.md pour créer le premier compte).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Commande | Effet |
+|---|---|
+| `npm run dev` | Serveur de développement (Turbopack, par défaut en Next.js 16). |
+| `npm run build` | Build de production. |
+| `npm run start` | Démarre le build de production en local. |
+| `npm run lint` | ESLint (flat config). |
 
-## Learn More
+## Structure du projet
 
-To learn more about Next.js, take a look at the following resources:
+```
+site-web/
+├── src/
+│   ├── app/
+│   │   ├── (public)/         # Toutes les pages publiques (Header + Footer partagés)
+│   │   ├── admin/
+│   │   │   ├── login/        # Connexion (sans sidebar)
+│   │   │   └── (dashboard)/  # Écrans du back-office (avec sidebar), protégés par proxy.ts
+│   │   └── api/               # Route Handlers (formulaires publics)
+│   ├── components/
+│   │   ├── ui/                # Composants shadcn/ui
+│   │   ├── layout/             # Header, Footer, AdminSidebar
+│   │   └── page-stub.tsx       # Placeholder utilisé par tous les écrans en attendant Stitch
+│   ├── lib/
+│   │   ├── supabase/           # Clients navigateur / serveur / admin (service role)
+│   │   ├── validations/        # Schémas Zod des 4 formulaires
+│   │   ├── email.ts             # Notifications via Resend
+│   │   └── api-helpers.ts       # Honeypot anti-spam, formatage d'erreurs
+│   └── proxy.ts                 # Protection de /admin/* (équivalent middleware en Next 16)
+└── supabase/
+    └── migrations/
+        └── 0001_init_schema.sql # Schéma complet (tables + RLS), cf. PRD §7
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pourquoi chaque page est un "stub"
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Chaque route publique et chaque écran admin affiche pour l'instant un composant `PageStub` qui liste les sections attendues (issues de `liste-pages-sections-maquettes.md`). C'est volontaire : l'objectif de cette étape est de préparer un environnement de développement complet (routing, backend, sécurité, design tokens) prêt à recevoir, fichier par fichier, l'UI générée dans Google Stitch — sans avoir à improviser une arborescence ou une logique backend en cours de route.
 
-## Deploy on Vercel
+## Note Next.js 16
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ce projet utilise Next.js 16, qui introduit des changements par rapport aux versions précédentes (`middleware.ts` renommé en `proxy.ts`, `params`/`searchParams`/`cookies()`/`headers()` toujours asynchrones, Turbopack par défaut). Avant de modifier des fichiers de convention (`proxy.ts`, `route.ts`, `layout.tsx`), consulter `node_modules/next/dist/docs/01-app/` qui contient la documentation exacte de la version installée.
