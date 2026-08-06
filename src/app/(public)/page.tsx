@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, GraduationCap, Briefcase, Building2, MapPin, Phone, Mail, Sparkles, ShieldCheck, Cpu, ChevronRight } from "lucide-react";
+import { ArrowRight, GraduationCap, Briefcase, Building2, MapPin, Phone, Mail, Sparkles, ShieldCheck, Cpu, ChevronRight, BookOpen, Award } from "lucide-react";
 import { FounderSection } from "@/components/shared/founder-section";
 import { CertificationBanner } from "@/components/shared/certification-banner";
 import { ProgramCard } from "@/components/shared/program-card";
@@ -9,7 +9,7 @@ import { HomeFormsSection } from "@/components/shared/home-forms-section";
 export default function AccueilPage() {
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
-      {/* 1. Hero Principal — Image Hero_image1.jpg Grand Format Flottante avec Flou Bas, visible uniquement sur Tablette (md) et Desktop (lg) */}
+      {/* 1. Hero Principal — Image Hero_image1.jpg Grand Format Flottante avec Flou Bas */}
       <section className="relative bg-brand-blue-dark text-white py-10 sm:py-14 lg:py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transform blur-[2px] pointer-events-none"
@@ -90,7 +90,7 @@ export default function AccueilPage() {
               </div>
             </div>
 
-            {/* Image du Hero (Hero_image1.jpg) — Grand Format visible UNIQUEMENT sur Tablette (md) et Desktop (lg), avec effet flottant et flou bas masquant */}
+            {/* Image du Hero (Hero_image1.jpg) — Grand Format visible UNIQUEMENT sur Tablette (md) et Desktop (lg) */}
             <div className="hidden md:block md:col-span-5 relative">
               <div className="relative w-full h-[460px] md:h-[500px] lg:h-[540px] animate-float rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-900 group">
                 <Image
@@ -101,7 +101,6 @@ export default function AccueilPage() {
                   priority
                   sizes="(max-width: 1024px) 45vw, 40vw"
                 />
-                {/* Flou et dégradé bas permettant à l'image de mieux s'adapter au fond du hero */}
                 <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/70 to-transparent flex items-end p-6 pointer-events-none">
                   <div className="text-white space-y-1">
                     <div className="text-xs font-bold uppercase tracking-wider text-brand-orange">Campus Akanda</div>
@@ -118,84 +117,119 @@ export default function AccueilPage() {
       {/* 2. Mot du Fondateur */}
       <FounderSection />
 
-      {/* 3. Qui sommes-nous / Mission & Engagements */}
-      <section className="py-12 sm:py-16 bg-white border-b border-border">
+      {/* 3. Section "Former l'Élite Technologique de Demain" — Cartes Numérotées en arrière-plan, Style Couleur Unique & Bordure Brillant au Survol */}
+      <section className="py-14 sm:py-20 bg-slate-50 border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center space-y-3 mb-10 sm:mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-              Mission & Vision
+          <div className="max-w-3xl mx-auto text-center space-y-3 mb-10 sm:mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-blue bg-blue-50 px-3.5 py-1 rounded-full border border-blue-100">
+              Mission & Engagements
             </span>
-            <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900">
+            <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-slate-900">
               Former l&apos;Élite Technologique de Demain
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Digi-SET Institute allie rigueur scientifique et immersion pratique pour garantir la souveraineté numérique.
+              Digi-SET Institute allie rigueur scientifique et immersion pratique pour garantir la souveraineté numérique du Gabon et du continent.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
-            <div className="md:col-span-4 rounded-2xl bg-slate-50 border border-slate-200 p-6 sm:p-8 space-y-4 shadow-xs flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-xl bg-brand-blue text-white flex items-center justify-center font-heading font-extrabold text-lg">
-                  01
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+            
+            {/* CARTE 01 : Style Bleu Marine / Académique avec Illustration Grand 01 en arrière-plan */}
+            <div className="relative group rounded-3xl bg-gradient-to-br from-brand-blue-dark via-slate-900 to-brand-blue-dark text-white p-7 sm:p-8 space-y-6 shadow-md border border-blue-400/20 hover:border-brand-blue hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between">
+              {/* Illustration Numéro 01 en arrière-plan */}
+              <div className="absolute -right-2 -top-3 text-8xl font-black font-heading text-blue-400/10 group-hover:text-blue-400/20 transition-colors select-none pointer-events-none">
+                01
+              </div>
+
+              <div className="relative space-y-4">
+                <div className="h-12 w-12 rounded-2xl bg-brand-blue text-white flex items-center justify-center font-heading font-extrabold text-lg shadow-sm border border-white/20">
+                  <BookOpen className="h-6 w-6" />
                 </div>
-                <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900">
-                  Exigence Académique ECTS
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Des cursus alignés sur les standards européens avec 60 ECTS par an, garantissant la transférabilité internationale du diplôme.
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-300 bg-blue-950/60 px-2.5 py-0.5 rounded-md border border-blue-800/40">
+                    Axe 1 — Rigueur
+                  </span>
+                  <h3 className="font-heading text-lg sm:text-xl font-extrabold text-white mt-1">
+                    Exigence Académique ECTS
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-body">
+                  Des cursus rigoureux alignés sur les standards européens avec 60 ECTS par an, garantissant la transférabilité internationale du diplôme et les poursuites d&apos;études en cycle ingénieur.
                 </p>
               </div>
-              <div className="pt-4 border-t border-slate-200 text-xs font-bold text-brand-blue flex items-center gap-1">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Bac à Bac+3 Diplômant</span>
+
+              <div className="relative pt-4 border-t border-white/15 text-xs font-bold text-blue-300 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-brand-orange" />
+                <span>Bac à Bac+3 Diplômant Validé</span>
               </div>
             </div>
 
-            <div className="md:col-span-4 rounded-2xl bg-brand-blue text-white p-6 sm:p-8 space-y-4 shadow-lg flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute right-3 top-3 text-7xl font-extrabold text-white/10 font-heading select-none pointer-events-none">
+            {/* CARTE 02 : Style Orange Vif / Laboratoires TP avec Illustration Grand 02 en arrière-plan */}
+            <div className="relative group rounded-3xl bg-gradient-to-br from-brand-orange via-brand-orange-dark to-amber-700 text-white p-7 sm:p-8 space-y-6 shadow-md border border-orange-300/30 hover:border-white/60 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between">
+              {/* Illustration Numéro 02 en arrière-plan */}
+              <div className="absolute -right-2 -top-3 text-8xl font-black font-heading text-white/15 group-hover:text-white/25 transition-colors select-none pointer-events-none">
                 02
               </div>
+
               <div className="relative space-y-4">
-                <div className="h-12 w-12 rounded-xl bg-brand-orange text-white flex items-center justify-center font-heading font-extrabold text-lg shadow-sm">
-                  02
+                <div className="h-12 w-12 rounded-2xl bg-white text-brand-orange flex items-center justify-center font-heading font-extrabold text-lg shadow-sm">
+                  <Cpu className="h-6 w-6" />
                 </div>
-                <h3 className="font-heading text-lg sm:text-xl font-extrabold text-white">
-                  Laboratoires TP Haute Technologie
-                </h3>
-                <p className="text-xs text-slate-200 leading-relaxed font-body">
-                  Des plateaux scientifiques équipés en optique, électronique et bancs de cybersécurité accessibles dès la 1ère année.
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-white bg-black/20 px-2.5 py-0.5 rounded-md border border-white/20">
+                    Axe 2 — Pratique
+                  </span>
+                  <h3 className="font-heading text-lg sm:text-xl font-extrabold text-white mt-1">
+                    Laboratoires TP Haute Technologie
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-100 leading-relaxed font-body">
+                  Des plateaux scientifiques de pointe équipés en optique, électricité, serveurs sous Linux/Python et bancs de cybersécurité SOC accessibles dès la 1ère année d&apos;études.
                 </p>
               </div>
-              <div className="relative pt-4 border-t border-white/20 text-xs font-bold text-brand-orange flex items-center gap-1">
-                <Cpu className="h-4 w-4" />
-                <span>100% de Pratique Garantie</span>
+
+              <div className="relative pt-4 border-t border-white/25 text-xs font-bold text-white flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-amber-200" />
+                <span>100% de Pratique Garantie en Labo</span>
               </div>
             </div>
 
-            <div className="md:col-span-4 rounded-2xl bg-slate-50 border border-slate-200 p-6 sm:p-8 space-y-4 shadow-xs flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-heading font-extrabold text-lg">
-                  03
+            {/* CARTE 03 : Style Émeraude / Certifications Pro avec Illustration Grand 03 en arrière-plan */}
+            <div className="relative group rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white p-7 sm:p-8 space-y-6 shadow-md border border-emerald-500/30 hover:border-emerald-400 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between">
+              {/* Illustration Numéro 03 en arrière-plan */}
+              <div className="absolute -right-2 -top-3 text-8xl font-black font-heading text-emerald-400/10 group-hover:text-emerald-400/20 transition-colors select-none pointer-events-none">
+                03
+              </div>
+
+              <div className="relative space-y-4">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-heading font-extrabold text-lg shadow-sm border border-emerald-400/30">
+                  <Award className="h-6 w-6" />
                 </div>
-                <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900">
-                  Partenariats Certifiants
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Intégration directe des examens mondiaux Cisco, Microsoft, AWS, Linux et CompTIA dans l&apos;évaluation académique.
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300 bg-emerald-950 px-2.5 py-0.5 rounded-md border border-emerald-700/50">
+                    Axe 3 — Emploi
+                  </span>
+                  <h3 className="font-heading text-lg sm:text-xl font-extrabold text-white mt-1">
+                    Partenariats Certifiants
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-body">
+                  Intégration directe des examens de certification mondiaux Cisco, Microsoft, AWS, Linux LPIC et CompTIA Security+ dans le cursus académique.
                 </p>
               </div>
-              <div className="pt-4 border-t border-slate-200 text-xs font-bold text-emerald-700 flex items-center gap-1">
-                <ShieldCheck className="h-4 w-4" />
-                <span>Employabilité Immédiate</span>
+
+              <div className="relative pt-4 border-t border-white/15 text-xs font-bold text-emerald-300 flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                <span>Employabilité Immédiate & SOC</span>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* 4. Choisir une situation */}
-      <section className="py-12 sm:py-16 bg-slate-50 border-b border-border">
+      <section className="py-12 sm:py-16 bg-white border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-orange">
