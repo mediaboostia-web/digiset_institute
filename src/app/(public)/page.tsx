@@ -9,8 +9,8 @@ import { HomeFormsSection } from "@/components/shared/home-forms-section";
 export default function AccueilPage() {
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
-      {/* 1. Hero Principal — Optimisé en hauteur pour afficher l'ensemble de la section et des métriques sans défilement */}
-      <section className="relative bg-brand-blue-dark text-white py-8 sm:py-12 lg:py-16 overflow-hidden">
+      {/* 1. Hero Principal — Avec Hero_image2.png flottante, soulignement courbé stylé et cadre métriques global transparent */}
+      <section className="relative bg-brand-blue-dark text-white py-10 sm:py-14 lg:py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transform blur-[2px] pointer-events-none"
           style={{ backgroundImage: "url('/images/img/Background-image.jpg')" }}
@@ -20,38 +20,43 @@ export default function AccueilPage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
             
-            <div className="lg:col-span-7 space-y-3 sm:space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-orange shadow-xs">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-orange shadow-xs">
                 Lancement Officiel Septembre 2026 — Akanda, Gabon
               </div>
 
-              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight sm:leading-tight text-white drop-shadow-xs">
+              {/* Titre H1 avec trait légèrement courbé stylé designer uniquement sur "Métiers du Numérique" */}
+              <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight sm:leading-tight text-white drop-shadow-xs">
                 L&apos;Établissement Supérieur Privé de Référence aux{" "}
-                <span className="relative inline-block text-white underline decoration-brand-orange decoration-4 sm:decoration-6 underline-offset-4 sm:underline-offset-6">
+                <span className="relative inline-block text-white">
                   Métiers du Numérique
+                  <svg
+                    className="absolute -bottom-2 left-0 w-full h-3 text-brand-orange overflow-visible"
+                    viewBox="0 0 100 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M2 8C25 2 75 11 98 4"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </span>
               </h1>
 
+              {/* Description sans traits de soulignement */}
               <p className="text-xs sm:text-sm lg:text-base text-slate-200 leading-relaxed font-body max-w-2xl drop-shadow-2xs">
-                Digi-SET Institute forme les futurs experts en{" "}
-                <strong className="text-white font-bold underline decoration-brand-orange/70 decoration-2 underline-offset-2">
-                  Intelligence Artificielle
-                </strong>
-                ,{" "}
-                <strong className="text-white font-bold underline decoration-brand-orange/70 decoration-2 underline-offset-2">
-                  Cybersécurité
-                </strong>{" "}
-                et{" "}
-                <strong className="text-white font-bold underline decoration-brand-orange/70 decoration-2 underline-offset-2">
-                  Systèmes de Paiement Électronique
-                </strong>
-                .
+                Digi-SET Institute forme les futurs experts en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique).
               </p>
 
+              {/* Boutons avec arrondis ajustés à 15px */}
               <div className="pt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <Link
                   href="/inscription/candidature"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-orange px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-brand-orange-dark active:scale-98 transition-all"
+                  className="inline-flex items-center justify-center gap-2 rounded-[15px] bg-brand-orange px-6 py-3.5 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-brand-orange-dark active:scale-98 transition-all"
                 >
                   Déposer une candidature
                   <ArrowRight className="h-4 w-4" />
@@ -59,46 +64,44 @@ export default function AccueilPage() {
 
                 <Link
                   href="/programmes"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-xs sm:text-sm font-bold text-white hover:bg-white/20 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-[15px] border border-white/30 bg-white/10 px-6 py-3.5 text-xs sm:text-sm font-bold text-white hover:bg-white/20 transition-colors"
                 >
                   Explorer les formations
                 </Link>
               </div>
 
-              {/* Métriques clés visibles immédiatement au-dessus de la ligne de flottaison */}
-              <div className="pt-4 border-t border-white/15 grid grid-cols-3 gap-3 text-left">
-                <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
-                  <div className="font-heading text-base sm:text-xl font-extrabold text-brand-orange">100%</div>
-                  <div className="text-[10px] sm:text-xs text-slate-200 font-medium">Pratique en Labo TP</div>
-                </div>
-                <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
-                  <div className="font-heading text-base sm:text-xl font-extrabold text-brand-orange">6+</div>
-                  <div className="text-[10px] sm:text-xs text-slate-200 font-medium">Certifications Pro</div>
-                </div>
-                <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
-                  <div className="font-heading text-base sm:text-xl font-extrabold text-brand-orange">Bac+2/3</div>
-                  <div className="text-[10px] sm:text-xs text-slate-200 font-medium">Parcours Diplômants</div>
+              {/* Cadre global transparent unique avec séparation légère pour les 3 métriques */}
+              <div className="pt-4">
+                <div className="rounded-[15px] bg-white/10 backdrop-blur-xs border border-white/20 p-3 sm:p-4 grid grid-cols-3 divide-x divide-white/20 shadow-md">
+                  <div className="px-2 sm:px-4 text-center sm:text-left">
+                    <div className="font-heading text-base sm:text-xl font-extrabold text-brand-orange">100%</div>
+                    <div className="text-[10px] sm:text-xs text-slate-100 font-medium leading-tight">Pratique en Labo TP</div>
+                  </div>
+                  <div className="px-2 sm:px-4 text-center sm:text-left">
+                    <div className="font-heading text-base sm:text-xl font-extrabold text-brand-orange">6+</div>
+                    <div className="text-[10px] sm:text-xs text-slate-100 font-medium leading-tight">Certifications Pro</div>
+                  </div>
+                  <div className="px-2 sm:px-4 text-center sm:text-left">
+                    <div className="font-heading text-base sm:text-xl font-extrabold text-brand-orange">Bac+2/3</div>
+                    <div className="text-[10px] sm:text-xs text-slate-100 font-medium leading-tight">Parcours Diplômants</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Image du Hero (sur desktop) */}
-            <div className="hidden lg:block lg:col-span-5">
-              <div className="relative rounded-2xl overflow-hidden border-4 border-white/20 shadow-xl bg-slate-900 aspect-4/3 group">
+            {/* Image du Hero (Hero_image2.png) avec mouvement flottant et flou/dégradé bas masqué */}
+            <div className="hidden lg:block lg:col-span-5 relative">
+              <div className="relative w-full h-[420px] sm:h-[480px] animate-float flex items-end justify-center">
                 <Image
-                  src="/images/img/Image_1.jpg"
-                  alt="Digi-SET Institute - Étudiants et Campus"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  src="/images/img/Hero_image2.png"
+                  alt="Étudiant Digi-SET Institute"
+                  width={400}
+                  height={480}
+                  className="max-h-full w-auto object-contain drop-shadow-2xl"
                   priority
-                  sizes="40vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-blue-dark/90 via-transparent to-transparent flex items-end p-4">
-                  <div className="text-white space-y-0.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-brand-orange">Campus Akanda</div>
-                    <div className="text-xs font-bold">Laboratoires de TP Haute Technologie & Salles Informatiques</div>
-                  </div>
-                </div>
+                {/* Flou et dégradé bas permettant à l'image de mieux s'adapter au fond du hero */}
+                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/60 to-transparent pointer-events-none" />
               </div>
             </div>
 
@@ -117,10 +120,7 @@ export default function AccueilPage() {
               Mission & Vision
             </span>
             <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900">
-              Former l&apos;Élite Technologique de{" "}
-              <span className="underline decoration-brand-orange decoration-4 underline-offset-4">
-                Demain
-              </span>
+              Former l&apos;Élite Technologique de Demain
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Digi-SET Institute allie rigueur scientifique et immersion pratique pour garantir la souveraineté numérique.
@@ -196,11 +196,7 @@ export default function AccueilPage() {
               Accès par Profil
             </span>
             <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-              Quelle est votre{" "}
-              <span className="underline decoration-brand-blue decoration-4 underline-offset-4">
-                situation
-              </span>{" "}
-              ?
+              Quelle est votre situation ?
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground mt-2">
               Orientation personnalisée selon votre profil académique ou professionnel.
@@ -226,7 +222,7 @@ export default function AccueilPage() {
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
                   href="/inscription/candidature"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-blue px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-blue-dark transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-brand-blue px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-blue-dark transition-colors"
                 >
                   Déposer une candidature
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -252,7 +248,7 @@ export default function AccueilPage() {
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
                   href="/programmes/formation-continue"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-orange px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-orange-dark transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-brand-orange px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-orange-dark transition-colors"
                 >
                   Demander un devis entreprise
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -278,7 +274,7 @@ export default function AccueilPage() {
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
                   href="/services/location-laboratoires"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors"
                 >
                   Voir les forfaits labos
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -298,10 +294,7 @@ export default function AccueilPage() {
                 Catalogue Général
               </span>
               <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-                Toutes nos Offres de{" "}
-                <span className="underline decoration-brand-orange decoration-4 underline-offset-4">
-                  Formation & Services
-                </span>
+                Toutes nos Offres de Formation & Services
               </h2>
             </div>
             <Link
@@ -401,10 +394,7 @@ export default function AccueilPage() {
                 Structure & Gouvernance
               </span>
               <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900 mt-2">
-                Les Pôles d&apos;Excellence de l&apos;
-                <span className="underline decoration-brand-blue decoration-4 underline-offset-4">
-                  Organigramme
-                </span>
+                Les Pôles d&apos;Excellence de l&apos;Organigramme
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 mt-1">
                 Une organisation hiérarchique en 3 rangs garantissant la rigueur pédagogique et l&apos;innovation.
@@ -501,10 +491,7 @@ export default function AccueilPage() {
                 Campus & Emplacement
               </span>
               <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900">
-                Localisation Exacte du{" "}
-                <span className="underline decoration-brand-orange decoration-4 underline-offset-4">
-                  Campus
-                </span>
+                Localisation Exacte du Campus
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Notre campus moderne est situé au Carrefour Moussavou à Angondje (Commune d&apos;Akanda, Gabon), à proximité des grands axes de transport.

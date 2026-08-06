@@ -106,8 +106,6 @@
 }
 
 .dark {
-  /* Non prioritaire en V1 (cf. design-system §3) — conservé au cas où le
-     sélecteur de thème système bascule involontairement dessus. */
   --brand-blue: #3b82c9;
   --brand-blue-dark: #0a1f3d;
   --brand-orange: #f2690a;
@@ -148,6 +146,19 @@
   --sidebar-accent-foreground: #f7f8fa;
   --sidebar-border: #ffffff1a;
   --sidebar-ring: var(--brand-orange);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
 @layer base {

@@ -14,20 +14,20 @@ export function FounderSection() {
             <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
               Mot du Fondateur
             </h2>
-            {/* Soulignement stylé, courbé et professionnel uniquement sous le titre */}
+            {/* Soulignement stylé courbé uniquement sous le titre */}
             <div className="h-1.5 w-24 sm:w-32 bg-gradient-to-r from-brand-orange via-brand-orange/80 to-transparent rounded-full mt-2.5 mx-auto" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* Portrait du Fondateur sans cadre carré avec dégradé flouté/masque bas élégant */}
+          {/* Portrait du Fondateur Dr ABAGA ABESSOLO Michel Audrey avec dégradé flouté bas masquant */}
           <div className="lg:col-span-5 flex justify-center order-2 lg:order-1">
             <div className="relative group w-full max-w-sm sm:max-w-md">
               <div className="relative h-[380px] sm:h-[460px] w-full overflow-hidden rounded-3xl">
                 <Image
-                  src="/images/img/Image_3.jpg"
-                  alt="Dr ABAGA ABESSOLO Michel Audrey - Fondateur de Digi-SET Institute"
+                  src="/images/fondateur/Dr ABAGA ABESSOLO Michel Audrey.jpg"
+                  alt="Dr ABAGA ABESSOLO Michel Audrey - Fondateur de DigiSET Institute"
                   fill
                   className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
                   sizes="(max-width: 1024px) 100vw, 420px"
