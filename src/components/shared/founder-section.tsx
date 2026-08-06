@@ -7,10 +7,7 @@ export function FounderSection() {
         
         {/* Titre avec soulignement stylé et professionnel uniquement sous le titre */}
         <div className="text-center mb-10 sm:mb-14">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-brand-orange bg-brand-orange/10 px-3 py-1 rounded-full border border-brand-orange/20">
-            Vision & Leadership
-          </span>
-          <div className="mt-2 inline-block">
+          <div className="inline-block">
             <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
               Mot du Fondateur
             </h2>
@@ -21,7 +18,7 @@ export function FounderSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* Portrait du Fondateur Dr ABAGA ABESSOLO Michel Audrey avec dégradé flouté bas masquant */}
+          {/* Portrait du Fondateur Dr ABAGA ABESSOLO Michel Audrey (Clean sans texte superposé) */}
           <div className="lg:col-span-5 flex justify-center order-2 lg:order-1">
             <div className="relative group w-full max-w-sm sm:max-w-md">
               <div className="relative h-[380px] sm:h-[460px] w-full overflow-hidden rounded-3xl">
@@ -34,16 +31,7 @@ export function FounderSection() {
                   priority
                 />
                 {/* Dégradé flouté bas masquant l'intégration du bas du portrait */}
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/80 to-transparent flex items-end p-5">
-                  <div>
-                    <div className="font-heading font-extrabold text-white text-base sm:text-lg drop-shadow-sm">
-                      Dr ABAGA ABESSOLO Michel Audrey
-                    </div>
-                    <div className="text-xs text-brand-orange font-bold drop-shadow-xs">
-                      Fondateur de DigiSET Institute
-                    </div>
-                  </div>
-                </div>
+                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/70 to-transparent pointer-events-none" />
               </div>
             </div>
           </div>

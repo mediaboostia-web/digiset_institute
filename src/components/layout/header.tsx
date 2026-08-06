@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, Menu, X, GraduationCap, Briefcase, Award, Monitor, FlaskConical, Building2, ShieldCheck } from "lucide-react";
@@ -8,9 +8,29 @@ import { ChevronDown, Menu, X, GraduationCap, Briefcase, Award, Monitor, FlaskCo
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-brand-blue-dark text-white shadow-md border-b border-white/10">
+    <header
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled
+          ? "bg-white text-slate-900 shadow-md border-b border-slate-200"
+          : "bg-brand-blue-dark text-white border-b border-white/10"
+      }`}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-20">
         
         {/* Logo Officiel Digi-SET avec Arrière-plan Transparent */}
@@ -27,11 +47,16 @@ export function Header() {
           </div>
         </Link>
 
-        {/* Navigation Desktop */}
+        {/* Navigation Desktop — Couleur dynamique au défilement (Scroll) */}
         <nav className="hidden lg:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
           
           {/* Accueil */}
-          <Link href="/" className="hover:text-brand-orange transition-colors py-2">
+          <Link
+            href="/"
+            className={`py-2 transition-colors ${
+              isScrolled ? "text-brand-orange hover:text-brand-orange-dark font-extrabold" : "text-white hover:text-brand-orange"
+            }`}
+          >
             Accueil
           </Link>
 
@@ -43,7 +68,9 @@ export function Header() {
           >
             <Link
               href="/programmes"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors py-2"
+              className={`flex items-center gap-1 py-2 transition-colors ${
+                isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
+              }`}
             >
               <span>Programmes</span>
               <ChevronDown className="h-3.5 w-3.5" />
@@ -117,7 +144,9 @@ export function Header() {
           >
             <Link
               href="/services"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors py-2"
+              className={`flex items-center gap-1 py-2 transition-colors ${
+                isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
+              }`}
             >
               <span>Services</span>
               <ChevronDown className="h-3.5 w-3.5" />
@@ -158,7 +187,9 @@ export function Header() {
           >
             <Link
               href="/institution"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors py-2"
+              className={`flex items-center gap-1 py-2 transition-colors ${
+                isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
+              }`}
             >
               <span>Stratégie & Institution</span>
               <ChevronDown className="h-3.5 w-3.5" />
@@ -191,17 +222,26 @@ export function Header() {
             )}
           </div>
 
-          {/* Contact (Sans icône) */}
-          <Link href="/contact" className="hover:text-brand-orange transition-colors py-2">
+          {/* Contact */}
+          <Link
+            href="/contact"
+            className={`py-2 transition-colors ${
+              isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
+            }`}
+          >
             Contact
           </Link>
         </nav>
 
-        {/* CTA Inscription Desktop avec Effet de Changement de Couleur au Survol */}
+        {/* CTA Inscription Desktop avec Effet de Survol Dynamique */}
         <div className="hidden lg:flex items-center gap-3">
           <Link
             href="/inscription/candidature"
-            className="rounded-[15px] bg-brand-orange px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-brand-orange-dark hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98"
+            className={`rounded-[15px] px-5 py-2.5 text-xs font-bold uppercase tracking-wider shadow-md transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98 ${
+              isScrolled
+                ? "bg-brand-orange text-white hover:bg-brand-orange-dark hover:shadow-lg"
+                : "bg-brand-orange text-white hover:bg-brand-orange-dark hover:shadow-lg"
+            }`}
           >
             Candidater 2026
           </Link>
@@ -210,7 +250,9 @@ export function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 text-white hover:text-brand-orange focus:outline-hidden"
+          className={`lg:hidden p-2 transition-colors focus:outline-hidden ${
+            isScrolled ? "text-slate-900 hover:text-brand-orange" : "text-white hover:text-brand-orange"
+          }`}
           aria-label="Menu"
         >
           {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
