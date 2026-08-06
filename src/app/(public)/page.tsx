@@ -9,7 +9,7 @@ import { HomeFormsSection } from "@/components/shared/home-forms-section";
 export default function AccueilPage() {
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
-      {/* 1. Hero Principal — Image de droite masquée sur mobile (hidden lg:block) pour une rapidité et clarté optimales */}
+      {/* 1. Hero Principal avec Soulignement Stylé sur le mot-clé principal */}
       <section className="relative bg-brand-blue-dark text-white py-12 sm:py-16 lg:py-24 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transform blur-[2px] pointer-events-none"
@@ -21,16 +21,31 @@ export default function AccueilPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             <div className="lg:col-span-7 space-y-4 sm:space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-orange shadow-xs">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-orange shadow-xs">
                 Lancement Officiel Septembre 2026 — Akanda, Gabon
               </div>
 
-              <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white drop-shadow-xs">
-                L&apos;Établissement Supérieur Privé de Référence aux Métiers du Numérique
+              <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight sm:leading-tight text-white drop-shadow-xs">
+                L&apos;Établissement Supérieur Privé de Référence aux{" "}
+                <span className="relative inline-block text-white underline decoration-brand-orange decoration-4 sm:decoration-8 underline-offset-4 sm:underline-offset-8">
+                  Métiers du Numérique
+                </span>
               </h1>
 
               <p className="text-sm sm:text-base lg:text-lg text-slate-200 leading-relaxed font-body max-w-2xl drop-shadow-2xs">
-                Digi-SET Institute forme les futurs experts en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique. Découvrez une pédagogie d&apos;excellence, des laboratoires de pointe et un accompagnement vers les certifications internationales.
+                Digi-SET Institute forme les futurs experts en{" "}
+                <strong className="text-white font-bold underline decoration-brand-orange/70 decoration-2 underline-offset-4">
+                  Intelligence Artificielle
+                </strong>
+                ,{" "}
+                <strong className="text-white font-bold underline decoration-brand-orange/70 decoration-2 underline-offset-4">
+                  Cybersécurité
+                </strong>{" "}
+                et{" "}
+                <strong className="text-white font-bold underline decoration-brand-orange/70 decoration-2 underline-offset-4">
+                  Systèmes de Paiement Électronique
+                </strong>
+                .
               </p>
 
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
@@ -66,7 +81,7 @@ export default function AccueilPage() {
               </div>
             </div>
 
-            {/* Image du Hero — MASQUÉE EN MOBILE (hidden lg:block) comme demandé */}
+            {/* Image du Hero — Masquée en mobile (hidden lg:block) */}
             <div className="hidden lg:block lg:col-span-5">
               <div className="relative rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-900 aspect-square group">
                 <Image
@@ -101,7 +116,10 @@ export default function AccueilPage() {
               Mission & Vision
             </span>
             <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900">
-              Former l&apos;Élite Technologique de Demain
+              Former l&apos;Élite Technologique de{" "}
+              <span className="underline decoration-brand-orange decoration-4 underline-offset-4">
+                Demain
+              </span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Digi-SET Institute allie rigueur scientifique et immersion pratique pour garantir la souveraineté numérique.
@@ -177,7 +195,11 @@ export default function AccueilPage() {
               Accès par Profil
             </span>
             <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-              Quelle est votre situation ?
+              Quelle est votre{" "}
+              <span className="underline decoration-brand-blue decoration-4 underline-offset-4">
+                situation
+              </span>{" "}
+              ?
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground mt-2">
               Orientation personnalisée selon votre profil académique ou professionnel.
@@ -275,7 +297,10 @@ export default function AccueilPage() {
                 Catalogue Général
               </span>
               <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-                Toutes nos Offres de Formation & Services
+                Toutes nos Offres de{" "}
+                <span className="underline decoration-brand-orange decoration-4 underline-offset-4">
+                  Formation & Services
+                </span>
               </h2>
             </div>
             <Link
@@ -375,7 +400,10 @@ export default function AccueilPage() {
                 Structure & Gouvernance
               </span>
               <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900 mt-2">
-                Les Pôles d&apos;Excellence de l&apos;Organigramme
+                Les Pôles d&apos;Excellence de l&apos;
+                <span className="underline decoration-brand-blue decoration-4 underline-offset-4">
+                  Organigramme
+                </span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 mt-1">
                 Une organisation hiérarchique en 3 rangs garantissant la rigueur pédagogique et l&apos;innovation.
@@ -459,7 +487,7 @@ export default function AccueilPage() {
         </div>
       </section>
 
-      {/* 8. SECTION LES 3 FORMULAIRES EN LIGNE (Placée avant la géolocalisation) */}
+      {/* 8. SECTION LES 3 FORMULAIRES EN LIGNE */}
       <HomeFormsSection />
 
       {/* 9. Localisation & Accès Campus avec Google Maps Fonctionnel */}
@@ -472,7 +500,10 @@ export default function AccueilPage() {
                 Campus & Emplacement
               </span>
               <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900">
-                Localisation Exacte du Campus
+                Localisation Exacte du{" "}
+                <span className="underline decoration-brand-orange decoration-4 underline-offset-4">
+                  Campus
+                </span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Notre campus moderne est situé au Carrefour Moussavou à Angondje (Commune d&apos;Akanda, Gabon), à proximité des grands axes de transport.
