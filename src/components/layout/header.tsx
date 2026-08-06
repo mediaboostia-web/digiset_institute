@@ -10,12 +10,12 @@ export function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-brand-blue-dark text-white shadow-md border-b border-white/10">
+    <header className="sticky top-0 z-50 w-full bg-brand-blue-dark text-white shadow-md border-b border-white/10 overflow-x-hidden">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-20">
         
         {/* Logo Officiel Digi-SET avec Arrière-plan Transparent */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <div className="relative h-12 w-36 sm:h-14 sm:w-44 bg-transparent p-1 flex items-center justify-center transition-opacity hover:opacity-90">
+          <div className="relative h-11 w-36 sm:h-14 sm:w-44 bg-transparent p-1 flex items-center justify-center transition-opacity hover:opacity-90">
             <Image
               src="/brand/logo-digiset.png"
               alt="Logo Digi-SET Institute"
@@ -50,10 +50,10 @@ export function Header() {
             </Link>
 
             {activeDropdown === "programmes" && (
-              <div className="absolute top-full left-0 w-80 rounded-xl bg-white text-slate-900 shadow-2xl border border-slate-200 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute top-full left-0 w-80 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/80 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
                 <Link
                   href="/programmes/classe-preparatoire"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <GraduationCap className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
@@ -64,7 +64,7 @@ export function Header() {
 
                 <Link
                   href="/programmes/licence-professionnelle"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <Award className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
@@ -75,7 +75,7 @@ export function Header() {
 
                 <Link
                   href="/programmes/formation-continue"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <Briefcase className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
@@ -86,7 +86,7 @@ export function Header() {
 
                 <Link
                   href="/programmes/certifications"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
@@ -97,7 +97,7 @@ export function Header() {
 
                 <Link
                   href="/programmes/digiset-online"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <Monitor className="h-5 w-5 text-sky-600 shrink-0 mt-0.5" />
                   <div>
@@ -124,10 +124,10 @@ export function Header() {
             </Link>
 
             {activeDropdown === "services" && (
-              <div className="absolute top-full left-0 w-72 rounded-xl bg-white text-slate-900 shadow-2xl border border-slate-200 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/80 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
                 <Link
                   href="/services/location-laboratoires"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <FlaskConical className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
@@ -138,7 +138,7 @@ export function Header() {
 
                 <Link
                   href="/services/consulting-it"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <Briefcase className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
@@ -165,10 +165,10 @@ export function Header() {
             </Link>
 
             {activeDropdown === "institution" && (
-              <div className="absolute top-full left-0 w-72 rounded-xl bg-white text-slate-900 shadow-2xl border border-slate-200 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/80 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
                 <Link
                   href="/institution"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <Building2 className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
@@ -179,7 +179,7 @@ export function Header() {
 
                 <Link
                   href="/institution#strategie"
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <ShieldCheck className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
@@ -202,7 +202,7 @@ export function Header() {
         <div className="hidden lg:flex items-center gap-3">
           <Link
             href="/inscription/candidature"
-            className="rounded-lg bg-brand-orange px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-brand-orange-dark transition-all transform hover:-translate-y-0.5"
+            className="rounded-xl bg-brand-orange px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-brand-orange-dark transition-all transform hover:-translate-y-0.5"
           >
             Candidater 2026
           </Link>
@@ -211,7 +211,7 @@ export function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 text-white hover:text-brand-orange"
+          className="lg:hidden p-2 text-white hover:text-brand-orange focus:outline-hidden"
           aria-label="Menu"
         >
           {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -221,92 +221,104 @@ export function Header() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-slate-900 border-t border-white/10 px-4 pt-3 pb-6 space-y-3">
+        <div className="lg:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 px-4 pt-3 pb-6 space-y-3 animate-in fade-in duration-200">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-xs font-bold uppercase text-white"
+            className="block py-2 text-xs font-bold uppercase text-white hover:text-brand-orange"
           >
             Accueil
           </Link>
-          <Link
-            href="/programmes"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-xs font-bold uppercase text-brand-orange"
-          >
-            Tous les Programmes
-          </Link>
-          <Link
-            href="/programmes/licence-professionnelle"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block pl-4 py-1.5 text-xs text-slate-300"
-          >
-            • Licence Professionnelle (3 options)
-          </Link>
-          <Link
-            href="/programmes/formation-continue"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block pl-4 py-1.5 text-xs text-slate-300"
-          >
-            • Formations Continues Entreprises
-          </Link>
-          <Link
-            href="/programmes/certifications"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block pl-4 py-1.5 text-xs text-slate-300"
-          >
-            • Certifications (Cisco, AWS, Microsoft...)
-          </Link>
-          <Link
-            href="/programmes/digiset-online"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block pl-4 py-1.5 text-xs text-slate-300"
-          >
-            • DigiSET Online
-          </Link>
+          
+          <div className="space-y-1">
+            <Link
+              href="/programmes"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1.5 text-xs font-bold uppercase text-brand-orange"
+            >
+              Tous les Programmes
+            </Link>
+            <Link
+              href="/programmes/classe-preparatoire"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block pl-3 py-1 text-xs text-slate-300 hover:text-white"
+            >
+              • Classe Préparatoire MP2I
+            </Link>
+            <Link
+              href="/programmes/licence-professionnelle"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block pl-3 py-1 text-xs text-slate-300 hover:text-white"
+            >
+              • Licence Professionnelle (3 options)
+            </Link>
+            <Link
+              href="/programmes/formation-continue"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block pl-3 py-1 text-xs text-slate-300 hover:text-white"
+            >
+              • Formations Continues Entreprises
+            </Link>
+            <Link
+              href="/programmes/certifications"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block pl-3 py-1 text-xs text-slate-300 hover:text-white"
+            >
+              • Certifications (Cisco, AWS, Microsoft...)
+            </Link>
+            <Link
+              href="/programmes/digiset-online"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block pl-3 py-1 text-xs text-slate-300 hover:text-white"
+            >
+              • DigiSET Online
+            </Link>
+          </div>
 
-          <Link
-            href="/services"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-xs font-bold uppercase text-brand-orange"
-          >
-            Services & Labos
-          </Link>
-          <Link
-            href="/services/location-laboratoires"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block pl-4 py-1.5 text-xs text-slate-300"
-          >
-            • Location de Laboratoires TP
-          </Link>
-          <Link
-            href="/services/consulting-it"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block pl-4 py-1.5 text-xs text-slate-300"
-          >
-            • Consulting IT
-          </Link>
+          <div className="space-y-1 pt-1 border-t border-white/10">
+            <Link
+              href="/services"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1.5 text-xs font-bold uppercase text-brand-orange"
+            >
+              Services & Labos
+            </Link>
+            <Link
+              href="/services/location-laboratoires"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block pl-3 py-1 text-xs text-slate-300 hover:text-white"
+            >
+              • Location de Laboratoires TP
+            </Link>
+            <Link
+              href="/services/consulting-it"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block pl-3 py-1 text-xs text-slate-300 hover:text-white"
+            >
+              • Consulting IT
+            </Link>
+          </div>
 
           <Link
             href="/institution"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-xs font-bold uppercase text-white"
+            className="block py-2 text-xs font-bold uppercase text-white hover:text-brand-orange border-t border-white/10 pt-2"
           >
             Stratégie & Institution (Organigramme)
           </Link>
           <Link
             href="/contact"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-xs font-bold uppercase text-white"
+            className="block py-2 text-xs font-bold uppercase text-white hover:text-brand-orange"
           >
             Contact
           </Link>
 
-          <div className="pt-2">
+          <div className="pt-3">
             <Link
               href="/inscription/candidature"
               onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-center rounded-lg bg-brand-orange py-3 text-xs font-bold uppercase text-white"
+              className="block w-full text-center rounded-xl bg-brand-orange py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md active:scale-98 transition-transform"
             >
               Candidater Rentrée 2026
             </Link>
