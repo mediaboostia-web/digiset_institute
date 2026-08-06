@@ -9,7 +9,7 @@ import { HomeFormsSection } from "@/components/shared/home-forms-section";
 export default function AccueilPage() {
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
-      {/* 1. Hero Principal — Badge Blanc Visible, Hero_image2.png Grand Format Flottant & Effets de Survol Boutons */}
+      {/* 1. Hero Principal — Image Hero_image1.jpg Grand Format Flottante avec Flou Bas, visible uniquement sur Tablette (md) et Desktop (lg) */}
       <section className="relative bg-brand-blue-dark text-white py-10 sm:py-14 lg:py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transform blur-[2px] pointer-events-none"
@@ -18,9 +18,9 @@ export default function AccueilPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-brand-blue-dark/95 via-brand-blue-dark/85 to-brand-blue-dark/95" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+            <div className="md:col-span-7 space-y-4 sm:space-y-5">
               {/* Badge avec Texte Visible en Blanc Puro */}
               <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white shadow-xs">
                 Lancement Officiel Septembre 2026 — Akanda, Gabon
@@ -48,12 +48,12 @@ export default function AccueilPage() {
                 </span>
               </h1>
 
-              {/* Description claire et lisible */}
+              {/* Description claire et lisible sans soulignement */}
               <p className="text-xs sm:text-sm lg:text-base text-slate-200 leading-relaxed font-body max-w-2xl drop-shadow-2xs">
                 Digi-SET Institute forme les futurs experts en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique).
               </p>
 
-              {/* Boutons d'action avec effets de changement de couleur de fond au survol (hover) */}
+              {/* Boutons d'action avec arrondis 15px et effet de survol dynamique */}
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                 <Link
                   href="/inscription/candidature"
@@ -90,19 +90,24 @@ export default function AccueilPage() {
               </div>
             </div>
 
-            {/* Image du Hero (Hero_image2.png) Grand Format bien alignée avec effet flottant et flou bas masquant */}
-            <div className="hidden lg:block lg:col-span-5 relative">
-              <div className="relative w-full h-[450px] lg:h-[500px] animate-float flex items-end justify-center">
+            {/* Image du Hero (Hero_image1.jpg) — Grand Format visible UNIQUEMENT sur Tablette (md) et Desktop (lg), avec effet flottant et flou bas masquant */}
+            <div className="hidden md:block md:col-span-5 relative">
+              <div className="relative w-full h-[460px] md:h-[500px] lg:h-[540px] animate-float rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-900 group">
                 <Image
-                  src="/images/img/Hero_image2.png"
-                  alt="Étudiant Digi-SET Institute"
-                  width={440}
-                  height={520}
-                  className="max-h-full w-auto object-contain drop-shadow-2xl"
+                  src="/images/img/Hero_image1.jpg"
+                  alt="Digi-SET Institute Campus et Étudiants"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                   priority
+                  sizes="(max-width: 1024px) 45vw, 40vw"
                 />
-                {/* Flou et dégradé bas permettant à l'image de s'adapter parfaitement au fond du hero */}
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/60 to-transparent pointer-events-none" />
+                {/* Flou et dégradé bas permettant à l'image de mieux s'adapter au fond du hero */}
+                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/70 to-transparent flex items-end p-6 pointer-events-none">
+                  <div className="text-white space-y-1">
+                    <div className="text-xs font-bold uppercase tracking-wider text-brand-orange">Campus Akanda</div>
+                    <div className="text-sm font-bold">Laboratoires de TP Haute Technologie & Salles Informatiques</div>
+                  </div>
+                </div>
               </div>
             </div>
 
