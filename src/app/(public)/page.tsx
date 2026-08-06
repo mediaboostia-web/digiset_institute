@@ -9,7 +9,7 @@ import { HomeFormsSection } from "@/components/shared/home-forms-section";
 export default function AccueilPage() {
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
-      {/* 1. Hero Principal — Avec Hero_image2.png flottante, soulignement courbé stylé et cadre métriques global transparent */}
+      {/* 1. Hero Principal — Badge Blanc Visible, Hero_image2.png Grand Format Flottant & Effets de Survol Boutons */}
       <section className="relative bg-brand-blue-dark text-white py-10 sm:py-14 lg:py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transform blur-[2px] pointer-events-none"
@@ -18,10 +18,11 @@ export default function AccueilPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-brand-blue-dark/95 via-brand-blue-dark/85 to-brand-blue-dark/95" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-orange shadow-xs">
+              {/* Badge avec Texte Visible en Blanc Puro */}
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white shadow-xs">
                 Lancement Officiel Septembre 2026 — Akanda, Gabon
               </div>
 
@@ -47,16 +48,16 @@ export default function AccueilPage() {
                 </span>
               </h1>
 
-              {/* Description sans traits de soulignement */}
+              {/* Description claire et lisible */}
               <p className="text-xs sm:text-sm lg:text-base text-slate-200 leading-relaxed font-body max-w-2xl drop-shadow-2xs">
                 Digi-SET Institute forme les futurs experts en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique).
               </p>
 
-              {/* Boutons avec arrondis ajustés à 15px */}
-              <div className="pt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {/* Boutons d'action avec effets de changement de couleur de fond au survol (hover) */}
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                 <Link
                   href="/inscription/candidature"
-                  className="inline-flex items-center justify-center gap-2 rounded-[15px] bg-brand-orange px-6 py-3.5 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-brand-orange-dark active:scale-98 transition-all"
+                  className="inline-flex items-center justify-center gap-2 rounded-[15px] bg-brand-orange px-6 py-3.5 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-brand-orange-dark hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98"
                 >
                   Déposer une candidature
                   <ArrowRight className="h-4 w-4" />
@@ -64,15 +65,15 @@ export default function AccueilPage() {
 
                 <Link
                   href="/programmes"
-                  className="inline-flex items-center justify-center gap-2 rounded-[15px] border border-white/30 bg-white/10 px-6 py-3.5 text-xs sm:text-sm font-bold text-white hover:bg-white/20 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-[15px] border border-white/30 bg-white/10 px-6 py-3.5 text-xs sm:text-sm font-bold text-white hover:bg-white/25 hover:border-white/50 transition-all duration-300"
                 >
                   Explorer les formations
                 </Link>
               </div>
 
               {/* Cadre global transparent unique avec séparation légère pour les 3 métriques */}
-              <div className="pt-4">
-                <div className="rounded-[15px] bg-white/10 backdrop-blur-xs border border-white/20 p-3 sm:p-4 grid grid-cols-3 divide-x divide-white/20 shadow-md">
+              <div className="pt-3">
+                <div className="rounded-[15px] bg-white/10 backdrop-blur-xs border border-white/20 p-3.5 sm:p-4 grid grid-cols-3 divide-x divide-white/20 shadow-md">
                   <div className="px-2 sm:px-4 text-center sm:text-left">
                     <div className="font-heading text-base sm:text-xl font-extrabold text-brand-orange">100%</div>
                     <div className="text-[10px] sm:text-xs text-slate-100 font-medium leading-tight">Pratique en Labo TP</div>
@@ -89,19 +90,19 @@ export default function AccueilPage() {
               </div>
             </div>
 
-            {/* Image du Hero (Hero_image2.png) avec mouvement flottant et flou/dégradé bas masqué */}
+            {/* Image du Hero (Hero_image2.png) Grand Format bien alignée avec effet flottant et flou bas masquant */}
             <div className="hidden lg:block lg:col-span-5 relative">
-              <div className="relative w-full h-[420px] sm:h-[480px] animate-float flex items-end justify-center">
+              <div className="relative w-full h-[450px] lg:h-[500px] animate-float flex items-end justify-center">
                 <Image
                   src="/images/img/Hero_image2.png"
                   alt="Étudiant Digi-SET Institute"
-                  width={400}
-                  height={480}
+                  width={440}
+                  height={520}
                   className="max-h-full w-auto object-contain drop-shadow-2xl"
                   priority
                 />
-                {/* Flou et dégradé bas permettant à l'image de mieux s'adapter au fond du hero */}
-                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/60 to-transparent pointer-events-none" />
+                {/* Flou et dégradé bas permettant à l'image de s'adapter parfaitement au fond du hero */}
+                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/60 to-transparent pointer-events-none" />
               </div>
             </div>
 
@@ -222,7 +223,7 @@ export default function AccueilPage() {
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
                   href="/inscription/candidature"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-brand-blue px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-blue-dark transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-brand-blue px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-blue-dark transition-all duration-300"
                 >
                   Déposer une candidature
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -248,7 +249,7 @@ export default function AccueilPage() {
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
                   href="/programmes/formation-continue"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-brand-orange px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-orange-dark transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-brand-orange px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-orange-dark transition-all duration-300"
                 >
                   Demander un devis entreprise
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -274,7 +275,7 @@ export default function AccueilPage() {
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
                   href="/services/location-laboratoires"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition-all duration-300"
                 >
                   Voir les forfaits labos
                   <ArrowRight className="h-3.5 w-3.5" />

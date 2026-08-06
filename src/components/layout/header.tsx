@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Menu, X, GraduationCap, Briefcase, Award, Monitor, FlaskConical, Building2, ShieldCheck, Phone } from "lucide-react";
+import { ChevronDown, Menu, X, GraduationCap, Briefcase, Award, Monitor, FlaskConical, Building2, ShieldCheck } from "lucide-react";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -191,18 +191,17 @@ export function Header() {
             )}
           </div>
 
-          {/* Contact */}
-          <Link href="/contact" className="hover:text-brand-orange transition-colors py-2 flex items-center gap-1">
-            <Phone className="h-3.5 w-3.5 text-brand-orange" />
-            <span>Contact</span>
+          {/* Contact (Sans icône) */}
+          <Link href="/contact" className="hover:text-brand-orange transition-colors py-2">
+            Contact
           </Link>
         </nav>
 
-        {/* CTA Inscription Desktop */}
+        {/* CTA Inscription Desktop avec Effet de Changement de Couleur au Survol */}
         <div className="hidden lg:flex items-center gap-3">
           <Link
             href="/inscription/candidature"
-            className="rounded-xl bg-brand-orange px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-brand-orange-dark transition-all transform hover:-translate-y-0.5"
+            className="rounded-[15px] bg-brand-orange px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-brand-orange-dark hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98"
           >
             Candidater 2026
           </Link>
@@ -318,7 +317,7 @@ export function Header() {
             <Link
               href="/inscription/candidature"
               onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-center rounded-xl bg-brand-orange py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md active:scale-98 transition-transform"
+              className="block w-full text-center rounded-[15px] bg-brand-orange py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md active:scale-98 transition-transform"
             >
               Candidater Rentrée 2026
             </Link>
