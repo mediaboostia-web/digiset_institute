@@ -10,7 +10,7 @@ export function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-brand-blue-dark text-white shadow-md border-b border-white/10 overflow-x-hidden">
+    <header className="sticky top-0 z-50 w-full bg-brand-blue-dark text-white shadow-md border-b border-white/10">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-20">
         
         {/* Logo Officiel Digi-SET avec Arrière-plan Transparent */}
@@ -43,14 +43,14 @@ export function Header() {
           >
             <Link
               href="/programmes"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors"
+              className="flex items-center gap-1 hover:text-brand-orange transition-colors py-2"
             >
               <span>Programmes</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             {activeDropdown === "programmes" && (
-              <div className="absolute top-full left-0 w-80 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/80 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute top-full left-0 w-80 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <Link
                   href="/programmes/classe-preparatoire"
                   className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
@@ -117,14 +117,14 @@ export function Header() {
           >
             <Link
               href="/services"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors"
+              className="flex items-center gap-1 hover:text-brand-orange transition-colors py-2"
             >
               <span>Services</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             {activeDropdown === "services" && (
-              <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/80 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <Link
                   href="/services/location-laboratoires"
                   className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
@@ -158,14 +158,14 @@ export function Header() {
           >
             <Link
               href="/institution"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors"
+              className="flex items-center gap-1 hover:text-brand-orange transition-colors py-2"
             >
               <span>Stratégie & Institution</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             {activeDropdown === "institution" && (
-              <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/80 p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <Link
                   href="/institution"
                   className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
