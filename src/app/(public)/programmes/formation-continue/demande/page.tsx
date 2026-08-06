@@ -1,15 +1,25 @@
-import { PageStub } from "@/components/page-stub";
+import { HeroSection } from "@/components/shared/hero-section";
+import { TrainingRequestForm } from "@/components/forms/training-request-form";
 
 export default function DemandeFormationContinuePage() {
   return (
-    <PageStub
-      title="Demande de formation continue"
-      route="/programmes/formation-continue/demande"
-      sections={[
-        "Rappel bref de l'offre (4 axes)",
-        "Formulaire : société, contact, domaine, nombre de participants, dates souhaitées, message (POST /api/submissions/training-request)",
-        "Écran de confirmation",
-      ]}
-    />
+    <div>
+      <HeroSection
+        badge="Espace Entreprises & Administrations"
+        title="Demande de Formation Continue"
+        subtitle="Remplissez ce formulaire pour nous faire part de vos besoins de formation professionnelle. Notre équipe vous transmettra une proposition technique et financière sous 24h."
+        breadcrumbs={[
+          { label: "Programmes", href: "/programmes" },
+          { label: "Formation Continue", href: "/programmes/formation-continue" },
+          { label: "Demande" },
+        ]}
+      />
+
+      <section className="py-12 bg-slate-50 border-b border-border">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <TrainingRequestForm />
+        </div>
+      </section>
+    </div>
   );
 }
