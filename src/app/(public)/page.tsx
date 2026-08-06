@@ -9,7 +9,7 @@ import { HomeFormsSection } from "@/components/shared/home-forms-section";
 export default function AccueilPage() {
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
-      {/* 1. Hero Principal — Image Hero_image1.jpg Grand Format Flottante avec Flou Bas */}
+      {/* 1. Hero Principal — Badge de Bienvenue à Digi-SET Institute, Image Hero_image1.jpg Grand Format Flottante avec Flou Bas */}
       <section className="relative bg-brand-blue-dark text-white py-10 sm:py-14 lg:py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transform blur-[2px] pointer-events-none"
@@ -21,9 +21,9 @@ export default function AccueilPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             <div className="md:col-span-7 space-y-4 sm:space-y-5">
-              {/* Badge avec Texte Visible en Blanc Puro */}
+              {/* Badge avec Texte de Bienvenue Visible en Blanc Puro */}
               <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white shadow-xs">
-                Lancement Officiel Septembre 2026 — Akanda, Gabon
+                Bienvenue à Digi-SET Institute — Akanda, Gabon
               </div>
 
               {/* Titre H1 avec trait légèrement courbé stylé designer uniquement sur "Métiers du Numérique" */}
@@ -117,7 +117,7 @@ export default function AccueilPage() {
       {/* 2. Mot du Fondateur */}
       <FounderSection />
 
-      {/* 3. Section "Former l'Élite Technologique de Demain" — Cartes Numérotées en arrière-plan, Style Couleur Unique & Bordure Brillant au Survol */}
+      {/* 3. Section "Former l'Élite Technologique de Demain" */}
       <section className="py-14 sm:py-20 bg-slate-50 border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center space-y-3 mb-10 sm:mb-14">
@@ -136,7 +136,6 @@ export default function AccueilPage() {
             
             {/* CARTE 01 : Style Bleu Marine / Académique avec Illustration Grand 01 en arrière-plan */}
             <div className="relative group rounded-3xl bg-gradient-to-br from-brand-blue-dark via-slate-900 to-brand-blue-dark text-white p-7 sm:p-8 space-y-6 shadow-md border border-blue-400/20 hover:border-brand-blue hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between">
-              {/* Illustration Numéro 01 en arrière-plan */}
               <div className="absolute -right-2 -top-3 text-8xl font-black font-heading text-blue-400/10 group-hover:text-blue-400/20 transition-colors select-none pointer-events-none">
                 01
               </div>
@@ -166,7 +165,6 @@ export default function AccueilPage() {
 
             {/* CARTE 02 : Style Orange Vif / Laboratoires TP avec Illustration Grand 02 en arrière-plan */}
             <div className="relative group rounded-3xl bg-gradient-to-br from-brand-orange via-brand-orange-dark to-amber-700 text-white p-7 sm:p-8 space-y-6 shadow-md border border-orange-300/30 hover:border-white/60 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between">
-              {/* Illustration Numéro 02 en arrière-plan */}
               <div className="absolute -right-2 -top-3 text-8xl font-black font-heading text-white/15 group-hover:text-white/25 transition-colors select-none pointer-events-none">
                 02
               </div>
@@ -196,7 +194,6 @@ export default function AccueilPage() {
 
             {/* CARTE 03 : Style Émeraude / Certifications Pro avec Illustration Grand 03 en arrière-plan */}
             <div className="relative group rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white p-7 sm:p-8 space-y-6 shadow-md border border-emerald-500/30 hover:border-emerald-400 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between">
-              {/* Illustration Numéro 03 en arrière-plan */}
               <div className="absolute -right-2 -top-3 text-8xl font-black font-heading text-emerald-400/10 group-hover:text-emerald-400/20 transition-colors select-none pointer-events-none">
                 03
               </div>
@@ -483,7 +480,7 @@ export default function AccueilPage() {
                   Pôle Formations & Conseil Scientifique
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Dirigé par la Direction des Études et le Conseil Académique. Conception des maquettes ECTS, accréditations et suivi pédagogique.
+                  Dirigé par la Direction des Études et le Conseil Académique. Conception des maquettes ECTS, accreditations et suivi pédagogique.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, GraduationCap, Phone, Plus, X, Briefcase, FlaskConical, Building2, Award, Monitor, Newspaper, ChevronRight } from "lucide-react";
+import { Home, BookOpen, GraduationCap, Phone, Plus, X, Briefcase, FlaskConical, Award, Monitor, Newspaper, ChevronRight } from "lucide-react";
 
 export function BottomNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -14,6 +14,21 @@ export function BottomNav() {
     if (path !== "/" && pathname.startsWith(path)) return true;
     return false;
   };
+
+  // Verrouillage du scroll sur mobile lorsque le tiroir "Plus" est ouvert
+  useEffect(() => {
+    if (drawerOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "unset";
+      document.body.style.touchAction = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+      document.body.style.touchAction = "auto";
+    };
+  }, [drawerOpen]);
 
   return (
     <>
@@ -92,7 +107,7 @@ export function BottomNav() {
         </button>
       </nav>
 
-      {/* Modal / Drawer Mobile "Plus d'options" */}
+      {/* Modal / Drawer Mobile "Plus d'options" avec Verrouillage de Défilement (Body Scroll Lock) */}
       {drawerOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div
