@@ -15,12 +15,12 @@ export function Header() {
         
         {/* Logo Officiel Digi-SET avec Arrière-plan Transparent */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <div className="relative h-11 w-36 sm:h-14 sm:w-44 bg-transparent p-1 flex items-center justify-center transition-opacity hover:opacity-90">
+          <div className="relative h-11 w-36 sm:h-14 sm:w-48 bg-transparent p-1 flex items-center justify-center transition-opacity hover:opacity-90">
             <Image
-              src="/brand/logo-digiset.png"
-              alt="Logo Digi-SET Institute"
-              width={170}
-              height={55}
+              src="/brand/Digiset Logo officiel.png"
+              alt="Logo Officiel Digi-SET Institute"
+              width={185}
+              height={60}
               className="max-h-full w-auto object-contain drop-shadow-sm"
               priority
             />
