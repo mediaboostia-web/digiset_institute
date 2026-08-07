@@ -88,6 +88,8 @@ export interface TeamMember {
   photo_url?: string;
   bio?: string;
   email?: string;
+  facebook_url?: string;
+  linkedin_url?: string;
   sort_order: number;
   created_at: string;
 }
