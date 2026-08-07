@@ -1,13 +1,19 @@
-import { PageStub } from "@/components/page-stub";
+import { FileText } from "lucide-react";
+import { FutureModuleTeaser } from "@/components/shared/future-module-teaser";
 
-export default function AdminPagesPage() {
+export default function AdminPagesContentPage() {
   return (
-    <PageStub
-      title="Gestion des pages de contenu libre"
-      route="/admin/pages"
-      sections={[
-        "Liste des blocs éditables (Mot du Fondateur, Qui sommes-nous, Stratégie, Pourquoi rejoindre Digi-SET, FAQ)",
-        "Éditeur de texte riche par bloc + upload d'image associée si applicable",
+    <FutureModuleTeaser
+      title="Édition des Pages de Contenu Libre & Légal"
+      category="Éditeur Institutionnel"
+      version="Version 3.0"
+      icon={FileText}
+      marketingHeadline="Gardez un contrôle total sur vos mentions légales, politique de confidentialité et textes de presentation institutionnelle."
+      description="Modifiez sans intervention technique la politique de protection des données, l'historique du fondateur et les pages d'information générale."
+      benefits={[
+        "Éditeur de texte riche sécurisé et conforme RGPD / lois Gabonaises",
+        "Historique des versions et prévisualisation avant publication",
+        "Mise à jour directe du mot du président et des valeurs institutionnelles",
       ]}
     />
   );

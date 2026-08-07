@@ -1,14 +1,20 @@
-import { PageStub } from "@/components/page-stub";
+import { Image as ImageIcon } from "lucide-react";
+import { FutureModuleTeaser } from "@/components/shared/future-module-teaser";
 
-export default function AdminGaleriePage() {
+export default function AdminGalleryPage() {
   return (
-    <PageStub
-      title="Gestion de la galerie médias"
-      route="/admin/galerie"
-      sections={[
-        "Grille de la médiathèque existante (par catégorie : campus, labos, événements)",
-        "Zone de drop / uploader avec barre de progression",
-        "Modale de sélection réutilisable (pour associer un média existant à une autre page)",
+    <FutureModuleTeaser
+      title="Médiathèque Centrale & Galerie Photos/Vidéos"
+      category="Gestion des Médias"
+      version="Version 2.0"
+      icon={ImageIcon}
+      marketingHeadline="Un réservoir centralisé de photographies haute résolution pour alimenter vos actualités, fiches d'équipe et bannières."
+      description="Stockez et catégorisez les photos des laboratoires de TP, du campus, des sessions d'examen et des cérémonies officielles dans Supabase Storage."
+      benefits={[
+        "Téléversement glisser-déposer de multiples fichiers d'un coup",
+        "Bibliothèque partagée réutilisable dans la rédaction des actualités",
+        "Catégorisation par thèmes (Campus, Labos Physique/IT, Événements)",
+        "Compression automatique et génération d'URL sécurisées CDN",
       ]}
     />
   );

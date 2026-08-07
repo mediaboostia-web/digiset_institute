@@ -1,15 +1,19 @@
-import { PageStub } from "@/components/page-stub";
+import { UserCheck } from "lucide-react";
+import { FutureModuleTeaser } from "@/components/shared/future-module-teaser";
 
-export default function AdminUtilisateursPage() {
+export default function AdminUsersPage() {
   return (
-    <PageStub
-      title="Gestion des utilisateurs admin"
-      route="/admin/utilisateurs"
-      sections={[
-        "Réservé au rôle Super-admin",
-        "Liste des comptes admin (nom, email, rôle, statut)",
-        "Formulaire d'invitation (email + attribution de rôle Super-admin/Éditeur)",
-        "Modale de confirmation de révocation d'accès",
+    <FutureModuleTeaser
+      title="Gestion des Comptes Administrateurs & Droits d'Accès"
+      category="Sécurité & Administration"
+      version="Version 3.0"
+      icon={UserCheck}
+      marketingHeadline="Sécurisez l'accès à votre plateforme et déléguez la gestion des contenus avec un contrôle fin des rôles et autorisations."
+      description="Créez des accès pour la direction, les secrétariats et les chargés de communication avec des rôles différenciés (Super Admin, Éditeur)."
+      benefits={[
+        "Gestion des utilisateurs de l'espace administration (`admin_users`)",
+        "Attribution de rôles (Super Administrateur vs Éditeur de contenu)",
+        "Audit des dernières connexions et traçabilité des modifications",
       ]}
     />
   );

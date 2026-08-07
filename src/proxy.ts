@@ -16,13 +16,18 @@ export async function proxy(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Pas encore configuré (cf. CONFIGURATION.md) : on laisse passer les
-    // pages publiques plutôt que de faire planter tout le site, mais
-    // /admin reste bloqué puisqu'aucune session ne peut être vérifiée.
+    // Pas encore configuré (cf. CONFIGURATION.md) : en développement / mock,
+    // on autorise l'accès si le cookie admin_dev_mode=true est présent,
+    // sinon on redirige vers /admin/login.
     console.warn(
       "[proxy] NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY manquants — voir CONFIGURATION.md.",
     );
-    if (request.nextUrl.pathname.startsWith("/admin/login") === false && request.nextUrl.pathname.startsWith("/admin")) {
+    const hasDevCookie = request.cookies.get("admin_dev_mode")?.value === "true";
+    if (
+      !hasDevCookie &&
+      !request.nextUrl.pathname.startsWith("/admin/login") &&
+      request.nextUrl.pathname.startsWith("/admin")
+    ) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
     return response;

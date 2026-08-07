@@ -1,15 +1,20 @@
-import { PageStub } from "@/components/page-stub";
+import { GraduationCap } from "lucide-react";
+import { FutureModuleTeaser } from "@/components/shared/future-module-teaser";
 
-export default function AdminProgrammesPage() {
+export default function AdminProgramsPage() {
   return (
-    <PageStub
-      title="Gestion des programmes"
-      route="/admin/programmes"
-      sections={[
-        "Tableau/liste des fiches programme (filtrable par famille, statut publié/brouillon)",
-        "Formulaire de création/édition (titre, sigle, durée, crédits, public visé, objectifs, profils d'admission, compétences, débouchés, pièces du dossier)",
-        "Aperçu en temps réel (colonne droite desktop)",
-        "Barre d'action persistante (Enregistrer en brouillon / Publier)",
+    <FutureModuleTeaser
+      title="Gestion des Programmes & Maquettes Pédagogiques"
+      category="Catalogue Académique"
+      version="Version 2.0"
+      icon={GraduationCap}
+      marketingHeadline="Structurez et actualisez en toute autonomie l'offre de formation de la Prépa MP2I, des Licences Pro et des Formations Continues."
+      description="Gérez les objectifs pédagogiques, les profils d'admission, la durée des cursus et les débouchés professionnels directement depuis votre espace d'administration."
+      benefits={[
+        "Mise à jour en temps réel des fiches filières (IA, Cybersécurité, Monétique)",
+        "Gestion des options et parcours de la Licence Professionnelle",
+        "Association directe des plaquettes de formation au format PDF",
+        "Optimisation du référencement naturel (SEO) des pages de cours",
       ]}
     />
   );
