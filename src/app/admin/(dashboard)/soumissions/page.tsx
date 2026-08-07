@@ -255,7 +255,7 @@ export default function AdminSubmissionsPage() {
             onClick={() => setIsCreateModalOpen(true)}
             className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs shadow-sm"
           >
-            <PlusCircle className="h-4 w-4" /> Enregistrer une soumission manuelle
+            <PlusCircle className="h-4 w-4" /> Enregistrer une soumission
           </Button>
         </div>
       </div>
@@ -410,7 +410,7 @@ export default function AdminSubmissionsPage() {
           <DialogContent className="max-w-xl w-[94vw] max-h-[88vh] overflow-y-auto overflow-x-hidden p-6">
             <DialogHeader className="border-b border-gray-100 pb-4">
               <DialogTitle className="font-heading text-lg font-bold text-gray-900">
-                Enregistrer une Soumission Manuelle
+                Enregistrer une Soumission
               </DialogTitle>
               <DialogDescription className="text-xs text-gray-500">
                 Saisissez les informations d'un candidat ou prospect reçu par téléphone ou à l'accueil.

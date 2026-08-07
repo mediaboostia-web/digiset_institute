@@ -1,4 +1,3 @@
-import { Image as ImageIcon } from "lucide-react";
 import { FutureModuleTeaser } from "@/components/shared/future-module-teaser";
 
 export default function AdminGalleryPage() {
@@ -7,7 +6,7 @@ export default function AdminGalleryPage() {
       title="Médiathèque Centrale & Galerie Photos/Vidéos"
       category="Gestion des Médias"
       version="Version 2.0"
-      icon={ImageIcon}
+      iconName="ImageIcon"
       marketingHeadline="Un réservoir centralisé de photographies haute résolution pour alimenter vos actualités, fiches d'équipe et bannières."
       description="Stockez et catégorisez les photos des laboratoires de TP, du campus, des sessions d'examen et des cérémonies officielles dans Supabase Storage."
       benefits={[

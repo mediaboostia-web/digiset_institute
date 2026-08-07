@@ -1,14 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, ArrowRight, ShieldAlert, Rocket, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  Sparkles,
+  ArrowRight,
+  Rocket,
+  CheckCircle2,
+  GraduationCap,
+  MessageSquareQuote,
+  Image as ImageIcon,
+  Building2,
+  FileText,
+  FolderDown,
+  UserCheck,
+  Settings,
+} from "lucide-react";
+
+export type ModuleIconName =
+  | "GraduationCap"
+  | "MessageSquareQuote"
+  | "ImageIcon"
+  | "Building2"
+  | "FileText"
+  | "FolderDown"
+  | "UserCheck"
+  | "Settings";
 
 interface FutureModuleTeaserProps {
   title: string;
   category: string;
   version: "Version 2.0" | "Version 3.0";
-  icon: React.ElementType;
+  iconName: ModuleIconName;
   marketingHeadline: string;
   description: string;
   benefits: string[];
@@ -18,19 +40,42 @@ export function FutureModuleTeaser({
   title,
   category,
   version,
-  icon: Icon,
+  iconName,
   marketingHeadline,
   description,
   benefits,
 }: FutureModuleTeaserProps) {
+  const getIcon = () => {
+    switch (iconName) {
+      case "GraduationCap":
+        return <GraduationCap className="h-6 w-6" />;
+      case "MessageSquareQuote":
+        return <MessageSquareQuote className="h-6 w-6" />;
+      case "ImageIcon":
+        return <ImageIcon className="h-6 w-6" />;
+      case "Building2":
+        return <Building2 className="h-6 w-6" />;
+      case "FileText":
+        return <FileText className="h-6 w-6" />;
+      case "FolderDown":
+        return <FolderDown className="h-6 w-6" />;
+      case "UserCheck":
+        return <UserCheck className="h-6 w-6" />;
+      case "Settings":
+        return <Settings className="h-6 w-6" />;
+      default:
+        return <Sparkles className="h-6 w-6" />;
+    }
+  };
+
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      {/* Bannière de notification élégante */}
+      {/* Bannière de notification */}
       <div className="flex flex-col gap-4 rounded-2xl border border-brand-blue/20 bg-gradient-to-r from-brand-blue-dark via-[#00428C] to-brand-blue p-6 text-white shadow-md sm:p-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-brand-orange backdrop-blur-xs">
-              <Icon className="h-6 w-6" />
+              {getIcon()}
             </div>
             <div>
               <span className="inline-block rounded-full bg-brand-orange/20 px-3 py-0.5 text-[11px] font-extrabold text-brand-orange border border-brand-orange/30">
@@ -80,11 +125,12 @@ export function FutureModuleTeaser({
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <Button asChild variant="outline" className="w-full sm:w-auto text-xs font-bold border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white">
-              <Link href="/admin/soumissions">
-                Gérer les soumissions V1 <ArrowRight className="ml-2 h-3.5 w-3.5" />
-              </Link>
-            </Button>
+            <Link
+              href="/admin/soumissions"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-brand-blue px-4 py-2 text-xs font-bold text-brand-blue hover:bg-brand-blue hover:text-white transition-colors"
+            >
+              Gérer les soumissions V1 <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
         </div>
       </div>

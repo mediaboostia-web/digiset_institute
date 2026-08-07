@@ -1,4 +1,3 @@
-import { GraduationCap } from "lucide-react";
 import { FutureModuleTeaser } from "@/components/shared/future-module-teaser";
 
 export default function AdminProgramsPage() {
@@ -7,7 +6,7 @@ export default function AdminProgramsPage() {
       title="Gestion des Programmes & Maquettes Pédagogiques"
       category="Catalogue Académique"
       version="Version 2.0"
-      icon={GraduationCap}
+      iconName="GraduationCap"
       marketingHeadline="Structurez et actualisez en toute autonomie l'offre de formation de la Prépa MP2I, des Licences Pro et des Formations Continues."
       description="Gérez les objectifs pédagogiques, les profils d'admission, la durée des cursus et les débouchés professionnels directement depuis votre espace d'administration."
       benefits={[

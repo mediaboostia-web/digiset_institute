@@ -1,4 +1,3 @@
-import { Settings } from "lucide-react";
 import { FutureModuleTeaser } from "@/components/shared/future-module-teaser";
 
 export default function AdminSettingsPage() {
@@ -7,7 +6,7 @@ export default function AdminSettingsPage() {
       title="Paramètres Globaux du Site & Configuration"
       category="Configuration Système"
       version="Version 3.0"
-      icon={Settings}
+      iconName="Settings"
       marketingHeadline="Modifiez à tout moment les coordonnées officielles de Digi-SET Institute, les comptes sociaux et l'interrupteur du mode maintenance."
       description="Une interface centralisée pour ajuster les numéros de téléphone, les adresses de réception des alertes emails et le bandeau d'annonce public."
       benefits={[
