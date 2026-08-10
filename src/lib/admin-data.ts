@@ -141,6 +141,64 @@ Les futurs bacheliers et professionnels sont invités à **[déposer leur dossie
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
   },
+  {
+    id: "news-2",
+    slug: "partenariat-certifications-internationales",
+    title: "Partenariat Stratégique avec les Acteurs Internationaux de la Certification",
+    cover_image_url: "/images/img/Image_4.jpg",
+    excerpt:
+      "Nos cursus intègrent dès la première année la préparation aux examens professionnels Cisco, AWS, Microsoft et Linux pour garantir une employabilité immédiate.",
+    body: `DigiSET Institute renforce son engagement pour l'insertion professionnelle de ses étudiants en intégrant les plus grandes **[certifications internationales](/programmes/certifications)** au cœur de son modèle pédagogique.
+
+## Des Certifications Reconnues Mondialement
+
+Dès la 1ère année de cursus, nos étudiants préparent les examens officiels :
+- **Cisco CCNA & CyberOps** pour la gouvernance réseau et la sécurité des infrastructures.
+- **AWS Certified Solutions Architect & Data Analytics** pour l'architecture Cloud et la Big Data.
+- **Microsoft Certified Azure Developer & Security Engineer**.
+- **CompTIA Security+ & Linux Professional Institute (LPI)**.
+
+## Un Avantage Compétitif Unique sur le Marché du Travail
+
+Ces certifications garantissent aux recruteurs et aux entreprises partenaires que nos diplômés possèdent des compétences immédiatement opérationnelles.
+
+Pour en savoir plus sur nos programmes certifiants ou inscrire vos collaborateurs, découvrez nos **[formations continues pour entreprises](/programmes/formation-continue)** ou posez vos questions au **[Secrétariat Académique](/contact)**.`,
+    status: "published",
+    category: "Partenariats & Entreprises",
+    tags: ["Certifications", "Cisco", "AWS", "Microsoft", "Employabilité"],
+    cta_text: "Découvrir nos formations certifiantes",
+    cta_url: "/programmes/certifications",
+    published_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "news-3",
+    slug: "mise-en-service-laboratoires-akanda",
+    title: "Mise en Service des Laboratoires de TP Scientifiques à Akanda",
+    cover_image_url: "/images/img/Img_2.jpg",
+    excerpt:
+      "Découvrez nos nouveaux équipements de travaux pratiques destinés aux étudiants et aux établissements de classe préparatoire partenaires.",
+    body: `Les nouveaux laboratoires de travaux pratiques (TP) de DigiSET Institute sur le campus d'Akanda sont officiellement prêts pour la rentrée 2026.
+
+## Des Équipements Pédagogiques de Haute Précision
+
+Nos salles spécialisées comprennent :
+- **Laboratoire de Physique & Électricité** (optique ondulatoire, oscilloscopes numériques, bancs d'essais).
+- **Laboratoire d'Informatique & Cybersécurité** (serveurs d'émulation de réseaux et environnements de pentest isolés).
+
+## Ouverture à la Location pour les Établissements Partenaires
+
+Afin de soutenir l'enseignement scientifique dans la sous-région, nos laboratoires sont ouverts à la **[location pour les lycées et classes préparatoires scientifiques](/services/location-laboratoires)**.
+
+Consultez nos grilles tarifaires et **[effectuez votre réservation en ligne](/services/location-laboratoires/demande)**.`,
+    status: "published",
+    category: "Laboratoires & TP Scientifiques",
+    tags: ["Laboratoires TP", "Physique", "Optique", "Akanda", "Science Gabon"],
+    cta_text: "Réserver un créneau de laboratoire",
+    cta_url: "/services/location-laboratoires/demande",
+    published_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
 ];
 
 // Organigramme officiel initial de l'établissement

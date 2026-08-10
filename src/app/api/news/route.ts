@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { NewsItem, ContentStatus } from "@/lib/admin-data";
+import { INITIAL_NEWS, type NewsItem, type ContentStatus } from "@/lib/admin-data";
 
 /**
  * Encodage/Décodage de métadonnées additionnelles dans le corps de l'article
@@ -45,9 +45,41 @@ export async function GET(request: NextRequest) {
       query = query.eq("status", "published");
     }
 
-    const { data, error } = await query.order("created_at", { ascending: false });
+    let { data, error } = await query.order("created_at", { ascending: false });
 
     if (error) throw error;
+
+    // Si la table Supabase est vide, on procède à l'initialisation automatique (seeding)
+    if (!data || data.length === 0) {
+      if (!slugParam) {
+        const seedRows = INITIAL_NEWS.map((item) => ({
+          title: item.title,
+          slug: item.slug,
+          excerpt: item.excerpt,
+          body: encodeArticleBody(item.body, {
+            category: item.category,
+            tags: item.tags,
+            cta_text: item.cta_text,
+            cta_url: item.cta_url,
+          }),
+          cover_image_url: item.cover_image_url || null,
+          status: item.status,
+          published_at: item.published_at,
+        }));
+
+        await admin.from("news").insert(seedRows);
+
+        // Re-requêter après insertion
+        let refetch = admin.from("news").select("*");
+        if (statusParam !== "all") {
+          refetch = refetch.eq("status", "published");
+        }
+        const refetchRes = await refetch.order("created_at", { ascending: false });
+        if (refetchRes.data && refetchRes.data.length > 0) {
+          data = refetchRes.data;
+        }
+      }
+    }
 
     const formattedArticles: NewsItem[] = (data || []).map((row) => {
       const { body, category, tags, cta_text, cta_url } = decodeArticleBody(row.body);
