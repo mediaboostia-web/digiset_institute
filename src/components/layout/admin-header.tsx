@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, Settings, LogOut, Inbox, FileText, Briefcase, Microscope, Mail, ArrowRight, User, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Bell, Settings, LogOut, Inbox, FileText, Briefcase, Microscope, Mail, ArrowRight, User, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
