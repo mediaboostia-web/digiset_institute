@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
+import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Eye, EyeOff, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -12,16 +12,62 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Rate Limiting anti-robot : 5 tentatives échouées = blocage 30 secondes
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (lockoutSeconds > 0) {
+      interval = setInterval(() => {
+        setLockoutSeconds((prev) => {
+          if (prev <= 1) {
+            setFailedAttempts(0);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [lockoutSeconds]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
+
+    if (lockoutSeconds > 0) {
+      setErrorMessage(`Compte temporairement verrouillé. Veuillez patienter ${lockoutSeconds} seconde(s).`);
+      return;
+    }
+
+    // Validation email existant / valide
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setErrorMessage("Veuillez saisir une adresse email valide.");
+      return;
+    }
+
     setIsLoading(true);
 
+    const recordFailure = () => {
+      const nextCount = failedAttempts + 1;
+      setFailedAttempts(nextCount);
+      if (nextCount >= 5) {
+        setLockoutSeconds(30);
+        setErrorMessage("Trop de tentatives infructueuses (5 échecs). Accès verrouillé pendant 30 secondes pour prévenir les attaques d'automatisation.");
+      } else {
+        setErrorMessage(`Identifiants incorrects. Tentative ${nextCount}/5 avant verrouillage anti-robot.`);
+      }
+      setIsLoading(false);
+    };
+
     try {
-      // 1. Si Supabase est configuré dans les variables d'environnement, authentification réelle SupaAuth
+      // 1. Authentification Supabase réelle
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -29,27 +75,27 @@ export default function AdminLoginPage() {
         const { createClient } = await import("@/lib/supabase/client");
         const supabase = createClient();
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: email.trim(),
           password,
         });
 
         if (error) {
-          setErrorMessage("Email ou mot de passe incorrect. Veuillez vérifier vos identifiants.");
-          setIsLoading(false);
+          recordFailure();
           return;
         }
 
+        setFailedAttempts(0);
         router.push("/admin");
         return;
       }
 
-      // 2. Si Supabase n'est pas encore lié (.env non rempli), contrôle d'accès sécurisé par défaut
-      if (email === "direction@digiset-gabon.com" && password === "DigiSET2026@") {
+      // 2. Mode dev / secours
+      if (email.trim() === "direction@digiset-gabon.com" && password === "DigiSET2026@") {
         document.cookie = "admin_dev_mode=true; path=/; max-age=86400";
+        setFailedAttempts(0);
         router.push("/admin");
       } else {
-        setErrorMessage("Identifiants incorrects. Accès refusé.");
-        setIsLoading(false);
+        recordFailure();
       }
     } catch (err) {
       setErrorMessage("Une erreur est survenue lors de la connexion.");
@@ -82,8 +128,14 @@ export default function AdminLoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           {errorMessage && (
-            <div className="mb-6 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-xs font-medium text-red-700 border border-red-200">
-              <AlertCircle className="h-4 w-4 shrink-0" />
+            <div className={`mb-6 flex items-start gap-2.5 rounded-xl p-3.5 text-xs font-medium border ${
+              lockoutSeconds > 0 ? "bg-amber-50 text-amber-800 border-amber-300" : "bg-red-50 text-red-700 border-red-200"
+            }`}>
+              {lockoutSeconds > 0 ? (
+                <ShieldAlert className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+              ) : (
+                <AlertCircle className="h-4 w-4 shrink-0 text-red-600 mt-0.5" />
+              )}
               <span>{errorMessage}</span>
             </div>
           )}
@@ -99,7 +151,8 @@ export default function AdminLoginPage() {
                   id="email"
                   type="email"
                   required
-                  placeholder="admin@digiset-gabon.com"
+                  disabled={lockoutSeconds > 0}
+                  placeholder="direction@digiset-gabon.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-9 text-xs h-10"
@@ -124,23 +177,34 @@ export default function AdminLoginPage() {
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
+                  disabled={lockoutSeconds > 0}
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-9 text-xs h-10"
+                  className="pl-9 pr-10 text-xs h-10"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                  title={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
             </div>
 
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || lockoutSeconds > 0}
               className="w-full gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs h-11 shadow-sm transition-all"
             >
               {isLoading ? (
                 "Connexion en cours..."
+              ) : lockoutSeconds > 0 ? (
+                `Verrouillé (${lockoutSeconds}s)`
               ) : (
                 <>
                   Se connecter au tableau de bord <ArrowRight className="h-4 w-4" />

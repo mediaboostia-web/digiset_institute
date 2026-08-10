@@ -56,7 +56,8 @@ const CATEGORY_OPTIONS = [
 ];
 
 export default function AdminNewsPage() {
-  const [newsList, setNewsList] = useState<NewsItem[]>(INITIAL_NEWS);
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
@@ -66,6 +67,25 @@ export default function AdminNewsPage() {
   // Modal d'édition/création
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState<NewsItem | null>(null);
+
+  const fetchArticles = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/news?status=all");
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data)) {
+        setNewsList(json.data);
+      }
+    } catch (err) {
+      console.error("Erreur chargement actualités:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
 
   // Form State
   const [formData, setFormData] = useState<{
@@ -167,7 +187,7 @@ export default function AdminNewsPage() {
     }
   };
 
-  const handleSaveArticle = (e: React.FormEvent) => {
+  const handleSaveArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.body) return;
 
@@ -181,63 +201,71 @@ export default function AdminNewsPage() {
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
 
-    if (editingArticle) {
-      setNewsList((prev) =>
-        prev.map((item) =>
-          item.id === editingArticle.id
-            ? {
-                ...item,
-                title: formData.title,
-                slug: formData.slug || item.slug,
-                category: finalCategory,
-                excerpt: formData.excerpt,
-                body: formData.body,
-                cover_image_url: formData.cover_image_url,
-                status: formData.status,
-                tags: tagsArray,
-                cta_text: formData.cta_text,
-                cta_url: formData.cta_url,
-              }
-            : item
-        )
-      );
-    } else {
-      const newArticle: NewsItem = {
-        id: `news-${Date.now()}`,
-        title: formData.title,
-        slug: formData.slug || `article-${Date.now()}`,
-        category: finalCategory,
-        excerpt: formData.excerpt,
-        body: formData.body,
-        cover_image_url: formData.cover_image_url,
-        status: formData.status,
-        tags: tagsArray,
-        cta_text: formData.cta_text,
-        cta_url: formData.cta_url,
-        published_at: new Date().toISOString(),
-        created_at: new Date().toISOString(),
-      };
-      setNewsList((prev) => [newArticle, ...prev]);
+    const payload = {
+      title: formData.title,
+      slug: formData.slug,
+      category: finalCategory,
+      excerpt: formData.excerpt,
+      body: formData.body,
+      cover_image_url: formData.cover_image_url,
+      status: formData.status,
+      tags: tagsArray,
+      cta_text: formData.cta_text,
+      cta_url: formData.cta_url,
+    };
+
+    try {
+      if (editingArticle) {
+        await fetch("/api/news", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: editingArticle.id, ...payload }),
+        });
+      } else {
+        await fetch("/api/news", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+      await fetchArticles();
+    } catch (err) {
+      console.error("Erreur enregistrement article:", err);
     }
 
     setIsModalOpen(false);
   };
 
-  const toggleStatus = (id: string) => {
+  const toggleStatus = async (id: string) => {
+    const target = newsList.find((n) => n.id === id);
+    if (!target) return;
+
+    const nextStatus = target.status === "published" ? "draft" : "published";
+
     setNewsList((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status: item.status === "published" ? "draft" : "published",
-            }
-          : item
-      )
+      prev.map((item) => (item.id === id ? { ...item, status: nextStatus } : item))
     );
+
+    try {
+      await fetch("/api/news", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: nextStatus }),
+      });
+      await fetchArticles();
+    } catch (err) {
+      console.error("Erreur bascule statut:", err);
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     setNewsList((prev) => prev.filter((item) => item.id !== id));
+    try {
+      await fetch(`/api/news?id=${id}`, { method: "DELETE" });
+      await fetchArticles();
+    } catch (err) {
+      console.error("Erreur suppression article:", err);
+    }
   };
 
   // Filtrage

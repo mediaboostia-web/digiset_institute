@@ -1,61 +1,49 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { HeroSection } from "@/components/shared/hero-section";
-import { Calendar, ArrowRight, Eye, Share2 } from "lucide-react";
+import { Calendar, ArrowRight, Eye, Share2, Loader2 } from "lucide-react";
+import { INITIAL_NEWS, NewsItem } from "@/lib/admin-data";
 
-import { INITIAL_NEWS } from "@/lib/admin-data";
-
-const ARTICLES = [
+const STATIC_FALLBACK_ARTICLES: NewsItem[] = [
+  INITIAL_NEWS[0],
   {
-    slug: INITIAL_NEWS[0].slug,
-    title: INITIAL_NEWS[0].title,
-    date: "10 Août 2026",
-    category: INITIAL_NEWS[0].category || "Institutionnel",
-    image: INITIAL_NEWS[0].cover_image_url || "/brand/fondateur.png",
-    excerpt: INITIAL_NEWS[0].excerpt,
-  },
-  {
+    id: "static-2",
     slug: "lancement-inscriptions-rentree-2026",
     title: "Lancement Officiel des Inscriptions pour la Rentrée de Septembre 2026",
-    date: "15 Juillet 2026",
+    cover_image_url: "/images/img/Image_3.jpg",
     category: "Admissions & Concours",
-    image: "/images/img/Image_3.jpg",
     excerpt: "DigiSET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
+    body: "",
+    status: "published",
+    published_at: "2026-07-15T00:00:00.000Z",
+    created_at: "2026-07-15T00:00:00.000Z",
   },
   {
+    id: "static-3",
     slug: "partenariat-certifications-internationales",
     title: "Partenariat Stratégique avec les Acteurs Internationaux de la Certification",
-    date: "02 Juillet 2026",
+    cover_image_url: "/images/img/Image_4.jpg",
     category: "Partenariats & Entreprises",
-    image: "/images/img/Image_4.jpg",
     excerpt: "Nos cursus intègrent dès la première année la préparation aux examens professionnels Cisco, AWS, Microsoft et Linux pour garantir une employabilité immédiate.",
+    body: "",
+    status: "published",
+    published_at: "2026-07-02T00:00:00.000Z",
+    created_at: "2026-07-02T00:00:00.000Z",
   },
   {
+    id: "static-4",
     slug: "mise-en-service-laboratoires-akanda",
     title: "Mise en Service des Laboratoires de TP Scientifiques à Akanda",
-    date: "20 Juin 2026",
+    cover_image_url: "/images/img/Img_2.jpg",
     category: "Laboratoires & TP Scientifiques",
-    image: "/images/img/Img_2.jpg",
     excerpt: "Découvrez nos nouveaux équipements de travaux pratiques destinés aux étudiants et aux établissements de classe préparatoire partenaires.",
-  },
-  {
-    slug: "securite-monetique-et-pci-dss-conference",
-    title: "Conférence sur la Monétique et la Sécurité des Paiements au Gabon",
-    date: "05 Juin 2026",
-    category: "Formations & Certifications",
-    image: "/images/img/Image6.jpg",
-    excerpt: "Retour sur le séminaire dédié aux experts bancaires et acteurs du Mobile Money à Libreville.",
-  },
-  {
-    slug: "atelier-data-science-et-ia-generative",
-    title: "Atelier Pratique sur la Data Science et l'IA Générative",
-    date: "18 Mai 2026",
-    category: "Vie Étudiante & Événements",
-    image: "/images/img/Image7.jpg",
-    excerpt: "Une journée d'immersion technique pour les professionnels et étudiants passionnés d'apprentissage automatique.",
+    body: "",
+    status: "published",
+    published_at: "2026-06-20T00:00:00.000Z",
+    created_at: "2026-06-20T00:00:00.000Z",
   },
 ];
 
@@ -71,11 +59,30 @@ const CATEGORIES = [
 
 export default function ActualitesPage() {
   const [selectedCategory, setSelectedCategory] = useState("Tous");
+  const [articles, setArticles] = useState<NewsItem[]>(STATIC_FALLBACK_ARTICLES);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadPublishedNews() {
+      try {
+        const res = await fetch("/api/news?status=published");
+        const json = await res.json();
+        if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
+          setArticles(json.data);
+        }
+      } catch (err) {
+        console.error("Erreur chargement actualités publiques:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadPublishedNews();
+  }, []);
 
   const filteredArticles = useMemo(() => {
-    if (selectedCategory === "Tous") return ARTICLES;
-    return ARTICLES.filter((a) => a.category === selectedCategory);
-  }, [selectedCategory]);
+    if (selectedCategory === "Tous") return articles;
+    return articles.filter((a) => a.category === selectedCategory);
+  }, [articles, selectedCategory]);
 
   return (
     <div>
@@ -111,61 +118,80 @@ export default function ActualitesPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {filteredArticles.map((article, idx) => (
-              <article
-                key={idx}
-                className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xs hover:border-2 hover:border-brand-blue hover:ring-4 hover:ring-brand-blue/20 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
-                    <Image
-                      src={article.image}
-                      alt={article.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 left-3 bg-brand-orange text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-xs">
-                      {article.category}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="rounded-xl border border-slate-200 bg-white p-4 space-y-4 animate-pulse">
+                  <div className="h-48 w-full bg-slate-200 rounded-lg" />
+                  <div className="h-4 w-1/3 bg-slate-200 rounded" />
+                  <div className="h-6 w-5/6 bg-slate-200 rounded" />
+                  <div className="h-12 w-full bg-slate-200 rounded" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {filteredArticles.map((article, idx) => (
+                <article
+                  key={article.id || idx}
+                  className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xs hover:border-2 hover:border-brand-blue hover:ring-4 hover:ring-brand-blue/20 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
+                >
+                  <div>
+                    <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                      <Image
+                        src={article.cover_image_url || "/brand/fondateur.png"}
+                        alt={article.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {article.category && (
+                        <div className="absolute top-3 left-3 bg-brand-orange text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-xs">
+                          {article.category}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-6 space-y-3">
+                      <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
+                        <Calendar className="h-3.5 w-3.5 text-brand-orange" />
+                        <span>
+                          {article.published_at
+                            ? new Date(article.published_at).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })
+                            : "Récemment publié"}
+                        </span>
+                      </div>
+
+                      <h3 className="font-heading text-base font-bold text-slate-900 leading-snug group-hover:text-brand-blue transition-colors line-clamp-2">
+                        {article.title}
+                      </h3>
+
+                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                        {article.excerpt}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="p-6 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
-                      <Calendar className="h-3.5 w-3.5 text-brand-orange" />
-                      <span>{article.date}</span>
-                    </div>
+                  <div className="p-6 pt-0 border-t border-slate-100 mt-2 flex items-center justify-between">
+                    <Link
+                      href={`/actualites/${article.slug}`}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-orange hover:underline"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      Consulter l&apos;article
+                    </Link>
 
-                    <h3 className="font-heading text-base font-bold text-slate-900 leading-snug group-hover:text-brand-blue transition-colors line-clamp-2">
-                      {article.title}
-                    </h3>
-
-                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                      {article.excerpt}
-                    </p>
+                    <Link
+                      href={`/actualites/${article.slug}`}
+                      className="text-xs font-semibold text-slate-500 hover:text-brand-blue flex items-center gap-1"
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                      Partager
+                    </Link>
                   </div>
-                </div>
-
-                <div className="p-6 pt-0 border-t border-slate-100 mt-2 flex items-center justify-between">
-                  <Link
-                    href={`/actualites/${article.slug}`}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-orange hover:underline"
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                    Consulter l&apos;article
-                  </Link>
-
-                  <Link
-                    href={`/actualites/${article.slug}`}
-                    className="text-xs font-semibold text-slate-500 hover:text-brand-blue flex items-center gap-1"
-                  >
-                    <Share2 className="h-3.5 w-3.5" />
-                    Partager
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          )}
 
         </div>
       </section>
