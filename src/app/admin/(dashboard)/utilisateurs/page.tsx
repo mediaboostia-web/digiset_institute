@@ -372,9 +372,11 @@ export default function AdminUsersPage() {
               <label className="font-bold text-slate-700">Rôle & Droits d'Accès *</label>
               <Select
                 value={formData.role}
-                onValueChange={(val: "super_admin" | "editor" | "admin") =>
-                  setFormData((prev) => ({ ...prev, role: val }))
-                }
+                onValueChange={(val) => {
+                  if (val) {
+                    setFormData((prev) => ({ ...prev, role: val as "super_admin" | "editor" | "admin" }));
+                  }
+                }}
               >
                 <SelectTrigger className="h-10 text-xs">
                   <SelectValue placeholder="Sélectionner un rôle" />

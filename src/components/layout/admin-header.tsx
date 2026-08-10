@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, Settings, LogOut, Inbox, FileText, Briefcase, Microscope, Mail, ArrowRight } from "lucide-react";
+import { Bell, Settings, LogOut, Inbox, FileText, Briefcase, Microscope, Mail, ArrowRight, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/client";
 
 interface NotificationItem {
@@ -24,10 +24,30 @@ interface NotificationItem {
   type: "registration" | "training" | "lab" | "contact";
 }
 
+function getInitials(name: string): string {
+  if (!name) return "DS";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
+function formatDisplayName(email?: string | null, rawName?: string | null): string {
+  if (rawName && rawName.trim().length > 0) return rawName;
+  if (email) {
+    const handle = email.split("@")[0];
+    return handle.charAt(0).toUpperCase() + handle.slice(1);
+  }
+  return "Administrateur";
+}
+
 export function AdminHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("Administrateur");
+  const [userRole, setUserRole] = useState<string>("Super-Administrateur");
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
@@ -63,18 +83,28 @@ export function AdminHeader() {
   };
 
   useEffect(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (supabaseUrl) {
-      const supabase = createClient();
-      supabase.auth.getUser().then(({ data }) => {
-        if (data.user?.email) {
-          setUserEmail(data.user.email);
+    async function loadUserData() {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      if (supabaseUrl) {
+        const supabase = createClient();
+        const { data } = await supabase.auth.getUser();
+        if (data.user) {
+          const email = data.user.email || "";
+          setUserEmail(email);
+          const fullName = (data.user.user_metadata?.full_name as string) || "";
+          setUserName(formatDisplayName(email, fullName));
+          return;
         }
-      });
+      }
+
+      // Si pas de session Supabase active (mode dev), essayer de lire les identifiants locaux
+      setUserEmail("direction@digiset-gabon.com");
+      setUserName("Dr ABAGA ABESSOLO");
     }
 
+    loadUserData();
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000); // Polling toutes les 15s
+    const interval = setInterval(fetchNotifications, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -117,6 +147,8 @@ export function AdminHeader() {
         return <Mail className="h-4 w-4 text-emerald-600" />;
     }
   };
+
+  const userInitials = getInitials(userName);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-white px-6 shadow-xs">
@@ -208,32 +240,31 @@ export function AdminHeader() {
 
         <div className="h-6 w-px bg-gray-200" />
 
-        {/* Profil Administrateur */}
+        {/* Profil Administrateur Personnalisé */}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-gray-100 focus:outline-none cursor-pointer">
-            <Avatar className="h-9 w-9 border border-gray-200">
-              <AvatarImage src="/brand/logo-digiset.png" alt="Admin DigiSET" />
-              <AvatarFallback className="bg-brand-blue-dark text-xs text-white">
-                DS
+            <Avatar className="h-9 w-9 border border-brand-blue/20 ring-2 ring-brand-blue/10">
+              <AvatarFallback className="bg-brand-blue text-xs font-bold text-white uppercase shadow-xs">
+                {userInitials}
               </AvatarFallback>
             </Avatar>
             <div className="hidden text-left sm:block">
               <p className="text-xs font-bold leading-tight text-gray-900 line-clamp-1 max-w-[150px]">
-                {userEmail || "Dr ABAGA ABESSOLO"}
+                {userName}
               </p>
               <p className="text-[11px] font-medium text-gray-500">
-                Super-Administrateur
+                {userRole}
               </p>
             </div>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="font-semibold text-gray-900">
-                Mon Compte Admin
+              <DropdownMenuLabel className="font-bold text-gray-900">
+                {userName}
               </DropdownMenuLabel>
               <p className="px-2 pb-1.5 text-[11px] text-gray-500 truncate">
-                {userEmail || "direction@digiset-gabon.com"}
+                {userEmail || "Connecté au back-office"}
               </p>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push("/admin/parametres")} className="cursor-pointer">
@@ -255,3 +286,4 @@ export function AdminHeader() {
     </header>
   );
 }
+
