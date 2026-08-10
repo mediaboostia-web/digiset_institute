@@ -16,9 +16,10 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(apiKey);
     const fromAddress = process.env.RESEND_FROM_EMAIL || "DigiSET Institute <onboarding@resend.dev>";
 
-    const targetEmail = recipient || process.env.NOTIFICATION_EMAIL_TO || "contact@digiset-gabon.com";
+    let targetEmail = recipient || process.env.NOTIFICATION_EMAIL_TO || process.env.ADMIN_NOTIFICATION_EMAIL || "mediaboostia@gmail.com";
 
-    const data = await resend.emails.send({
+    // tentative d'envoi principal
+    let data = await resend.emails.send({
       from: fromAddress,
       to: [targetEmail],
       subject: "🧪 Test d'envoi d'email — DigiSET Institute",
@@ -26,13 +27,33 @@ export async function POST(request: NextRequest) {
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b;">
           <h2 style="color: #002F6E;">Test d'envoi d'email réussi !</h2>
           <p>Ceci est un message de test envoyé depuis le back-office de <strong>DigiSET Institute</strong> via Resend API.</p>
-          <p><strong>Destinataire :</strong> ${targetEmail}</p>
+          <p><strong>Destinataire ciblé :</strong> ${targetEmail}</p>
+          <p><strong>Expéditeur (From) :</strong> ${fromAddress}</p>
           <p><strong>Date & Heure :</strong> ${new Date().toLocaleString("fr-FR")}</p>
           <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
           <p style="font-size: 12px; color: #64748b;">DigiSET Institute — Akanda, Gabon</p>
         </div>
       `,
     });
+
+    // Si Resend bloque à cause de la restriction du compte de test (onboarding@resend.dev)
+    if (data.error && data.error.message.includes("testing emails to your own email address")) {
+      console.warn("[test-email] Fallback automatique sur mediaboostia@gmail.com (mode test Resend).");
+      targetEmail = "mediaboostia@gmail.com";
+      data = await resend.emails.send({
+        from: fromAddress,
+        to: [targetEmail],
+        subject: "🧪 Test d'envoi d'email (Mode Test Resend) — DigiSET Institute",
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b;">
+            <h2 style="color: #002F6E;">Test d'envoi d'email réussi (Mode Test) !</h2>
+            <p>Le message a été redirigé vers <strong>${targetEmail}</strong> car le domaine personnalisé n'est pas encore validé sur Resend.</p>
+            <p><strong>Expéditeur :</strong> ${fromAddress}</p>
+            <p><strong>Date & Heure :</strong> ${new Date().toLocaleString("fr-FR")}</p>
+          </div>
+        `,
+      });
+    }
 
     if (data.error) {
       return NextResponse.json(
