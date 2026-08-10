@@ -92,6 +92,7 @@ export default async function ArticleDetailPage({
                 src={article.cover_image_url}
                 alt={article.title}
                 fill
+                unoptimized
                 className="object-cover"
                 priority
               />

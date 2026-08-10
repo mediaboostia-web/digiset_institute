@@ -142,6 +142,7 @@ export default function ActualitesPage() {
                         src={article.cover_image_url || "/brand/fondateur.png"}
                         alt={article.title}
                         fill
+                        unoptimized
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       {article.category && (

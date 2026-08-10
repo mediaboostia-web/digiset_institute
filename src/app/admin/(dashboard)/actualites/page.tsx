@@ -178,12 +178,16 @@ export default function AdminNewsPage() {
     insertTextToBody(`[${text}](${url})`);
   };
 
-  // Téléversement d'image
+  // Téléversement d'image avec conversion en Data URL permanente (Base64)
   const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, cover_image_url: imageUrl }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Url = reader.result as string;
+        setFormData((prev) => ({ ...prev, cover_image_url: base64Url }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -534,6 +538,33 @@ export default function AdminNewsPage() {
                   </div>
                 )}
                 
+                <div className="pt-2 space-y-1.5">
+                  <span className="text-[11px] text-gray-500 font-semibold">Ou choisissez parmi les photos officielles de l'Institut :</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "Campus & Fondateur", url: "/brand/fondateur.png" },
+                      { label: "Entrée Akanda", url: "/images/img/Image_3.jpg" },
+                      { label: "Partenariats & Etudiants", url: "/images/img/Image_4.jpg" },
+                      { label: "Laboratoires TP", url: "/images/img/Img_2.jpg" },
+                      { label: "Conférences & Amphi", url: "/images/img/Image6.jpg" },
+                      { label: "Informatique & Data", url: "/images/img/Image7.jpg" },
+                    ].map((stock) => (
+                      <button
+                        key={stock.url}
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, cover_image_url: stock.url }))}
+                        className={`text-[10px] font-bold px-2.5 py-1 rounded-md border transition-all cursor-pointer ${
+                          formData.cover_image_url === stock.url
+                            ? "bg-brand-blue text-white border-brand-blue shadow-xs"
+                            : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                        }`}
+                      >
+                        + {stock.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="pt-1">
                   <span className="text-[11px] text-gray-500 font-semibold">Ou collez une URL d'image externe :</span>
                   <Input
