@@ -276,10 +276,10 @@ export default function AccueilPage() {
                   Entreprises & Administrations
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Formations Inter & Intra-Entreprises
+                  Formations Continues pour Entreprises
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Montez en compétences vos équipes avec nos programmes de formation continue sur-mesure (Inter-entreprises dans nos centres ou Intra-entreprise dans vos locaux).
+                  Accélérez la montée en compétences de vos équipes avec nos programmes certifiants : en groupe dans nos salles DigiSET ou sur-mesure directement dans vos locaux d'entreprise.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100">
@@ -364,19 +364,19 @@ export default function AccueilPage() {
 
             {/* BLOC 2 : Formation Continue (Formations Inter & Intra-Entreprises) */}
             <ProgramCard
-              title="Formations Continues (Inter et Intra)"
+              title="Formations Continues & Sur-Mesure"
               category="Continue"
-              description="Sessions de renforcement de compétences courtes ou sur-mesure, dispensées en format Inter-entreprises (dans nos centres) ou Intra-entreprise (dans vos locaux)."
-              duration="3 à 10 jours / Sur-mesure"
-              targetPublic="Cadres, Ingénieurs, DSI, techniciens & entreprises"
+              description="Formations professionnelles courtes et certifiantes pour accélérer la montée en compétences de vos équipes. Dispensées dans nos centres DigiSET ou directement dans vos locaux d'entreprise."
+              duration="3 à 10 jours ou sur-mesure"
+              targetPublic="Dirigeants, DSI, cadres, ingénieurs et collaborateurs"
               highlights={[
-                "Formations Inter-entreprises",
-                "Formations Intra-entreprise sur-mesure",
-                "Certifications Cisco, AWS, Microsoft, Linux",
-                "Ingénierie de formation & Audit des besoins",
+                "En Groupe dans nos centres (Inter-entreprises)",
+                "Sur-Mesure dans vos bureaux (Intra-entreprise)",
+                "Certifications Internationales (Cisco, AWS, Linux...)",
+                "Ingénierie de formation & audit des besoins",
               ]}
               href="/programmes/formation-continue"
-              ctaText="Explorer l'offre Inter & Intra"
+              ctaText="Découvrir les Formations Continues"
               isCatalogCard={true}
             />
 
