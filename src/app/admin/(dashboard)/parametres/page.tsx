@@ -35,11 +35,11 @@ export default function AdminSettingsPage() {
   const [institutionForm, setInstitutionForm] = useState({
     name: "DigiSET Institute",
     sigle: "DigiSET",
-    address: "Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon",
-    phone1: "+241 07 40 00 00",
-    phone2: "+241 06 60 00 00",
-    email: "contact@digiset-gabon.com",
-    notificationEmail: "contact@digiset-gabon.com",
+    address: siteSettings.institutionAddress || "Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon",
+    phone1: siteSettings.institutionPhone1 || "+241 07 40 00 00",
+    phone2: siteSettings.institutionPhone2 || "+241 06 60 00 00",
+    email: siteSettings.institutionEmail || "contact@digiset-gabon.com",
+    notificationEmail: siteSettings.notificationEmail || "contact@digiset-gabon.com",
     facebookUrl: "https://facebook.com/digisetgabon",
     linkedinUrl: "https://linkedin.com/company/digisetgabon",
   });
@@ -48,6 +48,13 @@ export default function AdminSettingsPage() {
 
   const handleSaveInstitution = (e: React.FormEvent) => {
     e.preventDefault();
+    updateSiteSettings({
+      institutionAddress: institutionForm.address,
+      institutionPhone1: institutionForm.phone1,
+      institutionPhone2: institutionForm.phone2,
+      institutionEmail: institutionForm.email,
+      notificationEmail: institutionForm.notificationEmail,
+    });
     setInstitutionSuccess(true);
     setTimeout(() => setInstitutionSuccess(false), 4000);
   };
@@ -128,6 +135,7 @@ export default function AdminSettingsPage() {
 
   const handleSaveEmailConfig = (e: React.FormEvent) => {
     e.preventDefault();
+    updateSiteSettings({ notificationEmail: emailConfig.adminRecipient });
     setEmailSuccess(true);
     setTimeout(() => setEmailSuccess(false), 4000);
   };

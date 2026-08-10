@@ -2,37 +2,44 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Proxy (anciennement "middleware", renommé en Next.js 16 — cf.
- * node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md).
+ * Proxy (Route Protection & Session Refresh en Next.js 16)
  *
- * Rôle : rafraîchir la session SupaAuth à chaque requête et protéger tout
- * l'espace `/admin/*` (sauf `/admin/login`) en redirigeant vers la page de
- * connexion si aucune session valide n'est présente.
+ * Rôle : 
+ * 1. Proteger tout l'espace `/admin/*` (sauf `/admin/login`) pour les utilisateurs déconnectés.
+ * 2. Rediriger automatiquement vers `/admin` si un utilisateur déjà connecté visite `/admin/login`.
  */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
+  const pathname = request.nextUrl.pathname;
+
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isLoginRoute = pathname.startsWith("/admin/login");
+
+  if (!isAdminRoute) {
+    return response;
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  const hasDevCookie = request.cookies.get("admin_dev_mode")?.value === "true";
+
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Pas encore configuré (cf. CONFIGURATION.md) : en développement / mock,
-    // on autorise l'accès si le cookie admin_dev_mode=true est présent,
-    // sinon on redirige vers /admin/login.
-    console.warn(
-      "[proxy] NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY manquants — voir CONFIGURATION.md.",
-    );
-    const hasDevCookie = request.cookies.get("admin_dev_mode")?.value === "true";
-    if (
-      !hasDevCookie &&
-      !request.nextUrl.pathname.startsWith("/admin/login") &&
-      request.nextUrl.pathname.startsWith("/admin")
-    ) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+    // Mode sans Supabase (Variables d'env non configurées)
+    if (isLoginRoute && hasDevCookie) {
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
+
+    if (!isLoginRoute && !hasDevCookie) {
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("redirectTo", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
     return response;
   }
 
+  // Avec Supabase configuré
   const supabase = createServerClient(
     supabaseUrl,
     supabaseAnonKey,
@@ -54,20 +61,19 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  // IMPORTANT : getUser() revalide le token auprès du serveur Supabase Auth
-  // (contrairement à getSession(), qui ne fait que lire le cookie local) —
-  // c'est la vérification requise pour protéger une route côté proxy.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = Boolean(user) || hasDevCookie;
 
-  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
-  const isLoginRoute = request.nextUrl.pathname.startsWith("/admin/login");
-
-  if (isAdminRoute && !isLoginRoute && !user) {
+  // Redirection 1 : Utilisateur NON connecté accédant à /admin/* -> Redirection /admin/login
+  if (!isLoginRoute && !isAuthenticated) {
     const loginUrl = new URL("/admin/login", request.url);
-    loginUrl.searchParams.set("redirectTo", request.nextUrl.pathname);
+    loginUrl.searchParams.set("redirectTo", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Redirection 2 : Utilisateur DÉJÀ connecté accédant à /admin/login -> Redirection /admin
+  if (isLoginRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL("/admin", request.url));
   }
 
   return response;
@@ -75,12 +81,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * S'applique à toutes les routes sauf les fichiers statiques et
-     * l'optimisation d'images, pour que la session soit rafraîchie
-     * partout — la redirection ne s'active que sur /admin/* (voir logique
-     * ci-dessus).
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/admin/:path*",
   ],
 };

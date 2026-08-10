@@ -7,6 +7,11 @@ export interface SiteSettings {
   announcementText: string;
   announcementCtaText: string;
   announcementCtaHref: string;
+  notificationEmail: string;
+  institutionEmail: string;
+  institutionPhone1: string;
+  institutionPhone2: string;
+  institutionAddress: string;
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -14,6 +19,11 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   announcementText: "🎓 Inscriptions Ouvertes — Rentrée Académique de Septembre 2026 à DigiSET Akanda !",
   announcementCtaText: "S'inscrire maintenant",
   announcementCtaHref: "/inscription/candidature",
+  notificationEmail: "contact@digiset-gabon.com",
+  institutionEmail: "contact@digiset-gabon.com",
+  institutionPhone1: "+241 07 40 00 00",
+  institutionPhone2: "+241 06 60 00 00",
+  institutionAddress: "Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon",
 };
 
 const STORAGE_KEY = "digiset_site_settings";
