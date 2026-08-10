@@ -10,6 +10,7 @@ export default function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("digiset_sidebar_collapsed");
@@ -27,11 +28,20 @@ export default function AdminDashboardLayout({
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F8F9FB]">
-      <AdminSidebar isCollapsed={isCollapsed} onToggle={toggleCollapse} />
+    <div className="flex min-h-screen w-full bg-[#F8F9FB] relative">
+      <AdminSidebar
+        isCollapsed={isCollapsed}
+        onToggle={toggleCollapse}
+        isMobileOpen={isMobileOpen}
+        onCloseMobile={() => setIsMobileOpen(false)}
+      />
       <div className="flex flex-1 flex-col overflow-x-hidden min-w-0 transition-all duration-300">
-        <AdminHeader isCollapsed={isCollapsed} onToggleSidebar={toggleCollapse} />
-        <main className="flex-1 p-6 md:p-8">{children}</main>
+        <AdminHeader
+          isCollapsed={isCollapsed}
+          onToggleSidebar={toggleCollapse}
+          onOpenMobile={() => setIsMobileOpen(true)}
+        />
+        <main className="flex-1 p-3 sm:p-6 md:p-8">{children}</main>
       </div>
     </div>
   );

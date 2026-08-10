@@ -45,9 +45,10 @@ function formatDisplayName(email?: string | null, rawName?: string | null): stri
 interface AdminHeaderProps {
   isCollapsed?: boolean;
   onToggleSidebar?: () => void;
+  onOpenMobile?: () => void;
 }
 
-export function AdminHeader({ isCollapsed = false, onToggleSidebar }: AdminHeaderProps) {
+export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile }: AdminHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -156,12 +157,24 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar }: AdminHeade
   const userInitials = getInitials(userName);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-white px-6 shadow-xs">
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-white px-3 sm:px-6 shadow-xs">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        {/* Mobile Menu Button (< 768px) */}
+        {onOpenMobile && (
+          <button
+            onClick={onOpenMobile}
+            className="p-1.5 rounded-lg text-slate-700 hover:text-brand-blue hover:bg-slate-100 transition-colors md:hidden cursor-pointer shrink-0"
+            title="Ouvrir le menu"
+          >
+            <Menu className="h-5 w-5 text-brand-orange" />
+          </button>
+        )}
+
+        {/* Desktop Collapse Toggle Button (>= 768px) */}
         {onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+            className="hidden md:flex p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
             title={isCollapsed ? "Afficher le menu latéral" : "Cacher / Réduire le menu latéral"}
           >
             {isCollapsed ? (
@@ -171,10 +184,11 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar }: AdminHeade
             )}
           </button>
         )}
-        <h1 className="font-heading text-lg font-bold text-brand-blue-dark">
+
+        <h1 className="font-heading text-sm sm:text-lg font-bold text-brand-blue-dark truncate">
           {getPageTitle()}
         </h1>
-        <span className="rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue hidden sm:inline-block">
+        <span className="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[11px] sm:text-xs font-semibold text-brand-blue hidden lg:inline-block shrink-0">
           Espace Admin
         </span>
       </div>

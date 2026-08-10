@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col justify-center bg-[#F8F9FB] py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col justify-center bg-[#F8F9FB] px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         {/* Logo DigiSET Institute */}
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-md border border-gray-200">
