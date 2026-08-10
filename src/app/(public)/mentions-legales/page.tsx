@@ -6,7 +6,7 @@ export default function MentionsLegalesPage() {
       <HeroSection
         badge="Informations Légales"
         title="Mentions Légales"
-        subtitle="Mentions obligatoires et éditeur du site officiel de Digi-SET Institute."
+        subtitle="Mentions obligatoires et éditeur du site officiel de DigiSET Institute."
         breadcrumbs={[{ label: "Mentions Légales" }]}
       />
 
@@ -14,12 +14,12 @@ export default function MentionsLegalesPage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <h2 className="font-heading text-lg font-bold text-slate-900">1. Éditeur du Site</h2>
           <p>
-            Le site internet <strong>digiset-gabon.com</strong> est édité par l&apos;établissement supérieur privé <strong>Digi-SET Institute</strong> (Digital Science, Engineering and Technology Institute), situé à Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon.
+            Le site internet <strong>digiset-gabon.com</strong> est édité par l&apos;établissement supérieur privé <strong>DigiSET Institute</strong> (Digital Science, Engineering and Technology Institute), situé à Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon.
           </p>
 
           <h2 className="font-heading text-lg font-bold text-slate-900 pt-4">2. Directeur de la Publication</h2>
           <p>
-            Dr ABAGA ABESSOLO Michel Audrey, Fondateur et Directeur Général de Digi-SET Institute.
+            Dr ABAGA ABESSOLO Michel Audrey, Fondateur et Directeur Général de DigiSET Institute.
           </p>
 
           <h2 className="font-heading text-lg font-bold text-slate-900 pt-4">3. Hébergement du Domaine & du Site</h2>
@@ -29,7 +29,7 @@ export default function MentionsLegalesPage() {
 
           <h2 className="font-heading text-lg font-bold text-slate-900 pt-4">4. Propriété Intellectuelle</h2>
           <p>
-            L&apos;ensemble des contenus (textes, logos, marques, visuels et éléments graphiques) présents sur ce site est la propriété exclusive de Digi-SET Institute. Toute reproduction sans autorisation préalable est interdite.
+            L&apos;ensemble des contenus (textes, logos, marques, visuels et éléments graphiques) présents sur ce site est la propriété exclusive de DigiSET Institute. Toute reproduction sans autorisation préalable est interdite.
           </p>
         </div>
       </section>

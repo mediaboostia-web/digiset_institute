@@ -32,11 +32,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
 
 export default function AdminNewsPage() {
   const [newsList, setNewsList] = useState<NewsItem[]>(INITIAL_NEWS);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -311,7 +313,7 @@ export default function AdminNewsPage() {
                           variant="ghost"
                           className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-700"
                           title="Supprimer"
-                          onClick={() => handleDelete(article.id)}
+                          onClick={() => setDeleteTarget({ id: article.id, name: article.title })}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -496,6 +498,20 @@ export default function AdminNewsPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de Confirmation de Suppression */}
+      <ConfirmDeleteDialog
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            handleDelete(deleteTarget.id);
+          }
+        }}
+        itemName={deleteTarget?.name}
+        title="Supprimer l'actualité"
+        description="L'article sera définitivement supprimé et retiré du site public."
+      />
     </div>
   );
 }

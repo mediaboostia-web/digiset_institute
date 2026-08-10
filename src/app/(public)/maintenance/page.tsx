@@ -14,7 +14,7 @@ export default function MaintenancePage() {
         </h1>
 
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          Le site web de Digi-SET Institute fait actuellement l&apos;objet d&apos;une mise à jour technique. Nos services restent joignables par téléphone et email.
+          Le site web de DigiSET Institute fait actuellement l&apos;objet d&apos;une mise à jour technique. Nos services restent joignables par téléphone et email.
         </p>
 
         <div className="pt-4 space-y-2 text-xs text-slate-300 border-t border-white/10">

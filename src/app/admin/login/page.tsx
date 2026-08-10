@@ -15,32 +15,56 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
     setIsLoading(true);
 
-    // Simulation de validation de connexion
-    setTimeout(() => {
-      if (email && password) {
-        // Enregistrer le cookie dev/mock pour franchir le proxy Next.js
+    try {
+      // 1. Si Supabase est configuré dans les variables d'environnement, authentification réelle SupaAuth
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (supabaseUrl && supabaseAnonKey) {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          setErrorMessage("Email ou mot de passe incorrect. Veuillez vérifier vos identifiants.");
+          setIsLoading(false);
+          return;
+        }
+
+        router.push("/admin");
+        return;
+      }
+
+      // 2. Si Supabase n'est pas encore lié (.env non rempli), contrôle d'accès sécurisé par défaut
+      if (email === "direction@digiset-gabon.com" && password === "DigiSET2026@") {
         document.cookie = "admin_dev_mode=true; path=/; max-age=86400";
         router.push("/admin");
       } else {
-        setErrorMessage("Veuillez saisir votre adresse email et mot de passe.");
+        setErrorMessage("Identifiants incorrects. Accès refusé.");
         setIsLoading(false);
       }
-    }, 400);
+    } catch (err) {
+      setErrorMessage("Une erreur est survenue lors de la connexion.");
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex min-h-screen w-full flex-col justify-center bg-[#F8F9FB] py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        {/* Logo Digi-SET Institute */}
+        {/* Logo DigiSET Institute */}
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-md border border-gray-200">
           <Image
             src="/brand/logo-digiset.png"
-            alt="Digi-SET Institute Logo"
+            alt="DigiSET Institute Logo"
             width={56}
             height={56}
             className="object-contain"
@@ -51,7 +75,7 @@ export default function AdminLoginPage() {
           Espace Administration
         </h2>
         <p className="mt-2 text-xs font-medium text-gray-500">
-          Portail de gestion officiel de Digi-SET Institute
+          Portail de gestion officiel de DigiSET Institute
         </p>
       </div>
 

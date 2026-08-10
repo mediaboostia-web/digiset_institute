@@ -15,7 +15,7 @@ const ALL_PROGRAMS: (ProgramCardProps & { publicKey: string; domainKey: string; 
     duration: "2 ans (4 semestres)",
     ects: "120",
     targetPublic: "Bacheliers scientifiques (Bac C, D, S, E)",
-    highlights: ["Tronc commun scientifique d'excellence", "Pratique intensive en laboratoire", "Accès direct Licence Pro Digi-SET"],
+    highlights: ["Tronc commun scientifique d'excellence", "Pratique intensive en laboratoire", "Accès direct Licence Pro DigiSET"],
     href: "/programmes/classe-preparatoire",
     publicKey: "étudiant",
     domainKey: "ia-data",
@@ -61,21 +61,21 @@ const ALL_PROGRAMS: (ProgramCardProps & { publicKey: string; domainKey: string; 
     formatKey: "présentiel",
   },
   {
-    title: "Formations Continues — Cybersécurité",
+    title: "Formations Inter & Intra — Cybersécurité",
     category: "Continue",
-    description: "Modules intenses d'audit, de pentest et de gestion de crise cyber pour professionnels IT et responsables sécurité.",
+    description: "Modules sur-mesure inter et intra-entreprises d'audit, de pentest et de gestion de crise cyber pour professionnels IT.",
     duration: "3 à 10 jours",
     targetPublic: "Administrateurs réseaux, DSI, RSSI",
-    highlights: ["Mise en situation réelle (Red/Blue Team)", "Norme ISO 27001", "Certificat de réussite Digi-SET"],
+    highlights: ["Mise en situation réelle (Red/Blue Team)", "Norme ISO 27001", "Certificat de réussite DigiSET"],
     href: "/programmes/formation-continue",
     publicKey: "professionnel",
     domainKey: "cybersecurite",
     formatKey: "présentiel",
   },
   {
-    title: "Formations Continues — IA & Data Science",
+    title: "Formations Inter & Intra — IA & Data Science",
     category: "Continue",
-    description: "Maîtrisez la data et l'IA générative pour booster les processus métier de votre entreprise.",
+    description: "Maîtrisez la data et l'IA générative en sessions inter ou intra-entreprises pour booster les processus métier de votre entreprise.",
     duration: "3 à 10 jours",
     targetPublic: "Analystes de données, chefs de projet, développeurs",
     highlights: ["Python pour la Data", "Tableaux de bord BI", "IA générative appliquée"],
@@ -85,9 +85,9 @@ const ALL_PROGRAMS: (ProgramCardProps & { publicKey: string; domainKey: string; 
     formatKey: "présentiel",
   },
   {
-    title: "Formations Continues — Systèmes de Paiement",
+    title: "Formations Inter & Intra — Systèmes de Paiement",
     category: "Continue",
-    description: "Perfectionnement aux normes monétiques et à la conformité PCI-DSS pour les cadres du secteur bancaire.",
+    description: "Perfectionnement sur-mesure aux normes monétiques et à la conformité PCI-DSS pour les cadres du secteur bancaire.",
     duration: "3 à 5 jours",
     targetPublic: "Chefs de projet monétique, auditeurs bancaires",
     highlights: ["Conformité PCI-DSS v4.0", "Sécurisation des terminaux POS/EMV", "Interopérabilité mobile money"],
@@ -97,9 +97,9 @@ const ALL_PROGRAMS: (ProgramCardProps & { publicKey: string; domainKey: string; 
     formatKey: "présentiel",
   },
   {
-    title: "Formations Continues — Management & Stratégie",
+    title: "Formations Inter & Intra — Management & Stratégie",
     category: "Continue",
-    description: "Gouvernance de la transformation numérique et pilotage des systèmes d'information pour dirigeants et décideurs.",
+    description: "Gouvernance de la transformation numérique et pilotage des systèmes d'information en format inter et intra-entreprises pour décideurs.",
     duration: "3 à 5 jours",
     targetPublic: "Directeurs d'administration, DSI, dirigeants",
     highlights: ["Gouvernance ITIL & COBIT", "Pilotage du changement numérique", "Stratégie de souveraineté des données"],
@@ -160,7 +160,7 @@ export default function ProgrammesPage() {
       <HeroSection
         badge="Catalogue des Formations"
         title="Explorez nos Cursus Académiques et Certifiants"
-        subtitle="De la Classe Préparatoire MP2I à nos Licences Professionnelles et Formations Continues, découvrez l'offre d'excellence de Digi-SET Institute."
+        subtitle="De la Classe Préparatoire MP2I à nos Licences Professionnelles et Formations Continues, découvrez l'offre d'excellence de DigiSET Institute."
         breadcrumbs={[{ label: "Programmes" }]}
         primaryCtaText="Poser une candidature"
         primaryCtaHref="/inscription/candidature"

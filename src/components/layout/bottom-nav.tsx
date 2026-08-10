@@ -116,7 +116,7 @@ export function BottomNav() {
             {/* Header Drawer */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="font-heading text-base font-extrabold text-slate-900">
-                Menu & Navigation — Digi-SET
+                Menu & Navigation — DigiSET
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
@@ -195,7 +195,7 @@ export function BottomNav() {
                 onClick={() => setDrawerOpen(false)}
                 className="flex items-center justify-between p-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 rounded-lg"
               >
-                <span>Formations Continues (Entreprises)</span>
+                <span>Formations Inter & Intra-Entreprises</span>
                 <ChevronRight className="h-4 w-4 text-slate-400" />
               </Link>
 

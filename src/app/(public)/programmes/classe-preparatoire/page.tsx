@@ -6,9 +6,9 @@ import { CheckCircle2, GraduationCap, ArrowRight, FileText, Award, Calendar, Boo
 export const metadata: Metadata = {
   title: "Classe Préparatoire MP2I (Bac+2 - 120 ECTS)",
   description:
-    "Découvrez la Classe Préparatoire MP2I (Mathématiques, Physique, Informatique & Ingénierie) de Digi-SET Institute à Akanda. Cursus intensif de 2 ans ouvrant l'accès aux Licences Pro et cycles ingénieurs.",
+    "Découvrez la Classe Préparatoire MP2I (Mathématiques, Physique, Informatique & Ingénierie) de DigiSET Institute à Akanda. Cursus intensif de 2 ans ouvrant l'accès aux Licences Pro et cycles ingénieurs.",
   openGraph: {
-    title: "Classe Préparatoire MP2I (Bac+2) | Digi-SET Institute Gabon",
+    title: "Classe Préparatoire MP2I (Bac+2) | DigiSET Institute Gabon",
     description:
       "Formation scientifique d'excellence de 2 ans (120 ECTS) avec pratique en laboratoire de physique et salles informatiques sous Linux/Python.",
   },
@@ -76,7 +76,7 @@ export default function ClassePreparatoirePage() {
                 Présentation du Cursus MP2I
               </h2>
               <p className="text-sm text-slate-700 leading-relaxed">
-                La Classe Préparatoire MP2I de Digi-SET Institute a été conçue pour apporter aux bacheliers scientifiques des bases théoriques inébranlables en mathématiques appliquées, physique fondamentale, algorithmique et ingénierie informatique.
+                La Classe Préparatoire MP2I de DigiSET Institute a été conçue pour apporter aux bacheliers scientifiques des bases théoriques inébranlables en mathématiques appliquées, physique fondamentale, algorithmique et ingénierie informatique.
               </p>
               <p className="text-sm text-slate-700 leading-relaxed">
                 Pendant deux années intensives, l&apos;accent est mis à la fois sur le raisonnement scientifique de haut niveau et sur la pratique directe en laboratoire de travaux pratiques modernes (optique, mécanique, électronique, et salles informatiques sous Linux/Python).
@@ -209,7 +209,7 @@ export default function ClassePreparatoirePage() {
           <div className="rounded-2xl bg-brand-blue-dark text-white p-8 space-y-4 shadow-lg">
             <h3 className="font-heading text-xl font-bold">Poursuite d&apos;Études après la Prépa MP2I</h3>
             <p className="text-xs sm:text-sm text-slate-200 max-w-3xl leading-relaxed">
-              Après l&apos;obtention des 120 crédits ECTS de la prépa MP2I, les étudiants intègrent directement nos Licences Professionnelles de Digi-SET Institute (IA, Cybersécurité, Systèmes de Paiement) ou poursuivent dans nos écoles partenaires en cycle ingénieur.
+              Après l&apos;obtention des 120 crédits ECTS de la prépa MP2I, les étudiants intègrent directement nos Licences Professionnelles de DigiSET Institute (IA, Cybersécurité, Systèmes de Paiement) ou poursuivent dans nos écoles partenaires en cycle ingénieur.
             </p>
             <div className="pt-2">
               <Link

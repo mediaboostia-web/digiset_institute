@@ -23,14 +23,14 @@ const SIMPLE_5_FAQS: FaqItem[] = [
       "Pour la Classe Préparatoire MP2I (Bac+2), l'admission est ouverte aux bacheliers scientifiques (Bac C, D, S, E) sur étude de dossier. Pour la Licence Professionnelle (Bac+3), l'admission est accessible aux titulaires d'un Bac+2 scientifique ou technique (Prépa MP2I, BTS, DUT Informatique).",
   },
   {
-    question: "2. Les diplômes et certifications de Digi-SET sont-ils reconnus ?",
+    question: "2. Les diplômes et certifications de DigiSET sont-ils reconnus ?",
     answer:
       "Oui. Les diplômes délivrent 60 crédits ECTS par an (transférables en Europe et en Afrique). De plus, nos cursus intègrent la préparation directe aux examens certifiants mondiaux Cisco CCNA, AWS Academy, Microsoft Azure, Linux LPIC et CompTIA Security+.",
   },
   {
-    question: "3. Où se situe exactement le campus Digi-SET Institute ?",
+    question: "3. Où se situe exactement le campus DigiSET Institute ?",
     answer:
-      "Le campus moderne de Digi-SET Institute est situé à Akanda, au Carrefour Moussavou (Angondje) — Libreville, Gabon. Il héberge des salles informatiques haut débit et des laboratoires de TP scientifiques complets.",
+      "Le campus moderne de DigiSET Institute est situé à Akanda, au Carrefour Moussavou (Angondje) — Libreville, Gabon. Il héberge des salles informatiques haut débit et des laboratoires de TP scientifiques complets.",
   },
   {
     question: "4. Peut-on suivre la formation à distance avec DigiSET Online ?",
@@ -46,7 +46,7 @@ const SIMPLE_5_FAQS: FaqItem[] = [
 
 export function FaqSection({
   title = "Foire Aux Questions",
-  subtitle = "Les 5 questions essentielles à connaître sur Digi-SET Institute, nos admissions et notre campus.",
+  subtitle = "Les 5 questions essentielles à connaître sur DigiSET Institute, nos admissions et notre campus.",
   items = SIMPLE_5_FAQS,
 }: FaqSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -82,7 +82,7 @@ export function FaqSection({
                 <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-brand-orange bg-slate-100 shrink-0">
                   <Image
                     src="/images/img/Image7.jpg"
-                    alt="Secrétariat Académique Digi-SET"
+                    alt="Secrétariat Académique DigiSET"
                     fill
                     className="object-cover"
                   />

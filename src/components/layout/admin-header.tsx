@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, Settings, LogOut, ShieldCheck } from "lucide-react";
+import { Bell, Settings, LogOut, Inbox } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,10 +14,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { createClient } from "@/lib/supabase/client";
 
 export function AdminHeader() {
   const router = useRouter();
   const pathname = usePathname();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl) {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user?.email) {
+          setUserEmail(data.user.email);
+        }
+      });
+    }
+  }, []);
 
   // Nom dynamique basé sur la route
   const getPageTitle = () => {
@@ -35,7 +51,12 @@ export function AdminHeader() {
     return "Administration";
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl) {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    }
     document.cookie = "admin_dev_mode=; path=/; max-age=0";
     router.push("/admin/login");
   };
@@ -52,15 +73,50 @@ export function AdminHeader() {
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Bouton Notification avec badge */}
-        <Link
-          href="/admin/soumissions"
-          className="relative rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-brand-blue-dark"
-          title="Soumissions reçues"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-brand-orange ring-2 ring-white" />
-        </Link>
+        {/* Menu Déroulant Notifications Interactif */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="relative rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-brand-blue-dark focus:outline-none cursor-pointer">
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-orange text-[9px] font-extrabold text-white ring-2 ring-white">
+                {unreadCount}
+              </span>
+            )}
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end" className="w-80 p-0 shadow-xl border border-gray-200 rounded-xl overflow-hidden">
+            <div className="bg-brand-blue-dark p-3.5 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bell className="h-4 w-4 text-brand-orange" />
+                <span className="font-heading text-xs font-bold">Notifications & Leads</span>
+              </div>
+              <span className="rounded-full bg-brand-orange px-2 py-0.5 text-[10px] font-extrabold text-white">
+                {unreadCount} nouvelle{unreadCount > 1 ? "s" : ""}
+              </span>
+            </div>
+
+            <div className="divide-y divide-gray-100 max-h-72 overflow-y-auto text-xs">
+              {unreadCount === 0 ? (
+                <div className="p-6 text-center space-y-2 bg-gray-50/50">
+                  <Inbox className="h-7 w-7 text-gray-300 mx-auto" />
+                  <p className="font-bold text-gray-700">Aucune nouvelle notification</p>
+                  <p className="text-[11px] text-gray-500">
+                    Les futurs leads et candidatures étudiants s&apos;afficheront ici.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="border-t border-gray-100 p-2 text-center bg-gray-50">
+              <Link
+                href="/admin/soumissions"
+                className="text-xs font-bold text-brand-blue hover:text-brand-blue-dark"
+              >
+                Voir toutes les soumissions &rarr;
+              </Link>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Bouton Paramètres */}
         <Link
@@ -75,19 +131,19 @@ export function AdminHeader() {
 
         {/* Profil Administrateur */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-gray-100 focus:outline-none">
+          <DropdownMenuTrigger className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-gray-100 focus:outline-none cursor-pointer">
             <Avatar className="h-9 w-9 border border-gray-200">
-              <AvatarImage src="/brand/logo-digiset.png" alt="Admin Digi-SET" />
+              <AvatarImage src="/brand/logo-digiset.png" alt="Admin DigiSET" />
               <AvatarFallback className="bg-brand-blue-dark text-xs text-white">
                 DS
               </AvatarFallback>
             </Avatar>
             <div className="hidden text-left sm:block">
-              <p className="text-xs font-bold leading-tight text-gray-900">
-                Dr. ABAGA ABESSOLO
+              <p className="text-xs font-bold leading-tight text-gray-900 line-clamp-1 max-w-[150px]">
+                {userEmail || "Dr ABAGA ABESSOLO"}
               </p>
               <p className="text-[11px] font-medium text-gray-500">
-                Super Administrateur
+                Super-Administrateur
               </p>
             </div>
           </DropdownMenuTrigger>
@@ -97,11 +153,10 @@ export function AdminHeader() {
               <DropdownMenuLabel className="font-semibold text-gray-900">
                 Mon Compte Admin
               </DropdownMenuLabel>
+              <p className="px-2 pb-1.5 text-[11px] text-gray-500 truncate">
+                {userEmail || "direction@digiset-gabon.com"}
+              </p>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/admin/utilisateurs")} className="cursor-pointer">
-                <ShieldCheck className="mr-2 h-4 w-4 text-brand-blue" />
-                Gérer les accès
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/admin/parametres")} className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4 text-gray-500" />
                 Paramètres généraux

@@ -17,7 +17,7 @@ export default async function ArticleDetailPage({
       <HeroSection
         badge="Actualité Institutionnelle"
         title={articleTitle}
-        subtitle="Digi-SET Institute ouvre officiellement ses admissions pour sa première promotion à Akanda."
+        subtitle="DigiSET Institute ouvre officiellement ses admissions pour sa première promotion à Akanda."
         breadcrumbs={[
           { label: "Actualités", href: "/actualites" },
           { label: slug },
@@ -45,7 +45,7 @@ export default async function ArticleDetailPage({
           <div className="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
             <Image
               src="/images/img/Image_3.jpg"
-              alt="Lancement officiel Inscriptions Digi-SET Institute"
+              alt="Lancement officiel Inscriptions DigiSET Institute"
               fill
               className="object-cover"
               priority
@@ -54,7 +54,7 @@ export default async function ArticleDetailPage({
 
           <div className="prose prose-slate text-sm leading-relaxed space-y-4 text-slate-700">
             <p className="font-semibold text-base text-slate-900">
-              Digi-SET Institute (Digital Science, Engineering and Technology Institute) est fier d&apos;annoncer l&apos;ouverture officielle de la campagne de recrutement pour la rentrée académique de Septembre 2026 sur son campus principal d&apos;Akanda.
+              DigiSET Institute (Digital Science, Engineering and Technology Institute) est fier d&apos;annoncer l&apos;ouverture officielle de la campagne de recrutement pour la rentrée académique de Septembre 2026 sur son campus principal d&apos;Akanda.
             </p>
             <p>
               Implanté au Carrefour Moussavou à Angondje, l&apos;établissement met à disposition des étudiants gabonais et de la sous-région des infrastructures pédagogiques de dernier cri : laboratoires de travaux pratiques scientifiques équipés en physique, optique, électronique et cybersécurité, ainsi que des salles informatiques connectées à haut débit.

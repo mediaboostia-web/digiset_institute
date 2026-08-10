@@ -38,38 +38,53 @@ export function AdminSidebar() {
 
   const NAV_GROUPS: NavGroup[] = [
     {
-      title: "Vue d'ensemble",
+      title: "Modules V1 (Opérationnels)",
       items: [
         {
           href: "/admin",
           label: "Tableau de bord",
           icon: LayoutDashboard,
         },
-      ],
-    },
-    {
-      title: "Leads & Soumissions",
-      items: [
         {
           href: "/admin/soumissions",
-          label: "Soumissions",
+          label: "Réception des Soumissions",
           icon: Inbox,
-          badge: 4, // 4 nouvelles soumissions en attente
-        },
-      ],
-    },
-    {
-      title: "Gestion du Contenu",
-      items: [
-        {
-          href: "/admin/programmes",
-          label: "Programmes",
-          icon: GraduationCap,
+          badge: 4,
         },
         {
           href: "/admin/actualites",
-          label: "Actualités",
+          label: "Actualités & Presse",
           icon: Newspaper,
+        },
+        {
+          href: "/admin/equipe",
+          label: "Organigramme & Équipe",
+          icon: Users,
+        },
+        {
+          href: "/admin/parametres",
+          label: "Paramètres du site",
+          icon: Settings,
+        },
+      ],
+    },
+    {
+      title: "Modules Version 2.0 (V2)",
+      items: [
+        {
+          href: "/admin/partenaires",
+          label: "Partenaires & Logos",
+          icon: Building2,
+        },
+        {
+          href: "/admin/programmes",
+          label: "Programmes académiques",
+          icon: GraduationCap,
+        },
+        {
+          href: "/admin/temoignages",
+          label: "Témoignages & Avis",
+          icon: MessageSquareQuote,
         },
         {
           href: "/admin/galerie",
@@ -77,44 +92,19 @@ export function AdminSidebar() {
           icon: ImageIcon,
         },
         {
-          href: "/admin/equipe",
-          label: "Organigramme / Équipe",
-          icon: Users,
-        },
-        {
-          href: "/admin/temoignages",
-          label: "Témoignages",
-          icon: MessageSquareQuote,
-        },
-        {
-          href: "/admin/partenaires",
-          label: "Partenaires",
-          icon: Building2,
-        },
-        {
-          href: "/admin/pages",
-          label: "Pages libres",
-          icon: FileText,
-        },
-        {
           href: "/admin/documents",
           label: "Documents PDF",
           icon: FolderDown,
         },
-      ],
-    },
-    {
-      title: "Administration",
-      items: [
         {
-          href: "/admin/utilisateurs",
-          label: "Utilisateurs admin",
-          icon: UserCheck,
+          href: "/admin/pages",
+          label: "Pages libres & SEO",
+          icon: FileText,
         },
         {
-          href: "/admin/parametres",
-          label: "Paramètres du site",
-          icon: Settings,
+          href: "/admin/utilisateurs",
+          label: "Gestion Administrateurs",
+          icon: UserCheck,
         },
       ],
     },
@@ -128,7 +118,7 @@ export function AdminSidebar() {
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white p-1 shadow-xs">
             <Image
               src="/brand/logo-digiset.png"
-              alt="Logo Digi-SET"
+              alt="Logo DigiSET"
               width={36}
               height={36}
               className="object-contain"
@@ -136,7 +126,7 @@ export function AdminSidebar() {
           </div>
           <div>
             <h2 className="font-heading text-base font-bold text-white leading-tight">
-              Digi-SET
+              DigiSET
             </h2>
             <p className="text-[11px] font-medium text-white/60">Portail Back-Office</p>
           </div>

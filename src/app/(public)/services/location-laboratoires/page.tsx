@@ -26,7 +26,7 @@ export default function LocationLaboratoiresPage() {
               Des Plateaux Techniques de Référence à Libreville
             </h2>
             <p className="text-sm text-slate-700 leading-relaxed">
-              Pour permettre à l&apos;ensemble des établissements scolaires de dispenser des travaux pratiques conformes aux exigences des concours préparatoires internationaux, Digi-SET Institute ouvre ses laboratoires équipés aux lycées et écoles partenaires.
+              Pour permettre à l&apos;ensemble des établissements scolaires de dispenser des travaux pratiques conformes aux exigences des concours préparatoires internationaux, DigiSET Institute ouvre ses laboratoires équipés aux lycées et écoles partenaires.
             </p>
           </div>
 

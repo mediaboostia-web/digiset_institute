@@ -5,12 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, type RegistrationInput } from "@/lib/validations/registration";
 import { Loader2, CheckCircle2, AlertCircle, Send, Upload, FileCheck, ChevronDown } from "lucide-react";
+import { SubmissionSuccessModal } from "./submission-success-modal";
 
 export function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [lastSubmitted, setLastSubmitted] = useState<{ email: string; phone: string } | null>(null);
 
   const {
     register,
@@ -46,6 +48,7 @@ export function RegistrationForm() {
         throw new Error(result.error || "Une erreur est survenue lors de la soumission de la candidature.");
       }
 
+      setLastSubmitted({ email: data.email, phone: data.phone });
       setSubmitSuccess(true);
       reset();
       setSelectedFileName(null);
@@ -74,7 +77,7 @@ export function RegistrationForm() {
             Candidature enregistrée avec succès !
           </h3>
           <p className="text-sm text-emerald-800 max-w-md mx-auto">
-            Merci pour votre confiance. Votre dossier a été transmis à la commission d&apos;admission de Digi-SET Institute. Un accusé de réception a été envoyé sur votre email.
+            Merci pour votre confiance. Votre dossier a été transmis à la commission d&apos;admission de DigiSET Institute. Un accusé de réception a été envoyé sur votre email.
           </p>
           <button
             onClick={() => setSubmitSuccess(false)}
@@ -237,6 +240,14 @@ export function RegistrationForm() {
           </div>
         </form>
       )}
+
+      <SubmissionSuccessModal
+        isOpen={submitSuccess}
+        onClose={() => setSubmitSuccess(false)}
+        title="Votre Candidature a bien été Transmise !"
+        userEmail={lastSubmitted?.email}
+        userPhone={lastSubmitted?.phone}
+      />
     </div>
   );
 }

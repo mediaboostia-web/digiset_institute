@@ -22,7 +22,7 @@ export default function DigisetOnlinePage() {
           
           <div className="max-w-3xl space-y-4">
             <h2 className="font-heading text-2xl font-extrabold text-slate-900">
-              La Flexibilité de l&apos;Apprentissage à Distance, la Rigueur de Digi-SET
+              La Flexibilité de l&apos;Apprentissage à Distance, la Rigueur de DigiSET
             </h2>
             <p className="text-sm text-slate-700 leading-relaxed">
               DigiSET Online a été conçu pour permettre aux professionnels en activité, aux étudiants résidant en province ou à l&apos;étranger de se former aux métiers du numérique sans interrompre leur carrière ou déménager.

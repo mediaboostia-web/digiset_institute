@@ -10,7 +10,7 @@ export const registrationSchema = z.object({
   phone: z.string().trim().min(6, "Le numéro de téléphone est requis."),
   email: z.email("Adresse email invalide."),
   lastDiploma: z.string().trim().min(1, "Le dernier diplôme obtenu est requis."),
-  desiredProgramId: z.uuid().optional().or(z.literal("")),
+  desiredProgramId: z.string().optional().or(z.literal("")),
   // Honeypot anti-spam : doit rester vide (cf. CONFIGURATION.md §Sécurité).
   website: z.string().max(0).optional().or(z.literal("")),
 });

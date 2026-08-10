@@ -8,7 +8,7 @@ import { Globe, Mail, Phone, ShieldCheck, Award, Building2 } from "lucide-react"
 export const metadata: Metadata = {
   title: "Institution & Stratégie — Organigramme et Partenaires",
   description:
-    "Découvrez l'histoire, la gouvernance en 3 rangs hiérarchiques, l'organigramme de Digi-SET Institute et nos partenaires institutionnels et technologiques au Gabon.",
+    "Découvrez l'histoire, la gouvernance en 3 rangs hiérarchiques, l'organigramme de DigiSET Institute et nos partenaires institutionnels et technologiques au Gabon.",
 };
 
 interface TeamMember {
@@ -81,7 +81,7 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
             </a>
           )}
         </div>
-        <span className="text-[10px] text-slate-400 font-medium">Digi-SET Campus</span>
+        <span className="text-[10px] text-slate-400 font-medium">DigiSET Campus</span>
       </div>
     </div>
   );
@@ -94,7 +94,7 @@ export default function InstitutionPage() {
       name: "Dr ABAGA ABESSOLO Michel Audrey",
       role: "Fondateur & Directeur Général",
       department: "Direction Générale",
-      image: "/images/fondateur/Dr ABAGA ABESSOLO Michel Audrey.jpg",
+      image: "/brand/fondateur.png",
       linkedin: "https://linkedin.com",
       email: "direction@digiset-gabon.com",
       phone: "+24174000000",
@@ -188,7 +188,7 @@ export default function InstitutionPage() {
       <HeroSection
         badge="Stratégie & Institution"
         title="Institution, Gouvernance & Partenaires"
-        subtitle="Découvrez la structure organisationnelle de Digi-SET Institute, son équipe dirigeante en 3 rangs hiérarchiques et ses alliances technologiques internationales."
+        subtitle="Découvrez la structure organisationnelle de DigiSET Institute, son équipe dirigeante en 3 rangs hiérarchiques et ses alliances technologiques internationales."
         breadcrumbs={[{ label: "Institution & Stratégie" }]}
       />
 

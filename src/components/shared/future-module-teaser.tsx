@@ -104,7 +104,7 @@ export function FutureModuleTeaser({
       {/* Carte des Bénéfices & Roadmap */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs sm:p-8 space-y-6">
         <h3 className="font-heading text-sm font-bold text-gray-900 uppercase tracking-wider text-brand-blue-dark">
-          Ce que ce module permettra à Digi-SET Institute :
+          Ce que ce module permettra à DigiSET Institute :
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

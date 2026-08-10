@@ -25,7 +25,7 @@ export default function ConsultingItPage() {
               Une Expertise de Niveau International au Service du Gabon
             </h2>
             <p className="text-sm text-slate-700 leading-relaxed">
-              Le pôle Consulting IT de Digi-SET Institute accompagne les banques, les opérateurs télécoms, les PME et les institutions publiques dans leurs projets informatiques critiques.
+              Le pôle Consulting IT de DigiSET Institute accompagne les banques, les opérateurs télécoms, les PME et les institutions publiques dans leurs projets informatiques critiques.
             </p>
           </div>
 

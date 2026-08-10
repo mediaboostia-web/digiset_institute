@@ -14,7 +14,7 @@ const ARTICLES = [
     date: "15 Juillet 2026",
     category: "Scolarité",
     image: "/images/img/Image_3.jpg",
-    excerpt: "Digi-SET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
+    excerpt: "DigiSET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
   },
   {
     slug: "partenariat-certifications-internationales",
@@ -54,7 +54,7 @@ const CATEGORIES = ["Tous", "Campus & Vie Étudiante", "Scolarité", "Partenaria
 
 const STUDENT_FAQS = [
   {
-    question: "Comment se déroulent les inscriptions à Digi-SET Institute ?",
+    question: "Comment se déroulent les inscriptions à DigiSET Institute ?",
     answer: "Les inscriptions s'effectuent en ligne via le formulaire de candidature ou directement sur le campus d'Akanda. Une étude de dossier est réalisée sous 48h.",
   },
   {
@@ -67,7 +67,7 @@ const STUDENT_FAQS = [
   },
   {
     question: "Quels sont les clubs et associations du campus ?",
-    answer: "Le campus héberge le Club CyberSec, le Club IA & Robotique, le Club de Développement Web/Mobile et l'Association des Étudiants de Digi-SET.",
+    answer: "Le campus héberge le Club CyberSec, le Club IA & Robotique, le Club de Développement Web/Mobile et l'Association des Étudiants de DigiSET.",
   },
 ];
 
@@ -248,7 +248,7 @@ export default function VieEtudiantePage() {
       {/* FaqSection dédiée inspirée de Capture 4 */}
       <FaqSection
         title="FAQ — Vie Étudiante & Campus"
-        subtitle="Des questions sur votre quotidien à Digi-SET Institute ? Consulez les questions d'étudiants."
+        subtitle="Des questions sur votre quotidien à DigiSET Institute ? Consulez les questions d'étudiants."
         items={STUDENT_FAQS}
       />
     </div>

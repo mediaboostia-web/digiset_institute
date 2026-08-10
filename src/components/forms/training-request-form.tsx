@@ -5,11 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trainingRequestSchema, type TrainingRequestInput } from "@/lib/validations/training-request";
 import { Loader2, CheckCircle2, AlertCircle, Send, ChevronDown } from "lucide-react";
+import { SubmissionSuccessModal } from "./submission-success-modal";
 
 export function TrainingRequestForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [lastSubmitted, setLastSubmitted] = useState<{ email: string; phone: string } | null>(null);
 
   const {
     register,
@@ -48,6 +50,7 @@ export function TrainingRequestForm() {
         throw new Error(result.error || "Une erreur est survenue lors de la demande.");
       }
 
+      setLastSubmitted({ email: data.email, phone: data.phone });
       setSubmitSuccess(true);
       reset();
     } catch (err) {
@@ -240,6 +243,14 @@ export function TrainingRequestForm() {
           </div>
         </form>
       )}
+
+      <SubmissionSuccessModal
+        isOpen={submitSuccess}
+        onClose={() => setSubmitSuccess(false)}
+        title="Votre Demande de Formation a été Transmise !"
+        userEmail={lastSubmitted?.email}
+        userPhone={lastSubmitted?.phone}
+      />
     </div>
   );
 }

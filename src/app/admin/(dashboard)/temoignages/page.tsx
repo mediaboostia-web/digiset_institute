@@ -7,7 +7,7 @@ export default function AdminTestimonialsPage() {
       category="Contenu & Réputation"
       version="Version 2.0"
       iconName="MessageSquareQuote"
-      marketingHeadline="Boostez la crédibilité de Digi-SET Institute en mettant en avant les succès de vos étudiants et la confiance de vos entreprises partenaires."
+      marketingHeadline="Boostez la crédibilité de DigiSET Institute en mettant en avant les succès de vos étudiants et la confiance de vos entreprises partenaires."
       description="Ce module permettra de publier et modérer les citations, avis vidéo et parcours de réussite des diplômés pour renforcer la preuve sociale sur les pages de candidature."
       benefits={[
         "Mise en valeur des parcours d'anciens élèves (Alumni)",

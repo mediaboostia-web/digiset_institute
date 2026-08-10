@@ -3,39 +3,49 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Search, X, GraduationCap, Briefcase, Award, Monitor, FlaskConical, Building2, ShieldCheck, ArrowRight } from "lucide-react";
+import { ChevronDown, Search, GraduationCap, Briefcase, Award, Monitor, FlaskConical, Building2, ShieldCheck, ArrowRight } from "lucide-react";
+import { AnnouncementBanner } from "@/components/layout/announcement-banner";
 
 const SEARCH_CATALOG = [
   { title: "Classe Préparatoire MP2I", category: "Formation Initiale", url: "/programmes/classe-preparatoire", desc: "Cycle préparatoire scientifique (Maths, Physique, Informatique)" },
   { title: "Licence Pro — IA & Data Science", category: "Licence Pro", url: "/programmes/licence-professionnelle/ia-data-science", desc: "Machine Learning, Deep Learning & Big Data" },
   { title: "Licence Pro — Cybersécurité", category: "Licence Pro", url: "/programmes/licence-professionnelle/cybersecurite", desc: "Sécurité des SI, Pentest, SOC & Audit" },
   { title: "Licence Pro — Systèmes de Paiement Électronique", category: "Licence Pro", url: "/programmes/licence-professionnelle/systemes-paiement", desc: "Monétique, PCI-DSS, Mobile Money & Switch" },
-  { title: "Formations Continues Entreprises", category: "Executive", url: "/programmes/formation-continue", desc: "Modules courts pour professionnels & cadres DSI" },
+  { title: "Formations Inter & Intra-Entreprises", category: "Formation Continue", url: "/programmes/formation-continue", desc: "Formations sur-mesure inter et intra-entreprises pour professionnels & cadres DSI" },
   { title: "Certifications Pro (Cisco, AWS, Linux, Microsoft)", category: "Certifications", url: "/programmes/certifications", desc: "Examens mondiaux certifiants en visioconférence ou présentiel" },
-  { title: "Location de Laboratoires TP", category: "Services", url: "/services/location-laboratoires", desc: "Mise à disposition des labos TP pour lycées et prépas" },
   { title: "Consulting IT & Audits", category: "Services", url: "/services/consulting-it", desc: "Accompagnement, SOC & projets de transformation digitale" },
+  { title: "Location de Laboratoires TP", category: "Services", url: "/services/location-laboratoires", desc: "Mise à disposition des labos TP pour lycées et prépas" },
   { title: "Institution & Mot du Fondateur", category: "À Propos", url: "/institution", desc: "Gouvernance 3 rangs, Conseil académique & vision" },
   { title: "Candidature Rentrée Septembre 2026", category: "Inscription", url: "/inscription/candidature", desc: "Formulaire d'inscription en ligne étudiants" },
 ];
 
 export function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY <= 20) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Scroll vers le bas -> masquer la navbar
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY) {
+        // Scroll vers le haut -> afficher la navbar
+        setIsVisible(true);
       }
+      
+      setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Verrouillage strict du scroll de l'écran principal quand la recherche mobile est ouverte
   useEffect(() => {
@@ -61,37 +71,34 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled
-          ? "bg-white text-slate-900 shadow-md border-b border-slate-200"
-          : "bg-brand-blue-dark text-white border-b border-white/10"
+      className={`fixed top-0 left-0 right-0 z-50 w-full bg-white text-slate-900 border-b border-slate-200/80 shadow-xs transition-transform duration-300 ease-in-out ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
+      <AnnouncementBanner />
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-20 gap-3">
         
-        {/* Logo Officiel Digi-SET avec Arrière-plan Transparent */}
+        {/* Logo Officiel DigiSET */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
           <div className="relative h-11 w-36 sm:h-14 sm:w-44 bg-transparent p-1 flex items-center justify-center transition-opacity hover:opacity-90">
             <Image
               src="/brand/Digiset Logo officiel.png"
-              alt="Logo Officiel Digi-SET Institute"
+              alt="Logo Officiel DigiSET Institute"
               width={185}
               height={60}
-              className="max-h-full w-auto object-contain drop-shadow-sm"
+              className="max-h-full w-auto object-contain drop-shadow-xs"
               priority
             />
           </div>
         </Link>
 
-        {/* Navigation Desktop — Couleur dynamique au défilement (Scroll) */}
+        {/* Navigation Desktop — Fond Blanc Strict */}
         <nav className="hidden lg:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
           
           {/* Accueil */}
           <Link
             href="/"
-            className={`py-2 transition-colors ${
-              isScrolled ? "text-brand-orange hover:text-brand-orange-dark font-extrabold" : "text-white hover:text-brand-orange"
-            }`}
+            className="py-2 text-slate-800 hover:text-brand-orange transition-colors font-extrabold"
           >
             Accueil
           </Link>
@@ -104,9 +111,7 @@ export function Header() {
           >
             <Link
               href="/programmes"
-              className={`flex items-center gap-1 py-2 transition-colors ${
-                isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
-              }`}
+              className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors"
             >
               <span>Programmes</span>
               <ChevronDown className="h-3.5 w-3.5" />
@@ -121,7 +126,7 @@ export function Header() {
                   <GraduationCap className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Classe Préparatoire MP2I</div>
-                    <div className="text-[10px] text-slate-500 font-normal">Cycle 2 ans (120 ECTS)</div>
+                    <div className="text-[10px] text-slate-500 font-normal">Formation Initiale (2 ans)</div>
                   </div>
                 </Link>
 
@@ -131,7 +136,7 @@ export function Header() {
                 >
                   <Award className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
-                    <div className="text-xs font-bold text-slate-900">Licence Professionnelle</div>
+                    <div className="text-xs font-bold text-slate-900">Licences Professionnelles</div>
                     <div className="text-[10px] text-slate-500 font-normal">IA, Cybersécurité, Monétique</div>
                   </div>
                 </Link>
@@ -142,7 +147,7 @@ export function Header() {
                 >
                   <Briefcase className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
-                    <div className="text-xs font-bold text-slate-900">Formations Continues</div>
+                    <div className="text-xs font-bold text-slate-900">Formations Inter & Intra-Entreprises</div>
                     <div className="text-[10px] text-slate-500 font-normal">Entreprises & Administrations</div>
                   </div>
                 </Link>
@@ -179,36 +184,45 @@ export function Header() {
             onMouseLeave={() => setActiveDropdown(null)}
           >
             <Link
-              href="/services"
-              className={`flex items-center gap-1 py-2 transition-colors ${
-                isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
-              }`}
+              href="/services/consulting-it"
+              className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors"
             >
               <span>Services</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             {activeDropdown === "services" && (
-              <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <Link
-                  href="/services/location-laboratoires"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
-                  <FlaskConical className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
-                  <div>
-                    <div className="text-xs font-bold text-slate-900">Location de Laboratoires TP</div>
-                    <div className="text-[10px] text-slate-500 font-normal">Forfaits TP pour lycées & prépas</div>
-                  </div>
-                </Link>
-
+              <div className="absolute top-full left-0 w-80 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <Link
                   href="/services/consulting-it"
                   className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <Briefcase className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
-                    <div className="text-xs font-bold text-slate-900">Consulting IT</div>
-                    <div className="text-[10px] text-slate-500 font-normal">Audit, SOC & Projets digitaux</div>
+                    <div className="text-xs font-bold text-slate-900">Consulting IT & Transformation</div>
+                    <div className="text-[10px] text-slate-500 font-normal">Audit SI, SOC & Accompagnement</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/programmes/formation-continue"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
+                >
+                  <Building2 className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-bold text-slate-900">Formations Inter et Intra-Entreprises</div>
+                    <div className="text-[10px] text-slate-500 font-normal">Formations professionnelles sur-mesure</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/services/location-laboratoires"
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors opacity-80"
+                >
+                  <FlaskConical className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-bold text-slate-800">Location de Laboratoires TP</div>
+                    <div className="text-[10px] text-slate-500 font-normal">Forfaits TP pour lycées & prépas</div>
                   </div>
                 </Link>
               </div>
@@ -223,9 +237,7 @@ export function Header() {
           >
             <Link
               href="/institution"
-              className={`flex items-center gap-1 py-2 transition-colors ${
-                isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
-              }`}
+              className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors"
             >
               <span>Stratégie & Institution</span>
               <ChevronDown className="h-3.5 w-3.5" />
@@ -240,7 +252,7 @@ export function Header() {
                   <Building2 className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Institution & Organigramme</div>
-                    <div className="text-[10px] text-slate-500 font-normal">À propos, Gouvernance 3 rangs, Mot DG</div>
+                    <div className="text-[10px] text-slate-500 font-normal">À propos, Gouvernance, Mot du Fondateur</div>
                   </div>
                 </Link>
 
@@ -261,23 +273,17 @@ export function Header() {
           {/* Contact */}
           <Link
             href="/contact"
-            className={`py-2 transition-colors ${
-              isScrolled ? "text-slate-800 hover:text-brand-orange" : "text-white hover:text-brand-orange"
-            }`}
+            className="py-2 text-slate-800 hover:text-brand-orange transition-colors"
           >
             Contact
           </Link>
         </nav>
 
-        {/* Barre de Recherche Interactive sur Mobile (Remplace le menu burger) */}
+        {/* Barre de Recherche Interactive sur Mobile */}
         <div className="lg:hidden flex-1 max-w-[210px] sm:max-w-xs">
           <button
             onClick={() => setSearchOpen(true)}
-            className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all shadow-2xs border ${
-              isScrolled
-                ? "bg-slate-100/90 text-slate-600 border-slate-300 hover:bg-slate-200/90"
-                : "bg-white/15 text-slate-200 border-white/20 hover:bg-white/25"
-            }`}
+            className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all shadow-2xs border bg-slate-100/90 text-slate-600 border-slate-300 hover:bg-slate-200/90"
           >
             <div className="flex items-center gap-2 truncate">
               <Search className="h-3.5 w-3.5 text-brand-orange shrink-0" />
@@ -301,7 +307,7 @@ export function Header() {
 
       </div>
 
-      {/* Modal de Recherche Mobile Ultra-Interactive avec Verrouillage Strict du Scroll */}
+      {/* Modal de Recherche Mobile Ultra-Interactive */}
       {searchOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex flex-col bg-slate-900/95 backdrop-blur-md animate-in fade-in duration-200">
           <div className="p-4 bg-slate-900 border-b border-white/15 flex items-center justify-between gap-3">

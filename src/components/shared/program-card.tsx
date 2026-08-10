@@ -4,7 +4,7 @@ import { Clock, GraduationCap, Award, ArrowRight, CheckCircle2 } from "lucide-re
 export interface ProgramCardProps {
   id?: string;
   title: string;
-  category: "Initiale" | "Licence Pro" | "Continue" | "Certification" | "Online";
+  category: string;
   description: string;
   duration: string;
   badge?: string;

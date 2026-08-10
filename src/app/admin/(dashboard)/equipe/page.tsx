@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
 
 // Composants Icônes Réseaux Sociaux SVGs
 function LinkedInIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
@@ -52,6 +53,7 @@ export default function AdminTeamPage() {
   const [teamList, setTeamList] = useState<TeamMember[]>(INITIAL_TEAM);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -277,7 +279,7 @@ export default function AdminTeamPage() {
                 size="sm"
                 variant="ghost"
                 className="h-8 text-xs text-red-500 hover:bg-red-50 hover:text-red-700"
-                onClick={() => handleDelete(member.id)}
+                onClick={() => setDeleteTarget({ id: member.id, name: member.full_name })}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -468,6 +470,20 @@ export default function AdminTeamPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de Confirmation de Suppression */}
+      <ConfirmDeleteDialog
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            handleDelete(deleteTarget.id);
+          }
+        }}
+        itemName={deleteTarget?.name}
+        title="Supprimer le membre de l'équipe"
+        description="Ce membre sera définitivement retiré de l'organigramme de l'institut."
+      />
     </div>
   );
 }

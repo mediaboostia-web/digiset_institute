@@ -7,7 +7,7 @@ export default function AdminPartnersPage() {
       category="Réseau Institutionnel"
       version="Version 2.0"
       iconName="Building2"
-      marketingHeadline="Affichez avec prestige le réseau d'entreprises, de banques et d'universités partenaires de Digi-SET Institute."
+      marketingHeadline="Affichez avec prestige le réseau d'entreprises, de banques et d'universités partenaires de DigiSET Institute."
       description="Gérez les logos, liens officiels et niveaux de partenariat (Certifications Cisco/AWS, Banques Monétiques, TotalEnergies) affichés sur le site public."
       benefits={[
         "Gestion des logos partenaires haute définition",

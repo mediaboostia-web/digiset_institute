@@ -22,11 +22,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://digiset-gabon.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Digi-SET Institute — Établissement Supérieur Privé aux Métiers du Numérique (Gabon)",
-    template: "%s | Digi-SET Institute",
+    default: "DigiSET Institute — Établissement Supérieur Privé aux Métiers du Numérique (Gabon)",
+    template: "%s | DigiSET Institute",
   },
   description:
-    "Digi-SET Institute (Akanda, Gabon) forme les futurs leaders en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique). Classe préparatoire MP2I (120 ECTS), Licence Professionnelle (60 ECTS), certifications Cisco, AWS, Microsoft, Linux et location de laboratoires TP haute technologie.",
+    "DigiSET Institute (Akanda, Gabon) forme les futurs leaders en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique). Classe préparatoire MP2I (120 ECTS), Licence Professionnelle (60 ECTS), certifications Cisco, AWS, Microsoft, Linux et location de laboratoires TP haute technologie.",
   icons: {
     icon: [
       { url: "/brand/Digiset-institute Favicon.png", type: "image/png" },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     ],
   },
   keywords: [
-    "Digi-SET Institute",
+    "DigiSET Institute",
     "Dr ABAGA ABESSOLO Michel Audrey",
     "École supérieure numérique Gabon",
     "Université privée informatique Libreville Akanda",
@@ -53,9 +53,9 @@ export const metadata: Metadata = {
     "Location laboratoires TP physique chimie Gabon",
     "Formation continue entreprises Libreville",
   ],
-  authors: [{ name: "Digi-SET Institute", url: siteUrl }],
-  creator: "Digi-SET Institute",
-  publisher: "Digi-SET Institute",
+  authors: [{ name: "DigiSET Institute", url: siteUrl }],
+  creator: "DigiSET Institute",
+  publisher: "DigiSET Institute",
   alternates: {
     canonical: siteUrl,
   },
@@ -73,22 +73,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_GA",
     url: siteUrl,
-    title: "Digi-SET Institute — Établissement Supérieur Privé aux Métiers du Numérique",
+    title: "DigiSET Institute — Établissement Supérieur Privé aux Métiers du Numérique",
     description:
       "Formations d'excellence en Intelligence Artificielle, Cybersécurité et Monétique à Akanda, Gabon. Découvrez nos diplômes Bac+2 et Bac+3 et nos laboratoires de TP haute technologie.",
-    siteName: "Digi-SET Institute",
+    siteName: "DigiSET Institute",
     images: [
       {
         url: `${siteUrl}/images/img/Hero_image1.jpg`,
         width: 1200,
         height: 630,
-        alt: "Digi-SET Institute Campus Akanda Gabon",
+        alt: "DigiSET Institute Campus Akanda Gabon",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digi-SET Institute — L'Excellence Numérique au Gabon",
+    title: "DigiSET Institute — L'Excellence Numérique au Gabon",
     description:
       "Classe Préparatoire MP2I, Licence Pro IA, Cybersécurité & Monétique à Akanda. Pratique 100% en laboratoire et certifications internationales.",
     images: [`${siteUrl}/images/img/Hero_image1.jpg`],
@@ -103,7 +103,7 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
-    name: "Digi-SET Institute",
+    name: "DigiSET Institute",
     alternateName: "Digital Science, Engineering and Technology Institute",
     url: siteUrl,
     logo: `${siteUrl}/brand/Digiset Logo officiel.png`,

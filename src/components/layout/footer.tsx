@@ -14,14 +14,14 @@ export function Footer() {
               <div className="h-10 w-10 overflow-hidden rounded-lg bg-white p-1">
                 <Image
                   src="/brand/logo-digiset.png"
-                  alt="Digi-SET Institute Logo"
+                  alt="DigiSET Institute Logo"
                   width={36}
                   height={36}
                   className="object-contain"
                 />
               </div>
               <span className="font-heading text-xl font-bold text-white tracking-tight">
-                Digi-SET <span className="text-brand-orange">Institute</span>
+                DigiSET <span className="text-brand-orange">Institute</span>
               </span>
             </Link>
 
@@ -100,7 +100,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/programmes/formation-continue" className="text-slate-300 hover:text-white transition-colors">
-                  Formations Continues (Pro)
+                  Formations Inter & Intra-Entreprises
                 </Link>
               </li>
               <li>
@@ -193,7 +193,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-          <p>© {new Date().getFullYear()} Digi-SET Institute. Tous droits réservés. Lancement officiel Septembre 2026.</p>
+          <p>© {new Date().getFullYear()} DigiSET Institute. Tous droits réservés. Lancement officiel Septembre 2026.</p>
           <div className="flex items-center gap-6">
             <Link href="/mentions-legales" className="hover:text-white transition-colors">
               Mentions Légales

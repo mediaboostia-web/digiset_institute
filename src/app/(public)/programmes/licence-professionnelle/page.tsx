@@ -6,9 +6,9 @@ import { Award, GraduationCap, Clock, ArrowRight, BrainCircuit, ShieldAlert, Cre
 export const metadata: Metadata = {
   title: "Licence Professionnelle (Bac+3 - 60 ECTS) — 3 Options",
   description:
-    "Licence Professionnelle en Technologies du Numérique à Digi-SET Institute (Akanda, Gabon). 3 options d'avenir : IA & Data Science, Cybersécurité, Systèmes de Paiement Électronique (Monétique).",
+    "Licence Professionnelle en Technologies du Numérique à DigiSET Institute (Akanda, Gabon). 3 options d'avenir : IA & Data Science, Cybersécurité, Systèmes de Paiement Électronique (Monétique).",
   openGraph: {
-    title: "Licence Professionnelle du Numérique (Bac+3) | Digi-SET Institute",
+    title: "Licence Professionnelle du Numérique (Bac+3) | DigiSET Institute",
     description:
       "Formation opérationnelle de 1 an avec 12 semaines de stage en entreprise et certifications professionnelles intégrées.",
   },
@@ -65,7 +65,7 @@ export default function LicenceProfessionnellePage() {
               Un Diplôme Aligné sur le Marché de l&apos;Emploi
             </h2>
             <p className="text-sm text-slate-700 leading-relaxed">
-              La Licence Professionnelle de Digi-SET Institute s&apos;adresse aux étudiants titulaires d&apos;un Bac+2 scientifique ou technologique (Classe Préparatoire MP2I, BTS Informatique, DUT, L2 Sciences). Elle garantit une insertion professionnelle rapide grâce à un enseignement axé sur la pratique et un stage obligatoire de 12 semaines en entreprise.
+              La Licence Professionnelle de DigiSET Institute s&apos;adresse aux étudiants titulaires d&apos;un Bac+2 scientifique ou technologique (Classe Préparatoire MP2I, BTS Informatique, DUT, L2 Sciences). Elle garantit une insertion professionnelle rapide grâce à un enseignement axé sur la pratique et un stage obligatoire de 12 semaines en entreprise.
             </p>
           </div>
 

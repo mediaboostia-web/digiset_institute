@@ -7,11 +7,11 @@ export default function FormationContinuePage() {
     <div>
       <HeroSection
         badge="Offre Entreprises & Administrations"
-        title="Formations Continues Professionnelles"
-        subtitle="Élevez la maturité numérique de vos cadres et équipes techniques grâce à nos 4 axes de formations intensives de 3 à 10 jours."
+        title="Formations Inter & Intra-Entreprises"
+        subtitle="Élevez la maturité numérique de vos cadres et équipes techniques grâce à nos 4 axes de formations sur-mesure (Inter-entreprises dans nos centres ou Intra-entreprise dans vos locaux)."
         breadcrumbs={[
           { label: "Programmes", href: "/programmes" },
-          { label: "Formation Continue" },
+          { label: "Inter & Intra-Entreprises" },
         ]}
         primaryCtaText="Faire une demande de devis"
         primaryCtaHref="/programmes/formation-continue/demande"
@@ -26,7 +26,7 @@ export default function FormationContinuePage() {
               <Building className="h-8 w-8 text-brand-orange shrink-0" />
               <div>
                 <div className="text-[10px] uppercase font-bold text-slate-500">Formats</div>
-                <div className="text-sm font-extrabold text-slate-900">Intra & Inter-Entreprises</div>
+                <div className="text-sm font-extrabold text-slate-900">Inter & Intra-Entreprises</div>
               </div>
             </div>
 
@@ -42,7 +42,7 @@ export default function FormationContinuePage() {
               <CheckCircle2 className="h-8 w-8 text-brand-blue shrink-0" />
               <div>
                 <div className="text-[10px] uppercase font-bold text-slate-500">Reconnaissance</div>
-                <div className="text-sm font-extrabold text-slate-900">Attestation Digi-SET & Certifs</div>
+                <div className="text-sm font-extrabold text-slate-900">Attestation DigiSET & Certifs</div>
               </div>
             </div>
           </div>
@@ -54,7 +54,7 @@ export default function FormationContinuePage() {
                 Thématiques d&apos;Expertise
               </span>
               <h2 className="font-heading text-2xl font-extrabold text-slate-900 mt-1">
-                Les 4 Axes de Formation Continue
+                Les 4 Axes de Formations Inter & Intra-Entreprises
               </h2>
             </div>
 

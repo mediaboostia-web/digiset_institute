@@ -5,11 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, type ContactInput } from "@/lib/validations/contact";
 import { Loader2, CheckCircle2, AlertCircle, Send } from "lucide-react";
+import { SubmissionSuccessModal } from "./submission-success-modal";
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [lastSubmitted, setLastSubmitted] = useState<{ email: string; phone?: string } | null>(null);
 
   const {
     register,
@@ -41,6 +43,7 @@ export function ContactForm() {
         throw new Error(result.error || "Une erreur est survenue lors de l'envoi de votre message.");
       }
 
+      setLastSubmitted({ email: data.email, phone: data.phone || undefined });
       setSubmitSuccess(true);
       reset();
     } catch (err) {
@@ -183,6 +186,14 @@ export function ContactForm() {
           </div>
         </form>
       )}
+
+      <SubmissionSuccessModal
+        isOpen={submitSuccess}
+        onClose={() => setSubmitSuccess(false)}
+        title="Votre Message a été Transmis !"
+        userEmail={lastSubmitted?.email}
+        userPhone={lastSubmitted?.phone}
+      />
     </div>
   );
 }

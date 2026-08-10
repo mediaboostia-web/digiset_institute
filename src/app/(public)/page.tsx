@@ -9,7 +9,7 @@ import { HomeFormsSection } from "@/components/shared/home-forms-section";
 export default function AccueilPage() {
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
-      {/* 1. Hero Principal — Badge de Bienvenue à Digi-SET Institute, Image Hero_image1.jpg Grand Format Flottante avec Flou Bas */}
+      {/* 1. Hero Principal — Badge de Bienvenue à DigiSET Institute, Image Hero_image1.jpg Grand Format Flottante avec Flou Bas */}
       <section className="relative bg-brand-blue-dark text-white py-10 sm:py-14 lg:py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transform blur-[2px] pointer-events-none"
@@ -23,7 +23,7 @@ export default function AccueilPage() {
             <div className="md:col-span-7 space-y-4 sm:space-y-5">
               {/* Badge avec Texte de Bienvenue Visible en Blanc Puro */}
               <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white shadow-xs">
-                Bienvenue à Digi-SET Institute — Akanda, Gabon
+                Bienvenue à DigiSET Institute — Akanda, Gabon
               </div>
 
               {/* Titre H1 avec trait légèrement courbé stylé designer uniquement sur "Métiers du Numérique" */}
@@ -50,7 +50,7 @@ export default function AccueilPage() {
 
               {/* Description claire et lisible sans soulignement */}
               <p className="text-xs sm:text-sm lg:text-base text-slate-200 leading-relaxed font-body max-w-2xl drop-shadow-2xs">
-                Digi-SET Institute forme les futurs experts en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique).
+                DigiSET Institute forme les futurs experts en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique).
               </p>
 
               {/* Boutons d'action avec arrondis 15px et effet de survol dynamique */}
@@ -95,7 +95,7 @@ export default function AccueilPage() {
               <div className="relative w-full h-[460px] md:h-[500px] lg:h-[540px] animate-float rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-900 group">
                 <Image
                   src="/images/img/Hero_image1.jpg"
-                  alt="Digi-SET Institute Campus et Étudiants"
+                  alt="DigiSET Institute Campus et Étudiants"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                   priority
@@ -128,7 +128,7 @@ export default function AccueilPage() {
               Former l&apos;Élite Technologique de Demain
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Digi-SET Institute allie rigueur scientifique et immersion pratique pour garantir la souveraineté numérique du Gabon et du continent.
+              DigiSET Institute allie rigueur scientifique et immersion pratique pour garantir la souveraineté numérique du Gabon et du continent.
             </p>
           </div>
 
@@ -253,7 +253,7 @@ export default function AccueilPage() {
                   Formation Initiale (Bac à Bac+3)
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Intégrez notre Classe Préparatoire MP2I (2 ans) ou notre Licence Professionnelle (1 an) avec 3 options d&apos;avenir en IA, Cybersécurité et Monétique.
+                  Intégrez notre Classe Préparatoire MP2I (2 ans) ou notre Licence Professionnelle (1 an) avec nos 3 options d&apos;avenir en IA, Cybersécurité et Monétique.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100">
@@ -276,10 +276,10 @@ export default function AccueilPage() {
                   Entreprises & Administrations
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Formations Continues & Certifications
+                  Formations Inter & Intra-Entreprises
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Montez en compétences vos équipes techniques et managériales grâce à nos sessions courtes (3 à 10 jours) et aux certifications mondiales.
+                  Montez en compétences vos équipes avec nos programmes de formation continue sur-mesure (Inter-entreprises dans nos centres ou Intra-entreprise dans vos locaux).
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100">
@@ -299,21 +299,21 @@ export default function AccueilPage() {
                   <Building2 className="h-6 w-6" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                  Lycées & Établissements
+                  Organisations & DSI
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Location de Laboratoires TP
+                  Consulting IT & Transformations
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Mise à disposition de nos plateaux techniques équipés pour les manipulations pratiques de physique et sciences de l&apos;ingénieur.
+                  Accompagnement stratégique, audit de sécurité des SI, mise en place de SOC et conseil en transformation numérique à haute valeur ajoutée.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
-                  href="/services/location-laboratoires"
+                  href="/services/consulting-it"
                   className="inline-flex w-full items-center justify-center gap-2 rounded-[15px] bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition-all duration-300"
                 >
-                  Voir les forfaits labos
+                  Découvrir le Consulting IT
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -322,16 +322,16 @@ export default function AccueilPage() {
         </div>
       </section>
 
-      {/* 5. CATALOGUE GÉNÉRAL */}
+      {/* 5. CATALOGUE GÉNÉRAL — 3 Grands Blocs Principaux */}
       <section className="py-12 sm:py-16 bg-white border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-brand-blue">
-                Catalogue Général
+                Offres de Catalogue
               </span>
               <h2 className="font-heading text-xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-                Toutes nos Offres de Formation & Services
+                Nos 3 Pôles Principaux de Formation
               </h2>
             </div>
             <Link
@@ -342,74 +342,57 @@ export default function AccueilPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* BLOC 1 : Formation Initiale (Englobe toute la formation diplômante) */}
             <ProgramCard
-              title="Classe Préparatoire MP2I"
+              title="Formation Initiale Diplômante"
               category="Initiale"
-              description="Cycle préparatoire scientifique intensif (Maths, Physique, Informatique & Ingénierie) ouvrant l'accès aux cycles ingénieurs et licences spécialisées."
-              duration="2 ans (4 semestres)"
-              ects="120"
-              targetPublic="Bacheliers scientifiques (Bac C, D, S, E)"
-              highlights={["Tronc commun scientifique rigoureux", "Accès direct Licence Pro Digi-SET", "Préparation aux concours internationaux"]}
-              href="/programmes/classe-preparatoire"
+              description="Regroupe l'ensemble de nos formations académiques initiales : la Classe Préparatoire MP2I (2 ans) et notre Licence Professionnelle (1 an) déclinée en 3 options spécialisées."
+              duration="1 à 2 ans (60 - 120 ECTS)"
+              targetPublic="Bacheliers scientifiques & diplômés Bac+2"
+              highlights={[
+                "Classe Préparatoire MP2I (2 ans)",
+                "Option IA & Data Science",
+                "Option Cybersécurité & Audit SI",
+                "Option Systèmes de Paiement Électronique",
+              ]}
+              href="/programmes"
+              ctaText="Découvrir la Formation Initiale"
               isCatalogCard={true}
             />
 
+            {/* BLOC 2 : Formation Continue (Formations Inter & Intra-Entreprises) */}
             <ProgramCard
-              title="Licence Pro — IA & Data Science"
-              category="Licence Pro"
-              description="Spécialisation en développement de modèles de Machine Learning, Analyse de données massives, Computer Vision et traitement du langage."
-              duration="1 an (Bac+3)"
-              ects="60"
-              targetPublic="Étudiants issus de Prépa MP2I, BTS/DUT Info ou Bac+2 scientifique"
-              highlights={["Algorithmique avancée & Python Data", "Deep Learning & MLOps", "Projet tutoré d'IA appliquée"]}
-              href="/programmes/licence-professionnelle/ia-data-science"
-              isCatalogCard={true}
-            />
-
-            <ProgramCard
-              title="Licence Pro — Cybersécurité"
-              category="Licence Pro"
-              description="Formation d'experts en sécurité des systèmes d'information, pentest, audit de vulnérabilités, SOC et gestion d'incidents informatiques."
-              duration="1 an (Bac+3)"
-              ects="60"
-              targetPublic="Bac+2 en informatique, réseaux ou télécoms"
-              highlights={["Pentesting & Sécurité Réseaux", "Gestion des incidents SOC", "Préparation certifications CompTIA & Cisco"]}
-              href="/programmes/licence-professionnelle/cybersecurite"
-              isCatalogCard={true}
-            />
-
-            <ProgramCard
-              title="Licence Pro — Systèmes de Paiement Électronique"
-              category="Licence Pro"
-              description="Spécialisation unique en Afrique centrale aux technologies monétiques, norme PCI-DSS, infrastructure bancaire et sécurité des transactions."
-              duration="1 an (Bac+3)"
-              ects="60"
-              targetPublic="Bac+2 informatique, finance numérique ou gestion"
-              highlights={["Architecture Monétique & PCI-DSS", "Switch bancaire & Mobile Money", "Paiements électroniques & Blockchain"]}
-              href="/programmes/licence-professionnelle/systemes-paiement"
-              isCatalogCard={true}
-            />
-
-            <ProgramCard
-              title="Formations Continues Entreprises"
+              title="Formations Continues (Inter et Intra)"
               category="Continue"
-              description="Modules courts de haute spécialisation pour cadres et techniciens IT sur la Cybersécurité, l'IA, la Monétique et la Gouvernance IT."
-              duration="3 à 10 jours"
-              targetPublic="Ingénieurs, DSI, techniciens & administrateurs"
-              highlights={["4 Axes d'expertise métier", "Format présentiel sur-mesure", "Attestation de réussite Digi-SET"]}
+              description="Sessions de renforcement de compétences courtes ou sur-mesure, dispensées en format Inter-entreprises (dans nos centres) ou Intra-entreprise (dans vos locaux)."
+              duration="3 à 10 jours / Sur-mesure"
+              targetPublic="Cadres, Ingénieurs, DSI, techniciens & entreprises"
+              highlights={[
+                "Formations Inter-entreprises",
+                "Formations Intra-entreprise sur-mesure",
+                "Certifications Cisco, AWS, Microsoft, Linux",
+                "Ingénierie de formation & Audit des besoins",
+              ]}
               href="/programmes/formation-continue"
-              ctaText="Demander le catalogue pro"
+              ctaText="Explorer l'offre Inter & Intra"
               isCatalogCard={true}
             />
 
+            {/* BLOC 3 : Formations Online (DigiSET Online) */}
             <ProgramCard
-              title="DigiSET Online (À Distance)"
+              title="Formations Online (DigiSET Online)"
               category="Online"
-              description="Déclinaison 100% en ligne de nos programmes diplômants et certifiants avec plateforme interactive et accompagnement par tuteur dédié."
-              duration="Souple / Sur-mesure"
+              description="Déclinaison en ligne de nos programmes diplômants et certifiants avec plateforme LMS interactive, classes virtuelles et suivi personnalisé par tuteur dédié."
+              duration="Rythme flexible / À distance"
               targetPublic="Professionnels en activité & étudiants éloignés"
-              highlights={["Plateforme LMS moderne", "Classe virtuelle interactive", "Examen et diplôme identiques au présentiel"]}
+              highlights={[
+                "Plateforme e-learning interactive LMS",
+                "Accompagnement et tutorat individualisé",
+                "Classes virtuelles & laboratoires virtuels",
+                "Examens et diplômes identiques au présentiel",
+              ]}
               href="/programmes/digiset-online"
               ctaText="Découvrir DigiSET Online"
               isCatalogCard={true}
@@ -565,7 +548,7 @@ export default function AccueilPage() {
               <div className="rounded-2xl border border-slate-300 bg-white p-2 shadow-md overflow-hidden">
                 <div className="relative w-full h-[280px] sm:h-[360px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
                   <iframe
-                    title="Localisation Google Maps Digi-SET Institute"
+                    title="Localisation Google Maps DigiSET Institute"
                     src="https://maps.google.com/maps?q=Angondje,+Carrefour+Moussavou,+Akanda,+Libreville,+Gabon&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     width="100%"
                     height="100%"

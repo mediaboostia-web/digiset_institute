@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Inbox,
   Search,
@@ -20,6 +20,8 @@ import {
   Mail,
   PlusCircle,
   X,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 import {
   INITIAL_SUBMISSIONS,
@@ -45,12 +47,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
 
 export default function AdminSubmissionsPage() {
-  const [submissions, setSubmissions] = useState<AnySubmission[]>(INITIAL_SUBMISSIONS);
+  const [submissions, setSubmissions] = useState<AnySubmission[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  const fetchSubmissions = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/admin/submissions");
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data)) {
+        setSubmissions(json.data);
+      }
+    } catch (err) {
+      console.error("Erreur chargement soumissions:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubmissions();
+  }, []);
+
+  // State confirmation de suppression
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   // Soumission sélectionnée pour le tiroir/modal de détail
   const [selectedSubmission, setSelectedSubmission] = useState<AnySubmission | null>(null);
@@ -144,20 +170,44 @@ export default function AdminSubmissionsPage() {
   };
 
   // Mise à jour du statut d'une soumission
-  const handleUpdateStatus = (id: string, newStatus: SubmissionStatus) => {
+  const handleUpdateStatus = async (id: string, newStatus: SubmissionStatus) => {
+    const target = submissions.find((sub) => sub.id === id);
+    if (!target) return;
+
     setSubmissions((prev) =>
       prev.map((sub) => (sub.id === id ? { ...sub, status: newStatus } : sub))
     );
     if (selectedSubmission && selectedSubmission.id === id) {
       setSelectedSubmission((prev) => (prev ? { ...prev, status: newStatus } : null));
     }
+
+    try {
+      await fetch("/api/admin/submissions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, type: target.type, status: newStatus }),
+      });
+    } catch (err) {
+      console.error("Erreur mise à jour statut:", err);
+    }
   };
 
   // Suppression d'une soumission
-  const handleDeleteSubmission = (id: string) => {
+  const handleDeleteSubmission = async (id: string) => {
+    const target = submissions.find((sub) => sub.id === id);
+    if (!target) return;
+
     setSubmissions((prev) => prev.filter((sub) => sub.id !== id));
     if (selectedSubmission?.id === id) {
       setSelectedSubmission(null);
+    }
+
+    try {
+      await fetch(`/api/admin/submissions?id=${id}&type=${target.type}`, {
+        method: "DELETE",
+      });
+    } catch (err) {
+      console.error("Erreur suppression soumission:", err);
     }
   };
 
@@ -218,13 +268,13 @@ export default function AdminSubmissionsPage() {
       case "training":
         return (
           <span className="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-1 text-[11px] font-bold text-orange-700">
-            <Building className="h-3 w-3" /> Formation Pro
+            <Building className="h-3 w-3" /> Formation inter & intra entreprise
           </span>
         );
       case "lab":
         return (
           <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700">
-            <FlaskConical className="h-3 w-3" /> Location Labo
+            <FlaskConical className="h-3 w-3" /> Labo
           </span>
         );
       case "contact":
@@ -251,6 +301,16 @@ export default function AdminSubmissionsPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchSubmissions}
+            disabled={isLoading}
+            className="gap-2 text-xs font-semibold"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            Actualiser
+          </Button>
           <Button
             onClick={() => setIsCreateModalOpen(true)}
             className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs shadow-sm"
@@ -298,22 +358,27 @@ export default function AdminSubmissionsPage() {
             Toutes ({submissions.length})
           </TabsTrigger>
           <TabsTrigger value="registration" className="text-xs font-bold px-4">
-            Candidatures ({submissions.filter((s) => s.type === "registration").length})
+            Candidature ({submissions.filter((s) => s.type === "registration").length})
           </TabsTrigger>
           <TabsTrigger value="training" className="text-xs font-bold px-4">
-            Formations Continues ({submissions.filter((s) => s.type === "training").length})
+            Formation inter & intra entreprise ({submissions.filter((s) => s.type === "training").length})
           </TabsTrigger>
           <TabsTrigger value="lab" className="text-xs font-bold px-4">
-            Locations Labo ({submissions.filter((s) => s.type === "lab").length})
+            Labo ({submissions.filter((s) => s.type === "lab").length})
           </TabsTrigger>
           <TabsTrigger value="contact" className="text-xs font-bold px-4">
-            Messages Contact ({submissions.filter((s) => s.type === "contact").length})
+            Contact ({submissions.filter((s) => s.type === "contact").length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab} className="mt-4">
           <div className="rounded-xl border border-gray-200 bg-white shadow-xs overflow-hidden">
-            {filteredSubmissions.length === 0 ? (
+            {isLoading ? (
+              <div className="py-16 text-center">
+                <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-orange" />
+                <p className="mt-3 text-xs text-gray-500">Chargement des soumissions Supabase...</p>
+              </div>
+            ) : filteredSubmissions.length === 0 ? (
               <div className="py-12 text-center">
                 <Inbox className="mx-auto h-10 w-10 text-gray-300" />
                 <p className="mt-2 text-sm font-medium text-gray-600">Aucune soumission trouvée.</p>
@@ -387,7 +452,7 @@ export default function AdminSubmissionsPage() {
                                 variant="ghost"
                                 className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-700"
                                 title="Supprimer"
-                                onClick={() => handleDeleteSubmission(sub.id)}
+                                onClick={() => setDeleteTarget({ id: sub.id, name })}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -748,6 +813,20 @@ export default function AdminSubmissionsPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de Confirmation de Suppression */}
+      <ConfirmDeleteDialog
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            handleDeleteSubmission(deleteTarget.id);
+          }
+        }}
+        itemName={deleteTarget?.name}
+        title="Supprimer la soumission"
+        description="Cette soumission et ses données associées seront définitivement supprimées du back-office."
+      />
     </div>
   );
 }

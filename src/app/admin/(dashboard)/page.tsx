@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   UserPlus,
@@ -14,6 +14,8 @@ import {
   PlusCircle,
   Eye,
   GraduationCap,
+  Inbox,
+  Loader2,
 } from "lucide-react";
 import {
   INITIAL_SUBMISSIONS,
@@ -26,8 +28,26 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminDashboardPage() {
-  const [submissions] = useState<AnySubmission[]>(INITIAL_SUBMISSIONS);
+  const [submissions, setSubmissions] = useState<AnySubmission[]>([]);
   const [newsList] = useState<NewsItem[]>(INITIAL_NEWS);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch("/api/admin/submissions");
+        const json = await res.json();
+        if (json.ok && Array.isArray(json.data)) {
+          setSubmissions(json.data);
+        }
+      } catch (err) {
+        console.error("Erreur chargement tableau de bord:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   const kpis = calculateKPIs(submissions);
 
@@ -73,7 +93,7 @@ export default function AdminDashboardPage() {
           Tableau de Bord Administrateur
         </h1>
         <p className="text-sm text-gray-600 mt-1">
-          Bienvenue sur le portail de gestion de Digi-SET Institute. Voici le résumé des activités et soumissions récentes.
+          Bienvenue sur le portail de gestion de DigiSET Institute. Voici le résumé des activités et soumissions récentes.
         </p>
       </div>
 
@@ -191,57 +211,65 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-gray-50 uppercase text-gray-500 font-semibold border-b border-gray-100">
-                  <tr>
-                    <th className="px-6 py-3">Demandeur / Organisation</th>
-                    <th className="px-6 py-3">Type de demande</th>
-                    <th className="px-6 py-3">Date</th>
-                    <th className="px-6 py-3">Statut</th>
-                    <th className="px-6 py-3 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
-                  {recentSubmissions.map((sub) => {
-                    const name =
-                      sub.type === "training"
-                        ? sub.company_name
-                        : sub.type === "lab"
-                        ? sub.institution_name
-                        : sub.full_name;
+              {recentSubmissions.length === 0 ? (
+                <div className="p-8 text-center space-y-2">
+                  <Inbox className="h-8 w-8 text-gray-300 mx-auto" />
+                  <p className="text-xs font-bold text-gray-700">Aucune soumission reçue pour le moment.</p>
+                  <p className="text-[11px] text-gray-500">Les nouvelles candidatures et demandes s&apos;afficheront ici en temps réel.</p>
+                </div>
+              ) : (
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-gray-50 uppercase text-gray-500 font-semibold border-b border-gray-100">
+                    <tr>
+                      <th className="px-6 py-3">Demandeur / Organisation</th>
+                      <th className="px-6 py-3">Type de demande</th>
+                      <th className="px-6 py-3">Date</th>
+                      <th className="px-6 py-3">Statut</th>
+                      <th className="px-6 py-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
+                    {recentSubmissions.map((sub) => {
+                      const name =
+                        sub.type === "training"
+                          ? sub.company_name
+                          : sub.type === "lab"
+                          ? sub.institution_name
+                          : sub.full_name;
 
-                    return (
-                      <tr key={sub.id} className="hover:bg-gray-50/80 transition-colors">
-                        <td className="px-6 py-4">
-                          <p className="font-bold text-gray-900">{name}</p>
-                          <p className="text-[11px] text-gray-500">{sub.email}</p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="inline-block rounded-md bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-700">
-                            {getSubmissionTypeLabel(sub.type)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-gray-500">
-                          {new Date(sub.created_at).toLocaleDateString("fr-FR", {
-                            day: "2-digit",
-                            month: "short",
-                          })}
-                        </td>
-                        <td className="px-6 py-4">{getStatusBadge(sub.status)}</td>
-                        <td className="px-6 py-4 text-right">
-                          <Link
-                            href="/admin/soumissions"
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-brand-blue transition-colors"
-                            title="Inspecter la soumission"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                      return (
+                        <tr key={sub.id} className="hover:bg-gray-50/80 transition-colors">
+                          <td className="px-6 py-4">
+                            <p className="font-bold text-gray-900">{name}</p>
+                            <p className="text-[11px] text-gray-500">{sub.email}</p>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="inline-block rounded-md bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-700">
+                              {getSubmissionTypeLabel(sub.type)}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-gray-500">
+                            {new Date(sub.created_at).toLocaleDateString("fr-FR", {
+                              day: "2-digit",
+                              month: "short",
+                            })}
+                          </td>
+                          <td className="px-6 py-4">{getStatusBadge(sub.status)}</td>
+                          <td className="px-6 py-4 text-right">
+                            <Link
+                              href="/admin/soumissions"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-brand-blue transition-colors"
+                              title="Inspecter la soumission"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 

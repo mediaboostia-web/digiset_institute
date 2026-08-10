@@ -13,7 +13,7 @@ const ARTICLES = [
     date: "15 Juillet 2026",
     category: "Scolarité",
     image: "/images/img/Image_3.jpg",
-    excerpt: "Digi-SET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
+    excerpt: "DigiSET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
   },
   {
     slug: "partenariat-certifications-internationales",
@@ -63,7 +63,7 @@ export default function ActualitesPage() {
     <div>
       <HeroSection
         badge="Presse & Événements"
-        title="Actualités & Blog de Digi-SET Institute"
+        title="Actualités & Blog de DigiSET Institute"
         subtitle="Suivez toute l'actualité institutionnelle, académique et événementielle de notre établissement."
         breadcrumbs={[{ label: "Actualités" }]}
       />

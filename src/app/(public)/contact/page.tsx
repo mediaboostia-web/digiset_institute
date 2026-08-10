@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 export const metadata: Metadata = {
   title: "Contact & Accès Campus Akanda — Foire Aux Questions (FAQ)",
   description:
-    "Contactez le secrétariat académique de Digi-SET Institute à Akanda, Gabon. Formulaire de contact, numéros de téléphone, carte interactive Google Maps et FAQ.",
+    "Contactez le secrétariat académique de DigiSET Institute à Akanda, Gabon. Formulaire de contact, numéros de téléphone, carte interactive Google Maps et FAQ.",
 };
 
 export default function ContactPage() {
@@ -15,7 +15,7 @@ export default function ContactPage() {
     <div>
       <HeroSection
         badge="Accès & Secrétariat Académique"
-        title="Contactez Digi-SET Institute"
+        title="Contactez DigiSET Institute"
         subtitle="Nos conseillers académiques et responsables d'admission sont à votre disposition pour vous orienter et répondre à vos questions."
         breadcrumbs={[{ label: "Contact" }]}
       />
@@ -77,7 +77,7 @@ export default function ContactPage() {
               <div className="rounded-xl border border-slate-300 bg-white p-2 shadow-sm overflow-hidden space-y-2">
                 <div className="relative w-full h-[260px] rounded-lg overflow-hidden border border-slate-200">
                   <iframe
-                    title="Localisation Google Maps Digi-SET Institute Contact"
+                    title="Localisation Google Maps DigiSET Institute Contact"
                     src="https://maps.google.com/maps?q=Angondje,+Carrefour+Moussavou,+Akanda,+Libreville,+Gabon&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     width="100%"
                     height="100%"

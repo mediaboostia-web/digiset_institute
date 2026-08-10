@@ -14,7 +14,7 @@ export default function PolitiqueConfidentialitePage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <h2 className="font-heading text-lg font-bold text-slate-900">1. Collecte des Données Personnelles</h2>
           <p>
-            Digi-SET Institute s&apos;engage à protéger la vie privée de ses utilisateurs. Les données personnelles collectées via nos formulaires en ligne (nom, prénom, email, téléphone, diplômes) sont strictement réservées au traitement de vos candidatures et demandes d&apos;information.
+            DigiSET Institute s&apos;engage à protéger la vie privée de ses utilisateurs. Les données personnelles collectées via nos formulaires en ligne (nom, prénom, email, téléphone, diplômes) sont strictement réservées au traitement de vos candidatures et demandes d&apos;information.
           </p>
 
           <h2 className="font-heading text-lg font-bold text-slate-900 pt-4">2. Destinataires et Conservation</h2>
