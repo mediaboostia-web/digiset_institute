@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   UserPlus,
   Edit3,
@@ -8,7 +8,7 @@ import {
   Mail,
   Upload,
   X,
-  Share2,
+  Loader2,
 } from "lucide-react";
 import { INITIAL_TEAM, TeamMember } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
@@ -51,9 +51,11 @@ function FacebookIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
 
 export default function AdminTeamPage() {
   const [teamList, setTeamList] = useState<TeamMember[]>(INITIAL_TEAM);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -78,6 +80,25 @@ export default function AdminTeamPage() {
     linkedin_url: "",
     sort_order: teamList.length + 1,
   });
+
+  const fetchTeam = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/team");
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data)) {
+        setTeamList(json.data);
+      }
+    } catch (err) {
+      console.error("Erreur chargement équipe:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTeam();
+  }, []);
 
   const openCreateModal = () => {
     setEditingMember(null);
@@ -114,56 +135,54 @@ export default function AdminTeamPage() {
   const handlePhotoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, photo_url: imageUrl }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Url = reader.result as string;
+        setFormData((prev) => ({ ...prev, photo_url: base64Url }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleSaveMember = (e: React.FormEvent) => {
+  const handleSaveMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.full_name || !formData.role_title) return;
 
-    if (editingMember) {
-      setTeamList((prev) =>
-        prev.map((item) =>
-          item.id === editingMember.id
-            ? {
-                ...item,
-                full_name: formData.full_name,
-                role_title: formData.role_title,
-                pole: formData.pole,
-                photo_url: formData.photo_url,
-                bio: formData.bio,
-                email: formData.email,
-                facebook_url: formData.facebook_url,
-                linkedin_url: formData.linkedin_url,
-                sort_order: formData.sort_order,
-              }
-            : item
-        )
-      );
-    } else {
-      const newMember: TeamMember = {
-        id: `team-${Date.now()}`,
-        full_name: formData.full_name,
-        role_title: formData.role_title,
-        pole: formData.pole,
-        photo_url: formData.photo_url,
-        bio: formData.bio,
-        email: formData.email,
-        facebook_url: formData.facebook_url,
-        linkedin_url: formData.linkedin_url,
-        sort_order: formData.sort_order,
-        created_at: new Date().toISOString(),
-      };
-      setTeamList((prev) => [...prev, newMember].sort((a, b) => a.sort_order - b.sort_order));
-    }
+    setIsSubmitting(true);
 
-    setIsModalOpen(false);
+    try {
+      if (editingMember) {
+        await fetch("/api/team", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: editingMember.id,
+            ...formData,
+          }),
+        });
+      } else {
+        await fetch("/api/team", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      }
+      await fetchTeam();
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Erreur enregistrement membre:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setTeamList((prev) => prev.filter((item) => item.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      await fetch(`/api/team?id=${id}`, { method: "DELETE" });
+      await fetchTeam();
+    } catch (err) {
+      console.error("Erreur suppression membre:", err);
+    }
   };
 
   const sortedTeam = [...teamList].sort((a, b) => a.sort_order - b.sort_order);
@@ -188,105 +207,116 @@ export default function AdminTeamPage() {
         </Button>
       </div>
 
-      {/* Cartes des Membres de l'Équipe */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {sortedTeam.map((member) => (
-          <div
-            key={member.id}
-            className="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-xs transition-shadow hover:shadow-md"
-          >
-            <div>
-              <div className="flex items-start justify-between">
-                <Avatar className="h-16 w-16 border-2 border-brand-blue/20">
-                  <AvatarImage src={member.photo_url} alt={member.full_name} />
-                  <AvatarFallback className="bg-brand-blue-dark text-white font-bold text-base">
-                    {member.full_name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+      {isLoading ? (
+        <div className="py-16 text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-brand-blue mx-auto" />
+          <p className="text-xs font-semibold text-gray-500">Chargement de l'organigramme...</p>
+        </div>
+      ) : sortedTeam.length === 0 ? (
+        <div className="py-12 text-center border rounded-xl bg-white">
+          <p className="text-sm font-semibold text-gray-600">Aucun membre dans l'organigramme.</p>
+        </div>
+      ) : (
+        /* Cartes des Membres de l'Équipe */
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {sortedTeam.map((member) => (
+            <div
+              key={member.id}
+              className="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-xs transition-shadow hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-start justify-between">
+                  <Avatar className="h-16 w-16 border-2 border-brand-blue/20">
+                    <AvatarImage src={member.photo_url} alt={member.full_name} />
+                    <AvatarFallback className="bg-brand-blue-dark text-white font-bold text-base">
+                      {member.full_name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
 
-                <Badge variant="outline" className="text-[10px] font-bold text-gray-600 bg-gray-50">
-                  Ordre #{member.sort_order}
-                </Badge>
-              </div>
+                  <Badge variant="outline" className="text-[10px] font-bold text-gray-600 bg-gray-50">
+                    Ordre #{member.sort_order}
+                  </Badge>
+                </div>
 
-              <div className="mt-4">
-                <h3 className="font-heading text-base font-bold text-gray-900">
-                  {member.full_name}
-                </h3>
-                <p className="text-xs font-semibold text-brand-blue mt-0.5">
-                  {member.role_title}
-                </p>
-                <Badge className="mt-2 bg-gray-100 text-gray-700 hover:bg-gray-100 font-medium text-[10px]">
-                  {member.pole || "Direction"}
-                </Badge>
-              </div>
+                <div className="mt-4">
+                  <h3 className="font-heading text-base font-bold text-gray-900">
+                    {member.full_name}
+                  </h3>
+                  <p className="text-xs font-semibold text-brand-blue mt-0.5">
+                    {member.role_title}
+                  </p>
+                  <Badge className="mt-2 bg-gray-100 text-gray-700 hover:bg-gray-100 font-medium text-[10px]">
+                    {member.pole || "Direction"}
+                  </Badge>
+                </div>
 
-              {member.bio && (
-                <p className="mt-3 text-xs text-gray-600 line-clamp-3 leading-relaxed">
-                  {member.bio}
-                </p>
-              )}
-
-              {/* Coordonnées & Réseaux Sociaux */}
-              <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 text-xs">
-                {member.email && (
-                  <div className="flex items-center gap-1.5 text-gray-500">
-                    <Mail className="h-3.5 w-3.5 text-gray-400 shrink-0" />
-                    <a href={`mailto:${member.email}`} className="hover:text-brand-blue font-medium truncate">
-                      {member.email}
-                    </a>
-                  </div>
+                {member.bio && (
+                  <p className="mt-3 text-xs text-gray-600 line-clamp-3 leading-relaxed">
+                    {member.bio}
+                  </p>
                 )}
 
-                <div className="flex items-center gap-2 pt-1">
-                  {member.linkedin_url && (
-                    <a
-                      href={member.linkedin_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
-                      title="Profil LinkedIn"
-                    >
-                      <LinkedInIcon className="h-3 w-3" /> LinkedIn
-                    </a>
+                {/* Coordonnées & Réseaux Sociaux */}
+                <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 text-xs">
+                  {member.email && (
+                    <div className="flex items-center gap-1.5 text-gray-500">
+                      <Mail className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                      <a href={`mailto:${member.email}`} className="hover:text-brand-blue font-medium truncate">
+                        {member.email}
+                      </a>
+                    </div>
                   )}
 
-                  {member.facebook_url && (
-                    <a
-                      href={member.facebook_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-md bg-sky-50 px-2 py-1 text-[11px] font-bold text-sky-700 hover:bg-sky-100 transition-colors"
-                      title="Page Facebook"
-                    >
-                      <FacebookIcon className="h-3 w-3" /> Facebook
-                    </a>
-                  )}
+                  <div className="flex items-center gap-2 pt-1">
+                    {member.linkedin_url && (
+                      <a
+                        href={member.linkedin_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+                        title="Profil LinkedIn"
+                      >
+                        <LinkedInIcon className="h-3 w-3" /> LinkedIn
+                      </a>
+                    )}
+
+                    {member.facebook_url && (
+                      <a
+                        href={member.facebook_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-md bg-sky-50 px-2 py-1 text-[11px] font-bold text-sky-700 hover:bg-sky-100 transition-colors"
+                        title="Page Facebook"
+                      >
+                        <FacebookIcon className="h-3 w-3" /> Facebook
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-6 flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 gap-1.5 text-xs font-bold text-gray-700"
-                onClick={() => openEditModal(member)}
-              >
-                <Edit3 className="h-3.5 w-3.5" /> Modifier
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-8 text-xs text-red-500 hover:bg-red-50 hover:text-red-700"
-                onClick={() => setDeleteTarget({ id: member.id, name: member.full_name })}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
+              <div className="mt-6 flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 gap-1.5 text-xs font-bold text-gray-700"
+                  onClick={() => openEditModal(member)}
+                >
+                  <Edit3 className="h-3.5 w-3.5" /> Modifier
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 text-xs text-red-500 hover:bg-red-50 hover:text-red-700"
+                  onClick={() => setDeleteTarget({ id: member.id, name: member.full_name })}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Modal d'édition / création de membre réactif */}
       {isModalOpen && (
@@ -374,7 +404,7 @@ export default function AdminTeamPage() {
                       <AvatarFallback>DS</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-gray-900 truncate">Photo chargée</p>
+                      <p className="text-xs font-bold text-gray-900 truncate">Photo sélectionnée</p>
                     </div>
                     <Button
                       type="button"
@@ -395,6 +425,34 @@ export default function AdminTeamPage() {
                     <span className="text-xs font-bold text-gray-900">Téléverser une photo depuis votre appareil</span>
                   </div>
                 )}
+
+                {/* Choix parmi les photos de l'institut */}
+                <div className="pt-2 space-y-1">
+                  <span className="text-[11px] text-gray-500 font-semibold">Ou choisir une photo officielle :</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "Fondateur", url: "/brand/fondateur.png" },
+                      { label: "Bâtiment / Entrée", url: "/images/img/Image_3.jpg" },
+                      { label: "Étudiants / Campus", url: "/images/img/Image_4.jpg" },
+                      { label: "Laboratoires TP", url: "/images/img/Img_2.jpg" },
+                      { label: "Conférences", url: "/images/img/Image6.jpg" },
+                      { label: "Informatique", url: "/images/img/Image7.jpg" },
+                    ].map((stock) => (
+                      <button
+                        key={stock.url}
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, photo_url: stock.url }))}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded border transition-all cursor-pointer ${
+                          formData.photo_url === stock.url
+                            ? "bg-brand-blue text-white border-brand-blue"
+                            : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                        }`}
+                      >
+                        + {stock.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
                 <Input
                   placeholder="Ou URL externe : https://..."
@@ -462,8 +520,20 @@ export default function AdminTeamPage() {
                 >
                   Annuler
                 </Button>
-                <Button type="submit" className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-bold">
-                  {editingMember ? "Enregistrer" : "Ajouter le membre"}
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-bold"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> Enregistrement...
+                    </>
+                  ) : editingMember ? (
+                    "Enregistrer les modifications"
+                  ) : (
+                    "Ajouter le membre"
+                  )}
                 </Button>
               </div>
             </form>

@@ -29,12 +29,12 @@ export const metadata: Metadata = {
     "DigiSET Institute (Akanda, Gabon) forme les futurs leaders en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique). Classe préparatoire MP2I (120 ECTS), Licence Professionnelle (60 ECTS), certifications Cisco, AWS, Microsoft, Linux et location de laboratoires TP haute technologie.",
   icons: {
     icon: [
-      { url: "/brand/Digiset-institute Favicon.png", type: "image/png" },
-      { url: "/brand/Digiset Logo officiel.png", type: "image/png" },
-      { url: "/icon.png", type: "image/png" },
       { url: "/favicon.ico" },
+      { url: "/icon.png", type: "image/png" },
+      { url: "/brand/Digiset-institute Favicon.png", type: "image/png" },
+      { url: "/brand/logo-digiset.png", type: "image/png" },
     ],
-    shortcut: ["/brand/Digiset-institute Favicon.png"],
+    shortcut: ["/favicon.ico"],
     apple: [
       { url: "/brand/Digiset-institute Favicon.png", sizes: "180x180", type: "image/png" },
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
@@ -136,6 +136,8 @@ export default function RootLayout({
       className={`${sora.variable} ${inter.variable} h-full antialiased`}
     >
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.png" type="image/png" />
         <link rel="icon" href="/brand/Digiset-institute Favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/brand/Digiset-institute Favicon.png" />
         <script

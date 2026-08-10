@@ -1,63 +1,73 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { HeroSection } from "@/components/shared/hero-section";
 import { FounderSection } from "@/components/shared/founder-section";
-import { Globe, Mail, Phone, ShieldCheck, Award, Building2 } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Institution & Stratégie — Organigramme et Partenaires",
-  description:
-    "Découvrez l'histoire, la gouvernance en 3 rangs hiérarchiques, l'organigramme de DigiSET Institute et nos partenaires institutionnels et technologiques au Gabon.",
-};
+import { Globe, Mail, Phone, Loader2 } from "lucide-react";
 
 interface TeamMember {
-  name: string;
-  role: string;
-  department: string;
-  image: string;
-  linkedin?: string;
+  id?: string;
+  full_name: string;
+  role_title: string;
+  pole?: string;
+  photo_url?: string;
+  bio?: string;
   email?: string;
   phone?: string;
+  linkedin_url?: string;
+  facebook_url?: string;
+  sort_order?: number;
 }
 
 function TeamMemberCard({ member }: { member: TeamMember }) {
+  const photo = member.photo_url || "/brand/fondateur.png";
+
   return (
     <div className="group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-xs hover:border-2 hover:border-brand-blue hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
       <div>
         {/* Photo avec cadre soigné */}
         <div className="relative h-48 w-full rounded-xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
           <Image
-            src={member.image}
-            alt={member.name}
+            src={photo}
+            alt={member.full_name}
             fill
+            unoptimized
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, 300px"
           />
-          <div className="absolute top-2.5 right-2.5 bg-brand-blue/90 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-xs">
-            {member.department}
-          </div>
+          {member.pole && (
+            <div className="absolute top-2.5 right-2.5 bg-brand-blue/90 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-xs">
+              {member.pole}
+            </div>
+          )}
         </div>
 
         {/* Identité & Poste */}
         <h4 className="font-heading text-base font-bold text-slate-900 group-hover:text-brand-blue transition-colors">
-          {member.name}
+          {member.full_name}
         </h4>
         <p className="text-xs font-semibold text-brand-orange mt-0.5">
-          {member.role}
+          {member.role_title}
         </p>
+
+        {member.bio && (
+          <p className="text-xs text-slate-600 mt-2 line-clamp-3 leading-relaxed">
+            {member.bio}
+          </p>
+        )}
       </div>
 
       {/* Réseaux sociaux & Contact */}
       <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {member.linkedin && (
+          {member.linkedin_url && (
             <a
-              href={member.linkedin}
+              href={member.linkedin_url}
               target="_blank"
               rel="noopener noreferrer"
               className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-brand-blue hover:text-white transition-colors"
-              aria-label={`LinkedIn de ${member.name}`}
+              aria-label={`LinkedIn de ${member.full_name}`}
             >
               <Globe className="h-3.5 w-3.5" />
             </a>
@@ -66,7 +76,7 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
             <a
               href={`mailto:${member.email}`}
               className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-brand-blue hover:text-white transition-colors"
-              aria-label={`Email de ${member.name}`}
+              aria-label={`Email de ${member.full_name}`}
             >
               <Mail className="h-3.5 w-3.5" />
             </a>
@@ -75,7 +85,7 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
             <a
               href={`tel:${member.phone}`}
               className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-brand-blue hover:text-white transition-colors"
-              aria-label={`Téléphone de ${member.name}`}
+              aria-label={`Téléphone de ${member.full_name}`}
             >
               <Phone className="h-3.5 w-3.5" />
             </a>
@@ -88,68 +98,37 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
 }
 
 export default function InstitutionPage() {
-  // Rang 1 : Direction Générale
-  const RANG_1: TeamMember[] = [
-    {
-      name: "Dr ABAGA ABESSOLO Michel Audrey",
-      role: "Fondateur & Directeur Général",
-      department: "Direction Générale",
-      image: "/brand/fondateur.png",
-      linkedin: "https://linkedin.com",
-      email: "direction@digiset-gabon.com",
-      phone: "+24174000000",
-    },
-  ];
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Rang 2 : Pôles Formations & Académique
-  const RANG_2: TeamMember[] = [
-    {
-      name: "Prof. Jean-Marc ONDO",
-      role: "Directeur des Études & Maquettes ECTS",
-      department: "Pôle Pédagogie & Recherche",
-      image: "/images/img/Image6.jpg",
-      linkedin: "https://linkedin.com",
-      email: "etudes@digiset-gabon.com",
-    },
-    {
-      name: "Dr. Sylvie NGUEMA",
-      role: "Présidente du Conseil Scientifique",
-      department: "Conseil Académique",
-      image: "/images/img/Image7.jpg",
-      linkedin: "https://linkedin.com",
-      email: "conseil@digiset-gabon.com",
-    },
-  ];
+  useEffect(() => {
+    async function loadTeam() {
+      try {
+        const res = await fetch("/api/team");
+        const json = await res.json();
+        if (json.ok && Array.isArray(json.data)) {
+          setTeamMembers(json.data);
+        }
+      } catch (err) {
+        console.error("Erreur chargement organigramme public:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadTeam();
+  }, []);
 
-  // Rang 3 : Pôle Services, Partenariats & Plateaux TP
-  const RANG_3: TeamMember[] = [
-    {
-      name: "Ing. Patrick ELLA",
-      role: "Chef du Pôle Cybersécurité & Labos SOC",
-      department: "Pôle Cybersécurité",
-      image: "/images/img/Image_4.jpg",
-      linkedin: "https://linkedin.com",
-      email: "cyber@digiset-gabon.com",
-    },
-    {
-      name: "Dr. Marc MBOUMBA",
-      role: "Chef du Pôle IA & Data Science",
-      department: "Pôle IA & Data",
-      image: "/images/img/Img_2.jpg",
-      linkedin: "https://linkedin.com",
-      email: "ia@digiset-gabon.com",
-    },
-    {
-      name: "Mme Carine BEKALE",
-      role: "Responsable Pôle Monétique & Paiements",
-      department: "Pôle Monétique PCI-DSS",
-      image: "/images/img/Image_3.jpg",
-      linkedin: "https://linkedin.com",
-      email: "monetique@digiset-gabon.com",
-    },
-  ];
+  // Découpage dynamique par pôle
+  const rang1 = teamMembers.filter((m) => m.pole === "Direction Générale" || m.role_title.includes("Fondateur") || m.role_title.includes("Directeur Général"));
+  const rang2 = teamMembers.filter((m) => (m.pole === "Direction Académique" || m.pole === "Corps Professoral") && !rang1.includes(m));
+  const rang3 = teamMembers.filter((m) => !rang1.includes(m) && !rang2.includes(m));
 
-  // Partenaires avec vrais visuels de logos dans "certifications" / "img" / "brand"
+  // Fallback si filtre vide
+  const finalRang1 = rang1.length > 0 ? rang1 : teamMembers.slice(0, 1);
+  const finalRang2 = rang2.length > 0 ? rang2 : teamMembers.slice(1, 3);
+  const finalRang3 = rang3.length > 0 ? rang3 : teamMembers.slice(3);
+
+  // Partenaires
   const PARTENAIRES_OFFICIELS = [
     {
       name: "Cisco Networking Academy",
@@ -195,7 +174,7 @@ export default function InstitutionPage() {
       {/* Le Mot du Fondateur & Directeur Général */}
       <FounderSection />
 
-      {/* ORGANIGRAMME HIÉRARCHIQUE EN 3 RANGS */}
+      {/* ORGANIGRAMME HIÉRARCHIQUE EN 3 RANGS DYNAMIQUE */}
       <section className="py-16 bg-white border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -207,54 +186,69 @@ export default function InstitutionPage() {
               Organigramme Structuré en 3 Rangs Hiérarchiques
             </h2>
             <p className="text-xs sm:text-sm text-slate-600">
-              Présentation visuelle de l&apos;équipe dirigeante, des responsables de pôles de formation et des plateaux techniques.
+              Présentation en temps réel de l&apos;équipe dirigeante, des responsables de pôles de formation et des plateaux techniques.
             </p>
           </div>
 
-          {/* RANG 1 : Direction Générale */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-              <span className="h-3 w-3 rounded-full bg-brand-orange" />
-              <h3 className="font-heading text-sm font-extrabold text-slate-900 uppercase tracking-wider">
-                Rang 1 — Direction Générale & Présidence
-              </h3>
+          {isLoading ? (
+            <div className="py-16 text-center space-y-3">
+              <Loader2 className="h-8 w-8 animate-spin text-brand-blue mx-auto" />
+              <p className="text-xs font-semibold text-slate-500">Chargement de l&apos;organigramme en direct...</p>
             </div>
-            <div className="flex justify-center">
-              <div className="w-full max-w-sm">
-                <TeamMemberCard member={RANG_1[0]} />
-              </div>
-            </div>
-          </div>
+          ) : (
+            <>
+              {/* RANG 1 : Direction Générale */}
+              {finalRang1.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                    <span className="h-3 w-3 rounded-full bg-brand-orange" />
+                    <h3 className="font-heading text-sm font-extrabold text-slate-900 uppercase tracking-wider">
+                      Rang 1 — Direction Générale & Présidence
+                    </h3>
+                  </div>
+                  <div className="flex justify-center">
+                    <div className="w-full max-w-sm">
+                      <TeamMemberCard member={finalRang1[0]} />
+                    </div>
+                  </div>
+                </div>
+              )}
 
-          {/* RANG 2 : Pôles Formations & Académique */}
-          <div className="space-y-4 pt-4">
-            <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-              <span className="h-3 w-3 rounded-full bg-brand-blue" />
-              <h3 className="font-heading text-sm font-extrabold text-slate-900 uppercase tracking-wider">
-                Rang 2 — Pôles Formations & Direction Académique
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {RANG_2.map((m, i) => (
-                <TeamMemberCard key={i} member={m} />
-              ))}
-            </div>
-          </div>
+              {/* RANG 2 : Pôles Formations & Académique */}
+              {finalRang2.length > 0 && (
+                <div className="space-y-4 pt-4">
+                  <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                    <span className="h-3 w-3 rounded-full bg-brand-blue" />
+                    <h3 className="font-heading text-sm font-extrabold text-slate-900 uppercase tracking-wider">
+                      Rang 2 — Pôles Formations & Direction Académique
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                    {finalRang2.map((m, i) => (
+                      <TeamMemberCard key={m.id || i} member={m} />
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* RANG 3 : Pôle Services, Partenariats & Plateaux TP */}
-          <div className="space-y-4 pt-4">
-            <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-              <span className="h-3 w-3 rounded-full bg-emerald-600" />
-              <h3 className="font-heading text-sm font-extrabold text-slate-900 uppercase tracking-wider">
-                Rang 3 — Pôle Services, Partenariats & Plateaux Techniques TP
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {RANG_3.map((m, i) => (
-                <TeamMemberCard key={i} member={m} />
-              ))}
-            </div>
-          </div>
+              {/* RANG 3 : Pôle Services, Partenariats & Plateaux TP */}
+              {finalRang3.length > 0 && (
+                <div className="space-y-4 pt-4">
+                  <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                    <span className="h-3 w-3 rounded-full bg-emerald-600" />
+                    <h3 className="font-heading text-sm font-extrabold text-slate-900 uppercase tracking-wider">
+                      Rang 3 — Pôle Services, Partenariats & Plateaux Techniques TP
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {finalRang3.map((m, i) => (
+                      <TeamMemberCard key={m.id || i} member={m} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
 
         </div>
       </section>
