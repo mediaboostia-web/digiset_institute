@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, Settings, LogOut, Inbox } from "lucide-react";
+import { Bell, Settings, LogOut, Inbox, FileText, Briefcase, Microscope, Mail, ArrowRight } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,11 +16,51 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/client";
 
+interface NotificationItem {
+  id: string;
+  typeLabel: string;
+  name: string;
+  date: string;
+  type: "registration" | "training" | "lab" | "contact";
+}
+
 export function AdminHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch("/api/admin/submissions");
+      const json = await res.json();
+
+      if (json.ok && Array.isArray(json.data)) {
+        const newSubmissions = json.data.filter((item: { status: string }) => item.status === "nouveau");
+        setUnreadCount(newSubmissions.length);
+
+        const formatted: NotificationItem[] = newSubmissions.slice(0, 5).map((item: { id: string; type: string; fullName?: string; name?: string; createdAt: string }) => {
+          let label = "Candidature";
+          if (item.type === "training-request") label = "Formation Continue";
+          if (item.type === "lab-request") label = "Location Laboratoire";
+          if (item.type === "contact") label = "Message Contact";
+
+          return {
+            id: item.id,
+            typeLabel: label,
+            name: item.fullName || item.name || "Demandeur",
+            date: new Date(item.createdAt).toLocaleDateString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+            type: item.type as "registration" | "training" | "lab" | "contact",
+          };
+        });
+
+        setNotifications(formatted);
+      }
+    } catch (err) {
+      console.error("Erreur chargement notifications admin:", err);
+    }
+  };
 
   useEffect(() => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -32,6 +72,10 @@ export function AdminHeader() {
         }
       });
     }
+
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 15000); // Polling toutes les 15s
+    return () => clearInterval(interval);
   }, []);
 
   // Nom dynamique basé sur la route
@@ -61,6 +105,19 @@ export function AdminHeader() {
     router.push("/admin/login");
   };
 
+  const getIcon = (type: string) => {
+    switch (type) {
+      case "registration":
+        return <FileText className="h-4 w-4 text-brand-orange" />;
+      case "training-request":
+        return <Briefcase className="h-4 w-4 text-brand-blue" />;
+      case "lab-request":
+        return <Microscope className="h-4 w-4 text-purple-600" />;
+      default:
+        return <Mail className="h-4 w-4 text-emerald-600" />;
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-white px-6 shadow-xs">
       <div className="flex items-center gap-3">
@@ -78,7 +135,7 @@ export function AdminHeader() {
           <DropdownMenuTrigger className="relative rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-brand-blue-dark focus:outline-none cursor-pointer">
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-orange text-[9px] font-extrabold text-white ring-2 ring-white">
+              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-orange text-[10px] font-extrabold text-white ring-2 ring-white animate-pulse">
                 {unreadCount}
               </span>
             )}
@@ -101,18 +158,40 @@ export function AdminHeader() {
                   <Inbox className="h-7 w-7 text-gray-300 mx-auto" />
                   <p className="font-bold text-gray-700">Aucune nouvelle notification</p>
                   <p className="text-[11px] text-gray-500">
-                    Les futurs leads et candidatures étudiants s&apos;afficheront ici.
+                    Les futurs leads et candidatures étudiants s&apos;afficheront ici en temps réel.
                   </p>
                 </div>
-              ) : null}
+              ) : (
+                notifications.map((notif) => (
+                  <Link
+                    key={notif.id}
+                    href="/admin/soumissions"
+                    className="flex items-start gap-3 p-3 hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="p-2 rounded-lg bg-slate-100 shrink-0">
+                      {getIcon(notif.type)}
+                    </div>
+                    <div className="space-y-0.5 flex-1 min-w-0">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-bold text-brand-blue">{notif.typeLabel}</span>
+                        <span className="text-slate-400 text-[10px]">{notif.date}</span>
+                      </div>
+                      <p className="font-semibold text-slate-800 truncate">{notif.name}</p>
+                      <p className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+                        ● Nouvelle soumission reçue
+                      </p>
+                    </div>
+                  </Link>
+                ))
+              )}
             </div>
 
-            <div className="border-t border-gray-100 p-2 text-center bg-gray-50">
+            <div className="border-t border-gray-100 p-2.5 text-center bg-gray-50">
               <Link
                 href="/admin/soumissions"
-                className="text-xs font-bold text-brand-blue hover:text-brand-blue-dark"
+                className="inline-flex items-center gap-1 text-xs font-bold text-brand-blue hover:text-brand-blue-dark"
               >
-                Voir toutes les soumissions &rarr;
+                Voir toutes les soumissions <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           </DropdownMenuContent>

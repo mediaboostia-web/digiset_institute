@@ -1,40 +1,32 @@
 import Link from "next/link";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { HeroSection } from "@/components/shared/hero-section";
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { FormattedArticleBody } from "@/components/shared/formatted-article-body";
 import { INITIAL_NEWS, NewsItem } from "@/lib/admin-data";
-import { Calendar, ArrowLeft, Tag, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Calendar, ArrowLeft, Tag, Sparkles, ArrowRight } from "lucide-react";
 
-// Liste d'articles de démonstration et réels
-const SAMPLE_ARTICLES: Record<string, NewsItem> = {
-  "lancement-officiel-activites-septembre-2026": INITIAL_NEWS[0],
-  "lancement-inscriptions-rentree-2026": {
-    id: "news-2",
-    slug: "lancement-inscriptions-rentree-2026",
-    title: "Lancement Officiel des Inscriptions pour la Rentrée de Septembre 2026",
-    cover_image_url: "/images/img/Image_3.jpg",
-    excerpt:
-      "DigiSET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
-    body: `L'Établissement Supérieur Privé **DigiSET Institute** à Libreville annonce le lancement officiel des inscriptions pour l'année académique 2026-2027.
+async function getArticleBySlug(slug: string): Promise<NewsItem | null> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/news?slug=${slug}&status=published`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
+        return json.data[0];
+      }
+    }
+  } catch (err) {
+    console.error("Erreur récupération article par slug:", err);
+  }
 
-## Filières proposées à l'Admission
-
-1. **[Classe Préparatoire Scientifique MP2I](/programmes/classe-preparatoire)** : Formation intensive de 2 ans pour maîtriser les mathématiques, la physique et l'informatique.
-2. **[Licence Professionnelle IA & Data Science](/programmes/licence-professionnelle/ia-data-science)** : Maîtrisez le Machine Learning et la Big Data.
-3. **[Licence Professionnelle Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Protégez les systèmes informatiques et infrastructures critiques.
-4. **[Licence Professionnelle Monétique & Systèmes de Paiement](/programmes/licence-professionnelle/systemes-paiement)** : Devenez expert des réseaux bancaires et du paiement électronique.
-
-> Pour toute question ou assistance concernant la constitution de votre dossier, contactez le **[Secrétariat Académique](/contact)** ou déposez directement votre candidature.`,
-    status: "published",
-    category: "Scolarité",
-    tags: ["Inscriptions 2026", "Prépa MP2I", "Licence Pro", "Gabon"],
-    cta_text: "Déposer mon dossier de candidature",
-    cta_url: "/inscription/candidature",
-    published_at: "2026-07-15T00:00:00.000Z",
-    created_at: "2026-07-15T00:00:00.000Z",
-  },
-};
+  // Fallback sur la liste statique
+  const fallbackMatch = INITIAL_NEWS.find((n) => n.slug === slug);
+  return fallbackMatch || INITIAL_NEWS[0];
+}
 
 export default async function ArticleDetailPage({
   params,
@@ -42,7 +34,11 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = SAMPLE_ARTICLES[slug] || INITIAL_NEWS[0];
+  const article = await getArticleBySlug(slug);
+
+  if (!article) {
+    notFound();
+  }
 
   return (
     <div>
@@ -64,7 +60,14 @@ export default async function ArticleDetailPage({
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5 font-medium text-slate-700">
                 <Calendar className="h-4 w-4 text-brand-orange" />
-                <span>Publié le {new Date(article.published_at).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
+                <span>
+                  Publié le{" "}
+                  {new Date(article.published_at || article.created_at || Date.now()).toLocaleDateString("fr-FR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
               </div>
               {article.category && (
                 <span className="bg-brand-blue/10 text-brand-blue font-bold px-2.5 py-0.5 rounded-full text-[11px]">
@@ -79,7 +82,7 @@ export default async function ArticleDetailPage({
             </Link>
           </div>
 
-          {/* Boutons de Partage Réseaux */}
+          {/* Boutons de Partage Réseaux (Haut d'article) */}
           <ShareButtons title={article.title} />
 
           {/* Image de couverture */}
@@ -96,9 +99,11 @@ export default async function ArticleDetailPage({
           )}
 
           {/* Extrait d'introduction (Chapeau) */}
-          <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-brand-blue text-slate-800 text-base font-semibold leading-relaxed shadow-xs">
-            {article.excerpt}
-          </div>
+          {article.excerpt && (
+            <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-brand-blue text-slate-800 text-base font-semibold leading-relaxed shadow-xs">
+              {article.excerpt}
+            </div>
+          )}
 
           {/* Corps de l'article avec rendu automatique des liens hypertextes SEO */}
           <div className="pt-2">
@@ -123,6 +128,11 @@ export default async function ArticleDetailPage({
               </div>
             </div>
           )}
+
+          {/* Boutons de Partage Réseaux (Bas d'article) */}
+          <div className="pt-4 border-t border-slate-100">
+            <ShareButtons title={article.title} />
+          </div>
 
           {/* Bannière d'Appel à l'Action (CTA) SEO et Incitation au Clic */}
           <div className="rounded-2xl bg-gradient-to-r from-brand-blue-dark to-brand-blue p-6 sm:p-8 text-white shadow-xl space-y-4">
