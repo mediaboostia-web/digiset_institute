@@ -42,6 +42,11 @@ function formatDisplayName(email?: string | null, rawName?: string | null): stri
   return "Administrateur";
 }
 
+interface AdminHeaderProps {
+  isCollapsed?: boolean;
+  onToggleSidebar?: () => void;
+}
+
 export function AdminHeader({ isCollapsed = false, onToggleSidebar }: AdminHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
