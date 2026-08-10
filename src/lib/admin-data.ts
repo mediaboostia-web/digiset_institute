@@ -77,6 +77,9 @@ export interface NewsItem {
   status: ContentStatus;
   published_at: string;
   category?: string;
+  tags?: string[];
+  cta_text?: string;
+  cta_url?: string;
   created_at: string;
 }
 
@@ -101,7 +104,7 @@ export interface TeamMember {
 // Réception des soumissions : démarre vide pour enregistrer les vrais prospects et étudiants
 export const INITIAL_SUBMISSIONS: AnySubmission[] = [];
 
-// Actualité officielle initiale du lancement
+// Actualité officielle initiale du lancement avec maillage interne SEO
 export const INITIAL_NEWS: NewsItem[] = [
   {
     id: "news-1",
@@ -109,10 +112,32 @@ export const INITIAL_NEWS: NewsItem[] = [
     title: "Ouverture des Inscriptions à DigiSET Institute pour la Rentrée Académique 2026",
     cover_image_url: "/brand/fondateur.png",
     excerpt:
-      "DigiSET Institute ouvre officiellement les candidatures pour ses filières scientifiques d'excellence (Prépa MP2I, Licences Pro IA, Cybersécurité, Monétique).",
-    body: "L'établissement Supérieur Privé DigiSET Institute annonce le démarrage des inscriptions pour l'année académique 2026-2027 sur son campus d'Akanda. Les diplômés du secondaire et professionnels sont invités à déposer leur dossier en ligne.",
+      "DigiSET Institute ouvre officiellement les candidatures pour ses filières scientifiques d'excellence à Akanda (Prépa MP2I, Licences Pro IA, Cybersécurité, Monétique).",
+    body: `L'Établissement d'Enseignement Supérieur Privé **DigiSET Institute** annonce l'ouverture officielle des candidatures pour la rentrée académique 2026-2027 sur son campus d'Akanda.
+
+## Des Filières Scientifiques d'Avenir à Libreville
+
+Pour répondre aux défis de la transformation numérique au Gabon et en Afrique Centrale, l'institut propose des parcours universitaires spécialisés :
+
+- **[Classe Préparatoire MP2I](/programmes/classe-preparatoire)** : Formation intensive de 2 ans préparant aux grandes écoles et licences scientifiques.
+- **[Licence Pro IA & Data Science](/programmes/licence-professionnelle/ia-data-science)** : Spécialisation en intelligence artificielle, apprentissage automatique et traitement des données.
+- **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Expertise en sécurité opérationnelle, audit de code et protection des infrastructures SI.
+- **[Licence Pro Monétique & Systèmes de Paiement](/programmes/licence-professionnelle/systemes-paiement)** : Formation unique dédiée à la sécurité des transactions électroniques et au Mobile Money.
+
+## Des Infrastructures de Dernier Cri
+
+Nos étudiants bénéficient de **laboratoires de travaux pratiques de pointe** équipés pour la physique, l'électricité et l'informatique. Ces laboratoires sont également ouverts à la **[location pour les lycées et prépas de la région](/services/location-laboratoires)**.
+
+De plus, nous proposons des **[formations continues certifiantes pour les entreprises](/programmes/formation-continue)** souhaitant monter en compétences sur la cybersécurité et la Data.
+
+> "Notre objectif est de former des ingénieurs et techniciens d'excellence capables de concevoir les solutions technologiques de demain depuis Libreville." — Dr ABAGA ABESSOLO Michel Audrey, Directeur Fondateur.
+
+Les futurs bacheliers et professionnels sont invités à **[déposer leur dossier de candidature en ligne](/inscription/candidature)** dès aujourd'hui ou à nous **[contacter pour toute information](/contact)**.`,
     status: "published",
     category: "Institutionnel",
+    tags: ["Inscriptions 2026", "Licence Pro IA", "Cybersécurité", "Prépa MP2I", "Gabon Tech"],
+    cta_text: "Déposer mon dossier de candidature",
+    cta_url: "/inscription/candidature",
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
   },

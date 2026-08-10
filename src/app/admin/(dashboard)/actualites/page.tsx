@@ -12,6 +12,16 @@ import {
   Image as ImageIcon,
   Upload,
   X,
+  Link as LinkIcon,
+  Bold,
+  Quote,
+  List,
+  Heading2,
+  Heading3,
+  Tag,
+  Sparkles,
+  MousePointerClick,
+  ExternalLink,
 } from "lucide-react";
 import { INITIAL_NEWS, NewsItem, ContentStatus } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
@@ -34,6 +44,17 @@ import {
 } from "@/components/ui/select";
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
 
+const CATEGORY_OPTIONS = [
+  "Institutionnel",
+  "Admissions & Concours",
+  "Formations & Certifications",
+  "Vie Étudiante & Événements",
+  "Partenariats & Entreprises",
+  "Laboratoires & TP Scientifiques",
+  "DigiSET Online",
+  "Autre (Personnalisé)",
+];
+
 export default function AdminNewsPage() {
   const [newsList, setNewsList] = useState<NewsItem[]>(INITIAL_NEWS);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,19 +71,27 @@ export default function AdminNewsPage() {
   const [formData, setFormData] = useState<{
     title: string;
     slug: string;
-    category: string;
+    categorySelect: string;
+    customCategory: string;
     excerpt: string;
     body: string;
     cover_image_url: string;
     status: ContentStatus;
+    tags: string;
+    cta_text: string;
+    cta_url: string;
   }>({
     title: "",
     slug: "",
-    category: "Institutionnel",
+    categorySelect: "Institutionnel",
+    customCategory: "",
     excerpt: "",
     body: "",
     cover_image_url: "",
     status: "published",
+    tags: "",
+    cta_text: "Déposer une candidature",
+    cta_url: "/inscription/candidature",
   });
 
   const openCreateModal = () => {
@@ -70,25 +99,34 @@ export default function AdminNewsPage() {
     setFormData({
       title: "",
       slug: "",
-      category: "Institutionnel",
+      categorySelect: "Institutionnel",
+      customCategory: "",
       excerpt: "",
       body: "",
       cover_image_url: "",
       status: "published",
+      tags: "Prépa MP2I, Licences Pro, Cybersécurité, IA, Libreville",
+      cta_text: "Déposer mon dossier de candidature",
+      cta_url: "/inscription/candidature",
     });
     setIsModalOpen(true);
   };
 
   const openEditModal = (article: NewsItem) => {
     setEditingArticle(article);
+    const isStandardCategory = CATEGORY_OPTIONS.includes(article.category || "");
     setFormData({
       title: article.title,
       slug: article.slug,
-      category: article.category || "Institutionnel",
+      categorySelect: isStandardCategory ? article.category || "Institutionnel" : "Autre (Personnalisé)",
+      customCategory: isStandardCategory ? "" : article.category || "",
       excerpt: article.excerpt,
       body: article.body,
       cover_image_url: article.cover_image_url || "",
       status: article.status,
+      tags: article.tags ? article.tags.join(", ") : "",
+      cta_text: article.cta_text || "",
+      cta_url: article.cta_url || "",
     });
     setIsModalOpen(true);
   };
@@ -104,7 +142,23 @@ export default function AdminNewsPage() {
     setFormData((prev) => ({ ...prev, title, slug }));
   };
 
-  // Gestion du téléversement de fichier image local
+  // Insertion de texte / liens dans le corps de l'article pour le SEO
+  const insertTextToBody = (textToInsert: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      body: prev.body ? `${prev.body}\n\n${textToInsert}` : textToInsert,
+    }));
+  };
+
+  const insertCustomLink = () => {
+    const text = prompt("Texte sur lequel ajouter le lien (ex: Candidater en ligne) :", "Postuler maintenant");
+    if (!text) return;
+    const url = prompt("Lien de destination (ex: /inscription/candidature ou https://...) :", "/inscription/candidature");
+    if (!url) return;
+    insertTextToBody(`[${text}](${url})`);
+  };
+
+  // Téléversement d'image
   const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -117,6 +171,16 @@ export default function AdminNewsPage() {
     e.preventDefault();
     if (!formData.title || !formData.body) return;
 
+    const finalCategory =
+      formData.categorySelect === "Autre (Personnalisé)"
+        ? formData.customCategory || "Général"
+        : formData.categorySelect;
+
+    const tagsArray = formData.tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+
     if (editingArticle) {
       setNewsList((prev) =>
         prev.map((item) =>
@@ -125,11 +189,14 @@ export default function AdminNewsPage() {
                 ...item,
                 title: formData.title,
                 slug: formData.slug || item.slug,
-                category: formData.category,
+                category: finalCategory,
                 excerpt: formData.excerpt,
                 body: formData.body,
                 cover_image_url: formData.cover_image_url,
                 status: formData.status,
+                tags: tagsArray,
+                cta_text: formData.cta_text,
+                cta_url: formData.cta_url,
               }
             : item
         )
@@ -139,11 +206,14 @@ export default function AdminNewsPage() {
         id: `news-${Date.now()}`,
         title: formData.title,
         slug: formData.slug || `article-${Date.now()}`,
-        category: formData.category,
+        category: finalCategory,
         excerpt: formData.excerpt,
         body: formData.body,
         cover_image_url: formData.cover_image_url,
         status: formData.status,
+        tags: tagsArray,
+        cta_text: formData.cta_text,
+        cta_url: formData.cta_url,
         published_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
       };
@@ -364,21 +434,31 @@ export default function AdminNewsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700">Catégorie</label>
+                  <label className="font-bold text-gray-700">Catégorie de l'article *</label>
                   <Select
-                    value={formData.category}
-                    onValueChange={(cat) => setFormData((prev) => ({ ...prev, category: cat || "Institutionnel" }))}
+                    value={formData.categorySelect}
+                    onValueChange={(cat) => setFormData((prev) => ({ ...prev, categorySelect: cat || "Institutionnel" }))}
                   >
                     <SelectTrigger className="text-xs h-9">
                       <SelectValue placeholder="Sélectionner une catégorie" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Institutionnel">Institutionnel</SelectItem>
-                      <SelectItem value="Partenariat">Partenariat</SelectItem>
-                      <SelectItem value="Services & Labos">Services & Labos</SelectItem>
-                      <SelectItem value="Événements">Événements</SelectItem>
+                      {CATEGORY_OPTIONS.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+
+                  {formData.categorySelect === "Autre (Personnalisé)" && (
+                    <Input
+                      placeholder="Saisissez votre catégorie personnalisée..."
+                      value={formData.customCategory}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, customCategory: e.target.value }))}
+                      className="text-xs mt-1.5 border-brand-orange/40 bg-orange-50/30"
+                    />
+                  )}
                 </div>
               </div>
 
@@ -438,27 +518,173 @@ export default function AdminNewsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700">Chapeau / Extrait court *</label>
+                <label className="font-bold text-gray-700">Chapeau / Extrait court (Méta-Description SEO) *</label>
                 <Textarea
                   rows={2}
                   required
-                  placeholder="Résumé en 2 phrases affiché sur la carte d'actualité..."
+                  placeholder="Résumé en 2 phrases captivantes affiché sur les réseaux et cartes d'actualité..."
                   value={formData.excerpt}
                   onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
                   className="text-xs resize-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="font-bold text-gray-700">Corps complet de l'article *</label>
-                <Textarea
-                  rows={6}
-                  required
-                  placeholder="Contenu complet de l'actualité..."
-                  value={formData.body}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, body: e.target.value }))}
-                  className="text-xs"
-                />
+              {/* Assistant & Barre d'outils SEO pour la rédaction avec liens */}
+              <div className="space-y-2 border border-slate-200 rounded-xl p-3.5 bg-slate-50/70">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-brand-blue">
+                    <Sparkles className="h-4 w-4 text-brand-orange" />
+                    <span>Barre d&apos;outils Rédaction PRO & SEO</span>
+                  </div>
+                  <span className="text-[11px] text-slate-500">Insérez des liens et mots cliquables pour booster le taux de clic</span>
+                </div>
+
+                {/* Boutons d'insertion rapide de liens SEO internes */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                    <LinkIcon className="h-3 w-3 text-brand-blue" /> Raccourcis de liens d&apos;incitation à cliquer (Call-to-Action SEO) :
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={insertCustomLink}
+                      className="px-2.5 py-1 rounded-md bg-brand-blue text-white text-[11px] font-bold hover:bg-brand-blue-dark transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <LinkIcon className="h-3 w-3" /> Insérer un lien personnalisé...
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Déposer son dossier de candidature en ligne](/inscription/candidature)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Lien Candidature
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Découvrir les Licences Professionnelles](/programmes/licence-professionnelle)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Licences Pro
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Découvrir la Classe Préparatoire MP2I](/programmes/classe-preparatoire)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Prépa MP2I
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Demande de Formation Continue Entreprise](/programmes/formation-continue)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Formation Continue
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Consulter la brochure de nos Laboratoires](/services/location-laboratoires)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Location Labos
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Contacter le Secrétariat Académique](/contact)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Contact
+                    </button>
+                  </div>
+                </div>
+
+                {/* Formats de mise en page SEO */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-slate-200/60">
+                  <span className="text-[11px] font-bold text-slate-600 mr-1">Structure SEO :</span>
+                  <button
+                    type="button"
+                    onClick={() => insertTextToBody("## Titre de Section Important")}
+                    className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Heading2 className="h-3 w-3 text-brand-blue" /> Titre H2
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertTextToBody("### Sous-titre de détail")}
+                    className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Heading3 className="h-3 w-3 text-brand-blue" /> Titre H3
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertTextToBody("**mot important en gras**")}
+                    className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Bold className="h-3 w-3" /> Gras
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertTextToBody("- Point clé à retenir 1\n- Point clé à retenir 2")}
+                    className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
+                  >
+                    <List className="h-3 w-3" /> Puces
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertTextToBody("> Citation de la Direction de l'établissement...")}
+                    className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Quote className="h-3 w-3 text-brand-orange" /> Citation
+                  </button>
+                </div>
+
+                <div className="space-y-1 pt-1.5">
+                  <Textarea
+                    rows={8}
+                    required
+                    placeholder="Saisissez le corps de votre article. Utilisez les boutons ci-dessus pour ajouter des liens hypertextes et des titres de section..."
+                    value={formData.body}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, body: e.target.value }))}
+                    className="text-xs bg-white border-slate-300 font-sans leading-relaxed"
+                  />
+                  <p className="text-[10px] text-slate-500">
+                    💡 Astuce SEO : Pour ajouter un lien cliquable sur n&apos;importe quel mot, écrivez <code className="bg-slate-200 px-1 rounded text-slate-800">[Texte visible](https://lien.com)</code> ou utilisez le bouton &quot;Insérer un lien&quot;.
+                  </p>
+                </div>
+              </div>
+
+              {/* Optimisation SEO Avancée (Mots-clés & Bouton d'Action) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-gray-100 pt-3">
+                <div className="space-y-1.5">
+                  <label className="font-bold text-gray-700 flex items-center gap-1">
+                    <Tag className="h-3.5 w-3.5 text-brand-blue" /> Mots-clés / Tags SEO (séparés par virgule)
+                  </label>
+                  <Input
+                    placeholder="ex. IA, Cybersécurité, Licence Pro, Libreville"
+                    value={formData.tags}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, tags: e.target.value }))}
+                    className="text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-bold text-gray-700 flex items-center gap-1">
+                    <MousePointerClick className="h-3.5 w-3.5 text-brand-orange" /> Bouton d&apos;appel à l&apos;action (CTA)
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input
+                      placeholder="Texte du bouton (ex. S'inscrire)"
+                      value={formData.cta_text}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, cta_text: e.target.value }))}
+                      className="text-xs"
+                    />
+                    <Input
+                      placeholder="Lien cible (ex. /inscription/candidature)"
+                      value={formData.cta_url}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, cta_url: e.target.value }))}
+                      className="text-xs"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-gray-100">
@@ -489,8 +715,9 @@ export default function AdminNewsPage() {
                   >
                     Annuler
                   </Button>
-                  <Button type="submit" className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-bold">
-                    {editingArticle ? "Enregistrer" : "Publier l'actualité"}
+                  <Button type="submit" className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-bold gap-1.5 shadow-sm">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    {editingArticle ? "Enregistrer les modifications" : "Publier l'actualité SEO"}
                   </Button>
                 </div>
               </div>

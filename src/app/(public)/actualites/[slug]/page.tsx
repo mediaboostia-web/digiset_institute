@@ -2,7 +2,39 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroSection } from "@/components/shared/hero-section";
 import { ShareButtons } from "@/components/shared/share-buttons";
-import { Calendar, ArrowLeft } from "lucide-react";
+import { FormattedArticleBody } from "@/components/shared/formatted-article-body";
+import { INITIAL_NEWS, NewsItem } from "@/lib/admin-data";
+import { Calendar, ArrowLeft, Tag, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+
+// Liste d'articles de démonstration et réels
+const SAMPLE_ARTICLES: Record<string, NewsItem> = {
+  "lancement-officiel-activites-septembre-2026": INITIAL_NEWS[0],
+  "lancement-inscriptions-rentree-2026": {
+    id: "news-2",
+    slug: "lancement-inscriptions-rentree-2026",
+    title: "Lancement Officiel des Inscriptions pour la Rentrée de Septembre 2026",
+    cover_image_url: "/images/img/Image_3.jpg",
+    excerpt:
+      "DigiSET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
+    body: `L'Établissement Supérieur Privé **DigiSET Institute** à Libreville annonce le lancement officiel des inscriptions pour l'année académique 2026-2027.
+
+## Filières proposées à l'Admission
+
+1. **[Classe Préparatoire Scientifique MP2I](/programmes/classe-preparatoire)** : Formation intensive de 2 ans pour maîtriser les mathématiques, la physique et l'informatique.
+2. **[Licence Professionnelle IA & Data Science](/programmes/licence-professionnelle/ia-data-science)** : Maîtrisez le Machine Learning et la Big Data.
+3. **[Licence Professionnelle Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Protégez les systèmes informatiques et infrastructures critiques.
+4. **[Licence Professionnelle Monétique & Systèmes de Paiement](/programmes/licence-professionnelle/systemes-paiement)** : Devenez expert des réseaux bancaires et du paiement électronique.
+
+> Pour toute question ou assistance concernant la constitution de votre dossier, contactez le **[Secrétariat Académique](/contact)** ou déposez directement votre candidature.`,
+    status: "published",
+    category: "Scolarité",
+    tags: ["Inscriptions 2026", "Prépa MP2I", "Licence Pro", "Gabon"],
+    cta_text: "Déposer mon dossier de candidature",
+    cta_url: "/inscription/candidature",
+    published_at: "2026-07-15T00:00:00.000Z",
+    created_at: "2026-07-15T00:00:00.000Z",
+  },
+};
 
 export default async function ArticleDetailPage({
   params,
@@ -10,28 +42,37 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const articleTitle = "Lancement Officiel des Inscriptions pour la Rentrée de Septembre 2026";
+  const article = SAMPLE_ARTICLES[slug] || INITIAL_NEWS[0];
 
   return (
     <div>
       <HeroSection
-        badge="Actualité Institutionnelle"
-        title={articleTitle}
-        subtitle="DigiSET Institute ouvre officiellement ses admissions pour sa première promotion à Akanda."
+        badge={article.category || "Actualité Institutionnelle"}
+        title={article.title}
+        subtitle={article.excerpt}
         breadcrumbs={[
           { label: "Actualités", href: "/actualites" },
-          { label: slug },
+          { label: article.title },
         ]}
       />
 
       <section className="py-12 bg-white border-b border-border">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-8">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 text-xs text-slate-500 gap-2">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-brand-orange" />
-              <span>Publié le 15 Juillet 2026 • Par la Direction de la Scolarité</span>
+          {/* Métadonnées & retour */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 text-xs text-slate-500 gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 font-medium text-slate-700">
+                <Calendar className="h-4 w-4 text-brand-orange" />
+                <span>Publié le {new Date(article.published_at).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
+              </div>
+              {article.category && (
+                <span className="bg-brand-blue/10 text-brand-blue font-bold px-2.5 py-0.5 rounded-full text-[11px]">
+                  {article.category}
+                </span>
+              )}
             </div>
+
             <Link href="/actualites" className="inline-flex items-center gap-1 font-bold text-brand-blue hover:underline">
               <ArrowLeft className="h-3.5 w-3.5" />
               Retour aux actualités
@@ -39,49 +80,85 @@ export default async function ArticleDetailPage({
           </div>
 
           {/* Boutons de Partage Réseaux */}
-          <ShareButtons title={articleTitle} />
+          <ShareButtons title={article.title} />
 
           {/* Image de couverture */}
-          <div className="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
-            <Image
-              src="/images/img/Image_3.jpg"
-              alt="Lancement officiel Inscriptions DigiSET Institute"
-              fill
-              className="object-cover"
-              priority
-            />
+          {article.cover_image_url && (
+            <div className="relative h-64 sm:h-96 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-slate-100">
+              <Image
+                src={article.cover_image_url}
+                alt={article.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
+
+          {/* Extrait d'introduction (Chapeau) */}
+          <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-brand-blue text-slate-800 text-base font-semibold leading-relaxed shadow-xs">
+            {article.excerpt}
           </div>
 
-          <div className="prose prose-slate text-sm leading-relaxed space-y-4 text-slate-700">
-            <p className="font-semibold text-base text-slate-900">
-              DigiSET Institute (Digital Science, Engineering and Technology Institute) est fier d&apos;annoncer l&apos;ouverture officielle de la campagne de recrutement pour la rentrée académique de Septembre 2026 sur son campus principal d&apos;Akanda.
-            </p>
-            <p>
-              Implanté au Carrefour Moussavou à Angondje, l&apos;établissement met à disposition des étudiants gabonais et de la sous-région des infrastructures pédagogiques de dernier cri : laboratoires de travaux pratiques scientifiques équipés en physique, optique, électronique et cybersécurité, ainsi que des salles informatiques connectées à haut débit.
-            </p>
-            <h3 className="font-heading text-lg font-bold text-slate-900 pt-2">
-              Les Programmes Ouverts à l&apos;Admission
+          {/* Corps de l'article avec rendu automatique des liens hypertextes SEO */}
+          <div className="pt-2">
+            <FormattedArticleBody content={article.body} />
+          </div>
+
+          {/* Mots-clés SEO (Tags) */}
+          {article.tags && article.tags.length > 0 && (
+            <div className="pt-6 border-t border-slate-100 space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                <Tag className="h-3.5 w-3.5 text-brand-blue" /> Mots-clés associés :
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {article.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition-colors"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Bannière d'Appel à l'Action (CTA) SEO et Incitation au Clic */}
+          <div className="rounded-2xl bg-gradient-to-r from-brand-blue-dark to-brand-blue p-6 sm:p-8 text-white shadow-xl space-y-4">
+            <div className="flex items-center gap-2 text-brand-orange text-xs font-extrabold uppercase tracking-wider">
+              <Sparkles className="h-4 w-4" /> Formation d&apos;Excellence à Libreville
+            </div>
+            <h3 className="font-heading text-xl sm:text-2xl font-bold leading-snug">
+              Prêt à intégrer les métiers du numérique avec DigiSET Institute ?
             </h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li><strong>Classe Préparatoire MP2I (Bac à Bac+2)</strong> : Cursus scientifique de 2 ans préparant aux grands concours et licences pro.</li>
-              <li><strong>Licence Professionnelle (Bac+3 - 1 an)</strong> : 3 options à haute employabilité (IA & Data Science, Cybersécurité, Systèmes de Paiement Électronique).</li>
-              <li><strong>DigiSET Online</strong> : Déclinaison à distance de nos programmes certifiants.</li>
-            </ul>
-            <p>
-              Les candidats peuvent dès à présent déposer leur dossier en ligne ou prendre rendez-vous avec un conseiller d&apos;orientation sur le campus.
+            <p className="text-xs sm:text-sm text-blue-100 max-w-2xl leading-relaxed">
+              Consultez nos programmes de formation scientifique (Prépa MP2I, Licences Pro IA, Cybersécurité, Monétique) ou déposez votre candidature en ligne pour la rentrée 2026.
             </p>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link
+                href={article.cta_url || "/inscription/candidature"}
+                className="inline-flex items-center gap-2 rounded-xl bg-brand-orange px-6 py-3 text-xs font-extrabold text-white shadow-lg hover:bg-brand-orange-dark hover:scale-105 transition-all"
+              >
+                {article.cta_text || "Déposer mon dossier de candidature"}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/programmes/licence-professionnelle"
+                className="inline-flex items-center gap-2 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 px-5 py-3 text-xs font-bold text-white hover:bg-white/20 transition-all"
+              >
+                Découvrir les Licences Pro
+              </Link>
+            </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <Link
-              href="/inscription/candidature"
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-orange px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-brand-orange-dark transition-colors"
-            >
-              Déposer votre dossier d&apos;inscription
+          {/* Liens de retour */}
+          <div className="pt-4 flex items-center justify-between border-t border-slate-100 text-xs">
+            <Link href="/actualites" className="font-bold text-slate-600 hover:text-brand-blue transition-colors flex items-center gap-1">
+              <ArrowLeft className="h-3.5 w-3.5" /> Voir tous les articles
             </Link>
-
-            <Link href="/actualites" className="text-xs font-bold text-slate-600 hover:text-brand-blue transition-colors">
-              ← Voir tous les articles
+            <Link href="/contact" className="font-bold text-brand-blue hover:underline">
+              Besoin d&apos;une information ? Contactez-nous →
             </Link>
           </div>
 

@@ -6,12 +6,22 @@ import Image from "next/image";
 import { HeroSection } from "@/components/shared/hero-section";
 import { Calendar, ArrowRight, Eye, Share2 } from "lucide-react";
 
+import { INITIAL_NEWS } from "@/lib/admin-data";
+
 const ARTICLES = [
+  {
+    slug: INITIAL_NEWS[0].slug,
+    title: INITIAL_NEWS[0].title,
+    date: "10 Août 2026",
+    category: INITIAL_NEWS[0].category || "Institutionnel",
+    image: INITIAL_NEWS[0].cover_image_url || "/brand/fondateur.png",
+    excerpt: INITIAL_NEWS[0].excerpt,
+  },
   {
     slug: "lancement-inscriptions-rentree-2026",
     title: "Lancement Officiel des Inscriptions pour la Rentrée de Septembre 2026",
     date: "15 Juillet 2026",
-    category: "Scolarité",
+    category: "Admissions & Concours",
     image: "/images/img/Image_3.jpg",
     excerpt: "DigiSET Institute ouvre officiellement ses portes à Akanda. Les candidatures pour la Classe Préparatoire MP2I et les 3 options de Licence Pro sont désormais ouvertes en ligne.",
   },
@@ -19,7 +29,7 @@ const ARTICLES = [
     slug: "partenariat-certifications-internationales",
     title: "Partenariat Stratégique avec les Acteurs Internationaux de la Certification",
     date: "02 Juillet 2026",
-    category: "Partenariats",
+    category: "Partenariats & Entreprises",
     image: "/images/img/Image_4.jpg",
     excerpt: "Nos cursus intègrent dès la première année la préparation aux examens professionnels Cisco, AWS, Microsoft et Linux pour garantir une employabilité immédiate.",
   },
@@ -27,7 +37,7 @@ const ARTICLES = [
     slug: "mise-en-service-laboratoires-akanda",
     title: "Mise en Service des Laboratoires de TP Scientifiques à Akanda",
     date: "20 Juin 2026",
-    category: "Campus & Vie Étudiante",
+    category: "Laboratoires & TP Scientifiques",
     image: "/images/img/Img_2.jpg",
     excerpt: "Découvrez nos nouveaux équipements de travaux pratiques destinés aux étudiants et aux établissements de classe préparatoire partenaires.",
   },
@@ -35,7 +45,7 @@ const ARTICLES = [
     slug: "securite-monetique-et-pci-dss-conference",
     title: "Conférence sur la Monétique et la Sécurité des Paiements au Gabon",
     date: "05 Juin 2026",
-    category: "Ateliers & Conférences",
+    category: "Formations & Certifications",
     image: "/images/img/Image6.jpg",
     excerpt: "Retour sur le séminaire dédié aux experts bancaires et acteurs du Mobile Money à Libreville.",
   },
@@ -43,13 +53,21 @@ const ARTICLES = [
     slug: "atelier-data-science-et-ia-generative",
     title: "Atelier Pratique sur la Data Science et l'IA Générative",
     date: "18 Mai 2026",
-    category: "Campus & Vie Étudiante",
+    category: "Vie Étudiante & Événements",
     image: "/images/img/Image7.jpg",
     excerpt: "Une journée d'immersion technique pour les professionnels et étudiants passionnés d'apprentissage automatique.",
   },
 ];
 
-const CATEGORIES = ["Tous", "Scolarité", "Partenariats", "Campus & Vie Étudiante", "Ateliers & Conférences"];
+const CATEGORIES = [
+  "Tous",
+  "Institutionnel",
+  "Admissions & Concours",
+  "Formations & Certifications",
+  "Vie Étudiante & Événements",
+  "Partenariats & Entreprises",
+  "Laboratoires & TP Scientifiques",
+];
 
 export default function ActualitesPage() {
   const [selectedCategory, setSelectedCategory] = useState("Tous");
