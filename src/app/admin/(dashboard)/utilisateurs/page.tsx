@@ -421,7 +421,7 @@ export default function AdminUsersPage() {
           }}
           title="Supprimer ce compte administrateur"
           description="Êtes-vous sûr de vouloir supprimer cet accès administrateur ? Cet utilisateur ne pourra plus se connecter au back-office."
-          targetName={deleteTarget.name}
+          itemName={deleteTarget.name}
         />
       )}
     </div>
