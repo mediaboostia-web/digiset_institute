@@ -10,30 +10,38 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM_ADDRESS = "DigiSET Institute <notifications@digiset-gabon.com>";
+const FROM_ADDRESS = process.env.RESEND_FROM_EMAIL || "DigiSET Institute <onboarding@resend.dev>";
 
 export async function sendNotificationEmail(params: {
   subject: string;
   html: string;
+  to?: string;
 }) {
-  const to = process.env.NOTIFICATION_EMAIL_TO;
+  const recipient =
+    params.to ||
+    process.env.NOTIFICATION_EMAIL_TO ||
+    process.env.ADMIN_NOTIFICATION_EMAIL ||
+    "contact@digiset-gabon.com";
 
-  if (!resend || !to) {
-    // En développement local sans clé Resend configurée, on log au lieu
-    // d'échouer silencieusement — voir CONFIGURATION.md.
+  if (!resend) {
     console.warn(
-      "[email] RESEND_API_KEY ou NOTIFICATION_EMAIL_TO manquant — email non envoyé.",
+      "[email] RESEND_API_KEY manquant dans les variables d'environnement — email non envoyé.",
       params.subject,
     );
     return;
   }
 
-  await resend.emails.send({
-    from: FROM_ADDRESS,
-    to,
-    subject: params.subject,
-    html: params.html,
-  });
+  try {
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: recipient,
+      subject: params.subject,
+      html: params.html,
+    });
+    console.log(`[email] Notification envoyée avec succès à ${recipient}`);
+  } catch (error) {
+    console.error("[email] Erreur envoi Resend:", error);
+  }
 }
 
 export async function sendConfirmationEmail(params: {
@@ -49,10 +57,14 @@ export async function sendConfirmationEmail(params: {
     return;
   }
 
-  await resend.emails.send({
-    from: FROM_ADDRESS,
-    to: params.to,
-    subject: params.subject,
-    html: params.html,
-  });
+  try {
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: params.to,
+      subject: params.subject,
+      html: params.html,
+    });
+  } catch (error) {
+    console.error("[email] Erreur confirmation Resend:", error);
+  }
 }
