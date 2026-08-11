@@ -133,9 +133,18 @@ export default function AdminSettingsPage() {
   const [isTestingEmail, setIsTestingEmail] = useState(false);
   const [testEmailResult, setTestEmailResult] = useState<string | null>(null);
 
-  const handleSaveEmailConfig = (e: React.FormEvent) => {
+  const handleSaveEmailConfig = async (e: React.FormEvent) => {
     e.preventDefault();
     updateSiteSettings({ notificationEmail: emailConfig.adminRecipient });
+    try {
+      await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationEmail: emailConfig.adminRecipient }),
+      });
+    } catch (err) {
+      console.error("Erreur enregistrement paramètres email:", err);
+    }
     setEmailSuccess(true);
     setTimeout(() => setEmailSuccess(false), 4000);
   };

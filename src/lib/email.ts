@@ -1,5 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
+import { getActiveNotificationEmail } from "@/app/api/admin/settings/route";
 
 /**
  * Envoi d'email transactionnel (notification interne DigiSET + confirmation au demandeur).
@@ -16,15 +17,16 @@ export async function sendNotificationEmail(params: {
   html: string;
   to?: string;
 }) {
-  let recipient =
+  const recipient =
     params.to ||
+    getActiveNotificationEmail() ||
     process.env.NOTIFICATION_EMAIL_TO ||
     process.env.ADMIN_NOTIFICATION_EMAIL ||
     "mediaboostia@gmail.com";
 
   if (!resend) {
     console.warn(
-      "[email] RESEND_API_KEY manquant dans .env.local — email non envoyé.",
+      "[email] RESEND_API_KEY manquant dans .env.local — notification enregistrée en base mais email non envoyé.",
       params.subject
     );
     return;
@@ -43,7 +45,7 @@ export async function sendNotificationEmail(params: {
       await resend.emails.send({
         from: FROM_ADDRESS,
         to: "mediaboostia@gmail.com",
-        subject: `[Redirigé Test] ${params.subject}`,
+        subject: `[Redirigé Test DigiSET] ${params.subject}`,
         html: params.html,
       });
     } else {
