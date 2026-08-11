@@ -21,6 +21,7 @@ import {
   Tag,
   Sparkles,
   MousePointerClick,
+  Save,
 } from "lucide-react";
 import { NewsItem, ContentStatus } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
@@ -106,7 +107,7 @@ export default function AdminNewsPage() {
     customCategory: "",
     excerpt: "",
     body: "",
-    cover_image_url: "",
+    cover_image_url: "/images/img/Image_3.jpg",
     status: "published",
     tags: "",
     cta_text: "Déposer une candidature",
@@ -122,7 +123,7 @@ export default function AdminNewsPage() {
       customCategory: "",
       excerpt: "",
       body: "",
-      cover_image_url: "",
+      cover_image_url: "/images/img/Image_3.jpg",
       status: "published",
       tags: "Prépa MP2I, Licences Pro, Cybersécurité, IA, Libreville",
       cta_text: "Déposer mon dossier de candidature",
@@ -141,7 +142,7 @@ export default function AdminNewsPage() {
       customCategory: isStandardCategory ? "" : article.category || "",
       excerpt: article.excerpt,
       body: article.body,
-      cover_image_url: article.cover_image_url || "",
+      cover_image_url: article.cover_image_url || "/images/img/Image_3.jpg",
       status: article.status,
       tags: article.tags ? article.tags.join(", ") : "",
       cta_text: article.cta_text || "",
@@ -212,7 +213,7 @@ export default function AdminNewsPage() {
       category: finalCategory,
       excerpt: formData.excerpt,
       body: formData.body,
-      cover_image_url: formData.cover_image_url,
+      cover_image_url: formData.cover_image_url || "/images/img/Image_3.jpg",
       status: formData.status,
       tags: tagsArray,
       cta_text: formData.cta_text,
@@ -306,7 +307,7 @@ export default function AdminNewsPage() {
         </div>
         <Button
           onClick={openCreateModal}
-          className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs shadow-sm"
+          className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs shadow-sm cursor-pointer"
         >
           <PlusCircle className="h-4 w-4" /> Publier une actualité
         </Button>
@@ -414,7 +415,7 @@ export default function AdminNewsPage() {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="h-8 w-8 text-gray-600 hover:text-brand-blue"
+                          className="h-8 w-8 text-gray-600 hover:text-brand-blue cursor-pointer"
                           title="Modifier"
                           onClick={() => openEditModal(article)}
                         >
@@ -423,7 +424,7 @@ export default function AdminNewsPage() {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-700"
+                          className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-700 cursor-pointer"
                           title="Supprimer"
                           onClick={() => setDeleteTarget({ id: article.id, name: article.title })}
                         >
@@ -439,36 +440,39 @@ export default function AdminNewsPage() {
         )}
       </div>
 
-      {/* Modal d'Édition / Création Révisé — STRUCTURE FLUIDE ET ZÉRO DEBORDEMENT */}
+      {/* Modal d'Édition / Création Révisé — BOUTONS DE SAUVEGARDE PERMANENTEMENT VISIBLES */}
       {isModalOpen && (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-3xl sm:max-w-4xl w-[96vw] max-h-[92vh] flex flex-col p-0 overflow-hidden border-2 border-slate-200 shadow-2xl">
+          <DialogContent className="max-w-4xl w-[96vw] max-h-[90vh] flex flex-col p-0 overflow-hidden border-2 border-slate-200 shadow-2xl rounded-2xl bg-white">
+            
             {/* Header Fixe */}
-            <DialogHeader className="border-b border-slate-200 p-6 bg-slate-50/90 shrink-0">
-              <DialogTitle className="font-heading text-xl font-bold text-slate-900 flex items-center gap-2">
+            <DialogHeader className="border-b border-slate-200 p-5 bg-slate-50/90 shrink-0">
+              <DialogTitle className="font-heading text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Newspaper className="h-5 w-5 text-brand-orange" />
                 {editingArticle ? "Modifier l'article d'actualité" : "Rédiger une nouvelle actualité"}
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-600 font-medium">
-                Renseignez tous les détails de l'article, choisissez l'image de couverture et ajoutez vos liens d'incitation SEO.
+                Renseignez tous les détails de l'article, choisissez l'image de couverture et enregistrez vos modifications.
               </DialogDescription>
             </DialogHeader>
 
-            {/* Formulaire défilant sans jamais rien couper */}
-            <form onSubmit={handleSaveArticle} className="flex flex-col flex-1 overflow-hidden">
-              <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+            {/* Formulaire complet avec zone de défilement centrale */}
+            <form onSubmit={handleSaveArticle} className="flex flex-col flex-1 overflow-hidden min-h-0">
+              
+              {/* Corps du formulaire défilant (Hauteur limitée pour laisser le footer 100% visible) */}
+              <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-xs max-h-[calc(90vh-140px)]">
                 
                 {/* Section 1 : Titre, Slug & Catégorie */}
-                <div className="space-y-4 bg-slate-50/50 p-4 rounded-xl border border-slate-200">
+                <div className="space-y-4 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
                   <h3 className="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-brand-blue flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-brand-orange" /> 1. Informations Générales & Titre
+                    <Sparkles className="h-3.5 w-3.5 text-brand-orange" /> 1. Titre & Informations Générales
                   </h3>
 
                   <div className="space-y-1.5">
                     <label className="font-bold text-slate-700">Titre de l'actualité *</label>
                     <Input
                       required
-                      placeholder="ex. Cybersécurité : Le bouclier indispensable pour votre entreprise..."
+                      placeholder="ex. L'Intelligence Artificielle et la Cybersécurité : Les métiers en or de 2026 !"
                       value={formData.title}
                       onChange={(e) => handleTitleChange(e.target.value)}
                       className="text-xs h-10 font-bold text-slate-900 bg-white"
@@ -479,7 +483,7 @@ export default function AdminNewsPage() {
                     <div className="space-y-1.5">
                       <label className="font-bold text-slate-700">Slug (URL relative SEO)</label>
                       <Input
-                        placeholder="cybersecurite-bouclier-entreprise"
+                        placeholder="lintelligence-artificielle-et-la-cybersecurite"
                         value={formData.slug}
                         onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
                         className="text-xs font-mono bg-white text-slate-700"
@@ -517,7 +521,7 @@ export default function AdminNewsPage() {
                 </div>
 
                 {/* Section 2 : Photo de Couverture */}
-                <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-200">
+                <div className="space-y-3 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
                   <label className="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-brand-blue flex items-center gap-1.5">
                     <ImageIcon className="h-3.5 w-3.5 text-brand-orange" /> 2. Photo de couverture de l'article
                   </label>
@@ -602,78 +606,65 @@ export default function AdminNewsPage() {
                   </div>
                 </div>
 
-                {/* Section 3 : Chapeau & Extrait Court */}
-                <div className="space-y-2 bg-slate-50/50 p-4 rounded-xl border border-slate-200">
+                {/* Section 3 : Chapeau / Extrait court */}
+                <div className="space-y-2 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
                   <label className="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-brand-blue flex items-center gap-1.5">
                     <Quote className="h-3.5 w-3.5 text-brand-orange" /> 3. Chapeau / Extrait court (Méta-Description SEO) *
                   </label>
                   <Textarea
                     rows={3}
                     required
-                    placeholder="Résumé captivant en 2-3 phrases affiché sur les réseaux sociaux et sur la page d'actualités..."
+                    placeholder="Résumé captivant en 2-3 phrases affiché sur les cartes et réseaux sociaux..."
                     value={formData.excerpt}
                     onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
                     className="text-xs bg-white resize-y leading-relaxed"
                   />
                 </div>
 
-                {/* Section 4 : Corps de l'Article & Outils Rédaction SEO */}
+                {/* Section 4 : Corps de l'Article */}
                 <div className="space-y-3 border-2 border-slate-200 rounded-xl p-4 bg-slate-50/70">
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-brand-blue">
                       <Sparkles className="h-4 w-4 text-brand-orange" />
                       <span>4. Rédaction du Corps de l'Article & Liens SEO</span>
                     </div>
-                    <span className="text-[11px] text-slate-500 font-medium">Insérez des liens cliquables et des titres de section</span>
+                    <span className="text-[11px] text-slate-500 font-medium">Ajoutez des liens cliquables pour stimuler les candidatures</span>
                   </div>
 
-                  {/* Boutons d'insertion rapide de liens SEO internes */}
-                  <div className="space-y-1.5">
-                    <div className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                      <LinkIcon className="h-3 w-3 text-brand-blue" /> Raccourcis de liens d&apos;incitation au clic (SEO) :
-                    </div>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={insertCustomLink}
-                        className="px-2.5 py-1 rounded-md bg-brand-blue text-white text-[11px] font-bold hover:bg-brand-blue-dark transition-colors flex items-center gap-1 cursor-pointer"
-                      >
-                        <LinkIcon className="h-3 w-3" /> Lien personnalisé...
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertTextToBody("[Déposer son dossier de candidature en ligne](/inscription/candidature)")}
-                        className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
-                      >
-                        + Candidature
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertTextToBody("[Découvrir les Licences Professionnelles](/programmes/licence-professionnelle)")}
-                        className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
-                      >
-                        + Licences Pro
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertTextToBody("[Découvrir la Classe Préparatoire MP2I](/programmes/classe-preparatoire)")}
-                        className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
-                      >
-                        + Prépa MP2I
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertTextToBody("[Demande de Formation Continue Entreprise](/programmes/formation-continue)")}
-                        className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
-                      >
-                        + Formation Continue
-                      </button>
-                    </div>
+                  {/* Boutons d'incitation SEO */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={insertCustomLink}
+                      className="px-2.5 py-1 rounded-md bg-brand-blue text-white text-[11px] font-bold hover:bg-brand-blue-dark transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <LinkIcon className="h-3 w-3" /> Lien personnalisé...
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Déposer son dossier de candidature en ligne](/inscription/candidature)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Candidature
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Découvrir les Licences Professionnelles](/programmes/licence-professionnelle)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Licences Pro
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertTextToBody("[Découvrir la Classe Préparatoire MP2I](/programmes/classe-preparatoire)")}
+                      className="px-2 py-1 rounded-md bg-white border border-slate-300 text-slate-700 text-[11px] font-semibold hover:border-brand-orange hover:text-brand-orange transition-all cursor-pointer"
+                    >
+                      + Prépa MP2I
+                    </button>
                   </div>
 
-                  {/* Formats de mise en page SEO */}
+                  {/* Formats de mise en page */}
                   <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200/60">
-                    <span className="text-[11px] font-bold text-slate-600 mr-1">Structure SEO :</span>
                     <button
                       type="button"
                       onClick={() => insertTextToBody("## Titre de Section Important")}
@@ -697,34 +688,25 @@ export default function AdminNewsPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => insertTextToBody("- Point clé à retenir 1\n- Point clé à retenir 2")}
+                      onClick={() => insertTextToBody("- Point clé 1\n- Point clé 2")}
                       className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
                     >
                       <List className="h-3 w-3" /> Puces
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => insertTextToBody("> Citation de la Direction de l'établissement...")}
-                      className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
-                    >
-                      <Quote className="h-3 w-3 text-brand-orange" /> Citation
-                    </button>
                   </div>
 
-                  <div className="space-y-1 pt-1">
-                    <Textarea
-                      rows={10}
-                      required
-                      placeholder="Saisissez le texte complet de votre article..."
-                      value={formData.body}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, body: e.target.value }))}
-                      className="text-xs bg-white border-slate-300 font-sans leading-relaxed min-h-[220px]"
-                    />
-                  </div>
+                  <Textarea
+                    rows={8}
+                    required
+                    placeholder="Saisissez le corps complet de l'article..."
+                    value={formData.body}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, body: e.target.value }))}
+                    className="text-xs bg-white border-slate-300 font-sans leading-relaxed min-h-[180px]"
+                  />
                 </div>
 
-                {/* Section 5 : Mots-Clés & Bouton d'Appel à l'Action (CTA) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-200">
+                {/* Section 5 : Tags & CTA */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
                   <div className="space-y-1.5">
                     <label className="font-bold text-slate-700 flex items-center gap-1">
                       <Tag className="h-3.5 w-3.5 text-brand-blue" /> Tags SEO (séparés par virgule)
@@ -739,7 +721,7 @@ export default function AdminNewsPage() {
 
                   <div className="space-y-1.5">
                     <label className="font-bold text-slate-700 flex items-center gap-1">
-                      <MousePointerClick className="h-3.5 w-3.5 text-brand-orange" /> Bouton d&apos;action CTA de bas d&apos;article
+                      <MousePointerClick className="h-3.5 w-3.5 text-brand-orange" /> Bouton CTA de bas d&apos;article
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       <Input
@@ -760,21 +742,21 @@ export default function AdminNewsPage() {
 
               </div>
 
-              {/* Footer Fixe Toujours Accessible */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 px-6 border-t border-slate-200 bg-slate-100/90 shrink-0">
+              {/* FOOTER FIXE TOUJOURS ACCESSIBLE AVEC BOUTON D'ENREGISTREMENT LUMINEUX */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 px-6 border-t-2 border-slate-200 bg-slate-100 shrink-0 z-50">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <span className="font-bold text-slate-700">Statut :</span>
+                  <span className="font-bold text-slate-700 text-xs">Statut de l'article :</span>
                   <Select
                     value={formData.status}
                     onValueChange={(val) => {
                       if (val) setFormData((prev) => ({ ...prev, status: val as ContentStatus }));
                     }}
                   >
-                    <SelectTrigger className="w-[140px] text-xs h-9 bg-white">
+                    <SelectTrigger className="w-[140px] text-xs h-9 bg-white border-slate-300 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="published">Publié</SelectItem>
+                      <SelectItem value="published">Publié (En ligne)</SelectItem>
                       <SelectItem value="draft">Brouillon</SelectItem>
                     </SelectContent>
                   </Select>
@@ -785,16 +767,22 @@ export default function AdminNewsPage() {
                     type="button"
                     variant="outline"
                     onClick={() => setIsModalOpen(false)}
-                    className="text-xs font-bold bg-white hover:bg-slate-100 cursor-pointer"
+                    className="text-xs font-bold bg-white hover:bg-slate-200 cursor-pointer border-slate-300"
                   >
                     Annuler
                   </Button>
-                  <Button type="submit" className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-bold gap-1.5 shadow-md cursor-pointer">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    {editingArticle ? "Enregistrer les modifications" : "Publier l'actualité SEO"}
+                  
+                  {/* BOUTON D'ENREGISTREMENT ET DE PUBLICATION HAUTEMENT VISIBLE */}
+                  <Button
+                    type="submit"
+                    className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-extrabold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span>{editingArticle ? "Enregistrer les modifications" : "Publier l'actualité"}</span>
                   </Button>
                 </div>
               </div>
+
             </form>
           </DialogContent>
         </Dialog>
