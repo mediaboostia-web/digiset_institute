@@ -14,7 +14,7 @@ export function AnnouncementBanner() {
   }
 
   return (
-    <div className="relative z-50 bg-gradient-to-r from-brand-blue-dark via-brand-blue to-brand-blue-dark text-white py-2.5 px-4 shadow-sm border-b border-white/10 animate-in fade-in slide-in-from-top duration-300">
+    <div className="hidden md:block relative z-50 bg-gradient-to-r from-brand-blue-dark via-brand-blue to-brand-blue-dark text-white py-2.5 px-4 shadow-sm border-b border-white/10 animate-in fade-in slide-in-from-top duration-300">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 text-xs font-medium">
         <div className="flex flex-1 items-center justify-center gap-3 text-center sm:justify-start">
           <span className="inline-flex items-center gap-1 rounded-full bg-brand-orange px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-xs shrink-0">
