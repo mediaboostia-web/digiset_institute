@@ -16,7 +16,6 @@ import {
   Microscope,
   Mail,
   Inbox,
-  ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -310,18 +309,14 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem asChild>
-              <Link href="/admin/utilisateurs" className="cursor-pointer text-xs flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-500" />
-                <span>Mon Profil Admin</span>
-              </Link>
+            <DropdownMenuItem onClick={() => router.push("/admin/utilisateurs")} className="cursor-pointer text-xs flex items-center gap-2">
+              <User className="h-4 w-4 text-gray-500" />
+              <span>Mon Profil Admin</span>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
-              <Link href="/admin/parametres" className="cursor-pointer text-xs flex items-center gap-2">
-                <Settings className="h-4 w-4 text-gray-500" />
-                <span>Paramètres & Notifications</span>
-              </Link>
+            <DropdownMenuItem onClick={() => router.push("/admin/parametres")} className="cursor-pointer text-xs flex items-center gap-2">
+              <Settings className="h-4 w-4 text-gray-500" />
+              <span>Paramètres & Notifications</span>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
