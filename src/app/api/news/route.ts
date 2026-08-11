@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
       body: articleBody,
       cover_image_url: cover_image_url || "/brand/fondateur.png",
       status: status || "published",
-      published_at: status === "published" ? new Date().toISOString() : undefined,
+      published_at: status === "published" ? new Date().toISOString() : new Date().toISOString(),
       created_at: new Date().toISOString(),
       tags: tags || [],
       cta_text: cta_text || "Déposer un dossier",
