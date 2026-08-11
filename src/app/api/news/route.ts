@@ -2,12 +2,28 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getGlobalNews, getNewsBySlug, addNewsItem, updateNewsItem, deleteNewsItem, slugify } from "@/lib/news-store";
 import type { NewsItem, ContentStatus } from "@/lib/admin-data";
 
-function encodeArticleBody(body: string, meta: { category?: string; tags?: string[]; cta_text?: string; cta_url?: string }): string {
+function encodeArticleBody(
+  body: string,
+  meta: {
+    category?: string;
+    tags?: string[];
+    cta_text?: string;
+    cta_url?: string;
+    cover_image_url?: string;
+  }
+): string {
   const metaJSON = JSON.stringify(meta);
   return `<!--META:${metaJSON}-->\n${body}`;
 }
 
-function decodeArticleBody(rawBody: string): { body: string; category?: string; tags?: string[]; cta_text?: string; cta_url?: string } {
+function decodeArticleBody(rawBody: string): {
+  body: string;
+  category?: string;
+  tags?: string[];
+  cta_text?: string;
+  cta_url?: string;
+  cover_image_url?: string;
+} {
   const metaMatch = rawBody.match(/^<!--META:(.*?)-->\n?/);
   if (metaMatch) {
     try {
@@ -58,12 +74,12 @@ export async function GET(request: NextRequest) {
 
       if (!error && data && data.length > 0) {
         const formatted: NewsItem[] = data.map((row) => {
-          const { body, category, tags, cta_text, cta_url } = decodeArticleBody(row.body);
+          const { body, category, tags, cta_text, cta_url, cover_image_url: metaCover } = decodeArticleBody(row.body);
           return {
             id: row.id,
             slug: row.slug,
             title: row.title,
-            cover_image_url: row.cover_image_url || "/brand/fondateur.png",
+            cover_image_url: row.cover_image_url || metaCover || "/images/img/Image_3.jpg",
             excerpt: row.excerpt || "",
             body,
             category: category || row.category || "Institutionnel",
@@ -109,6 +125,7 @@ export async function POST(request: NextRequest) {
     }
 
     const finalSlug = slug ? slugify(slug) : slugify(title);
+    const finalCover = cover_image_url || "/images/img/Image_3.jpg";
 
     const newArticle: NewsItem = {
       id: `news-${Date.now()}`,
@@ -117,7 +134,7 @@ export async function POST(request: NextRequest) {
       category: category || "Institutionnel",
       excerpt: excerpt || "",
       body: articleBody,
-      cover_image_url: cover_image_url || "/images/img/Image_3.jpg",
+      cover_image_url: finalCover,
       status: status || "published",
       published_at: status === "published" ? new Date().toISOString() : new Date().toISOString(),
       created_at: new Date().toISOString(),
@@ -139,6 +156,7 @@ export async function POST(request: NextRequest) {
         tags: tags || [],
         cta_text,
         cta_url,
+        cover_image_url: finalCover,
       });
 
       await admin.from("news").insert({
@@ -146,7 +164,7 @@ export async function POST(request: NextRequest) {
         slug: finalSlug,
         excerpt: excerpt || "",
         body: fullEncodedBody,
-        cover_image_url: cover_image_url || null,
+        cover_image_url: finalCover,
         status: status || "published",
         published_at: status === "published" ? new Date().toISOString() : null,
       });

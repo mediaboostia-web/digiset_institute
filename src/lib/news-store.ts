@@ -18,93 +18,57 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/**
- * Extraire les mots significatifs (> 2 caractères) pour la recherche floue / tolérante aux fautes
- */
-function extractKeywords(str: string): string[] {
-  return str
-    .toLowerCase()
-    .replace(/[^\w\s]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w.length > 2);
-}
-
 export function getGlobalNews(status: "published" | "all" = "published"): NewsItem[] {
   if (status === "all") return newsStoreMemory;
   return newsStoreMemory.filter((item) => item.status === "published");
 }
 
+/**
+ * Recherche stricte d'article par slug.
+ * Évite rigoureusement tout chevauchement ou duplication d'anciens articles.
+ */
 export function getNewsBySlug(slug: string): NewsItem | null {
   if (!slug) return null;
 
   const targetSlug = slug.toLowerCase().trim();
   const targetNormalized = slugify(slug);
 
-  // 1. Recherche exacte sur le slug ou slug normalisé
+  // 1. Recherche exacte par slug direct ou slug normalisé
   let match = newsStoreMemory.find(
     (item) => item.slug === targetSlug || slugify(item.slug) === targetNormalized
   );
   if (match) return match;
 
-  // 2. Recherche tolérante : cas de "cyberscurit" vs "cybersecurite" (accents tronqués)
+  // 2. Recherche exacte par titre normalisé
+  match = newsStoreMemory.find(
+    (item) => slugify(item.title) === targetNormalized
+  );
+  if (match) return match;
+
+  // 3. Cas spécifique des accents tronqués (ex: "cyberscurit" -> "cybersecurite")
   match = newsStoreMemory.find((item) => {
     const itemSlugNorm = slugify(item.slug);
-    const itemTitleNorm = slugify(item.title);
     return (
-      itemSlugNorm.includes(targetNormalized) ||
-      targetNormalized.includes(itemSlugNorm) ||
-      itemTitleNorm.includes(targetNormalized) ||
-      targetNormalized.includes(itemTitleNorm)
+      itemSlugNorm.replace(/e/g, "") === targetNormalized.replace(/e/g, "")
     );
   });
   if (match) return match;
 
-  // 3. Recherche floue basée sur la pertinence des mots-clés
-  const targetKeywords = extractKeywords(targetSlug);
-  if (targetKeywords.length > 0) {
-    let bestMatch: NewsItem | null = null;
-    let maxScore = 0;
-
-    for (const item of newsStoreMemory) {
-      const itemText = `${item.title} ${item.slug} ${item.excerpt || ""}`.toLowerCase();
-      let score = 0;
-
-      for (const kw of targetKeywords) {
-        // Recherche partielle des mots (ex. "cyberscurit" sous-chaîne de "cybersécurité" ou vice versa)
-        const cleanKw = slugify(kw);
-        if (cleanKw.length > 3) {
-          const stem = cleanKw.substring(0, 5); // les 5 premières lettres
-          if (itemText.includes(cleanKw) || itemText.includes(stem)) {
-            score += 1;
-          }
-        }
-      }
-
-      if (score > maxScore && score >= 2) {
-        maxScore = score;
-        bestMatch = item;
-      }
-    }
-
-    if (bestMatch) return bestMatch;
-  }
-
-  // 4. Dernier recours : retourner le premier article s'il n'y en a qu'un ou si c'est la catégorie cybersécurité
-  if (targetSlug.includes("cyber") || targetSlug.includes("bouclier")) {
-    const cyberArticle = newsStoreMemory.find(
-      (item) =>
-        item.title.toLowerCase().includes("cyber") ||
-        item.slug.toLowerCase().includes("cyber") ||
-        item.category?.toLowerCase().includes("cyber")
-    );
-    if (cyberArticle) return cyberArticle;
-  }
-
+  // Si aucun résultat strict ne correspond, retourner null (pas de redirection erronée vers un ancien article)
   return null;
 }
 
 export function addNewsItem(item: NewsItem): NewsItem {
-  const finalSlug = item.slug ? slugify(item.slug) : slugify(item.title);
+  const baseSlug = item.slug ? slugify(item.slug) : slugify(item.title);
+  
+  // Garantir un slug unique pour éviter toute collision avec un ancien article
+  let finalSlug = baseSlug;
+  let counter = 1;
+  while (newsStoreMemory.some((n) => n.slug === finalSlug && n.id !== item.id)) {
+    finalSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
   const newItem: NewsItem = {
     ...item,
     slug: finalSlug,
@@ -112,8 +76,8 @@ export function addNewsItem(item: NewsItem): NewsItem {
     created_at: item.created_at || new Date().toISOString(),
   };
 
-  // Supprimer s'il existe déjà et insérer au début
-  newsStoreMemory = [newItem, ...newsStoreMemory.filter((n) => n.id !== newItem.id && n.slug !== newItem.slug)];
+  // Remplacer s'il existe déjà par ID ou insérer en tête de liste
+  newsStoreMemory = [newItem, ...newsStoreMemory.filter((n) => n.id !== newItem.id)];
   return newItem;
 }
 
@@ -121,11 +85,16 @@ export function updateNewsItem(id: string, updates: Partial<NewsItem>): NewsItem
   let updatedItem: NewsItem | null = null;
   newsStoreMemory = newsStoreMemory.map((item) => {
     if (item.id === id) {
+      const newSlug = updates.slug
+        ? slugify(updates.slug)
+        : updates.title
+        ? slugify(updates.title)
+        : item.slug;
+
       updatedItem = {
         ...item,
         ...updates,
-        ...(updates.slug && { slug: slugify(updates.slug) }),
-        ...(updates.title && !updates.slug && { slug: slugify(updates.title) }),
+        slug: newSlug,
       };
       return updatedItem;
     }
