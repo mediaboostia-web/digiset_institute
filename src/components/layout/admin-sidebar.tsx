@@ -9,38 +9,27 @@ import {
   GraduationCap,
   Newspaper,
   Image as ImageIcon,
-  Users,
-  MessageSquareQuote,
+  Quote,
   Building2,
-  FileText,
+  Users,
   FolderDown,
+  FileText,
   UserCheck,
   Settings,
   PlusCircle,
-  ExternalLink,
+  X,
   PanelLeftClose,
   PanelLeftOpen,
-  X,
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ElementType;
-  badge?: number;
-}
-
-interface NavGroup {
-  title: string;
-  items: NavItem[];
-}
 
 interface AdminSidebarProps {
   isCollapsed?: boolean;
   onToggle?: () => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  pendingSubmissionsCount?: number;
 }
 
 export function AdminSidebar({
@@ -48,64 +37,65 @@ export function AdminSidebar({
   onToggle,
   isMobileOpen = false,
   onCloseMobile,
+  pendingSubmissionsCount = 2,
 }: AdminSidebarProps) {
   const pathname = usePathname();
 
-  const NAV_GROUPS: NavGroup[] = [
+  const NAV_GROUPS = [
     {
-      title: "Modules V1 (Opérationnels)",
+      title: "Navigation Principale",
       items: [
         {
           href: "/admin",
-          label: "Tableau de bord",
+          label: "Tableau de Bord",
           icon: LayoutDashboard,
         },
         {
           href: "/admin/soumissions",
-          label: "Réception des Soumissions",
+          label: "Soumissions & Candidatures",
           icon: Inbox,
-          badge: 4,
+          badge: pendingSubmissionsCount,
+        },
+      ],
+    },
+    {
+      title: "Gestion des Contenus",
+      items: [
+        {
+          href: "/admin/programmes",
+          label: "Offres & Cursus",
+          icon: GraduationCap,
         },
         {
           href: "/admin/actualites",
-          label: "Actualités & Presse",
+          label: "Actualités & Blog",
           icon: Newspaper,
+        },
+        {
+          href: "/admin/galerie",
+          label: "Médiathèque & Photos",
+          icon: ImageIcon,
+        },
+        {
+          href: "/admin/temoignages",
+          label: "Témoignages & Avis",
+          icon: Quote,
+        },
+        {
+          href: "/admin/partenaires",
+          label: "Partenaires Officiels",
+          icon: Building2,
         },
         {
           href: "/admin/equipe",
           label: "Organigramme & Équipe",
           icon: Users,
         },
-        {
-          href: "/admin/parametres",
-          label: "Paramètres du site",
-          icon: Settings,
-        },
       ],
     },
     {
-      title: "Modules Version 2.0 (V2)",
+      title: "Administration & Système",
       items: [
-        {
-          href: "/admin/partenaires",
-          label: "Partenaires & Logos",
-          icon: Building2,
-        },
-        {
-          href: "/admin/programmes",
-          label: "Programmes académiques",
-          icon: GraduationCap,
-        },
-        {
-          href: "/admin/temoignages",
-          label: "Témoignages & Avis",
-          icon: MessageSquareQuote,
-        },
-        {
-          href: "/admin/galerie",
-          label: "Galerie médias",
-          icon: ImageIcon,
-        },
         {
           href: "/admin/documents",
           label: "Documents PDF",
@@ -120,6 +110,11 @@ export function AdminSidebar({
           href: "/admin/utilisateurs",
           label: "Gestion Administrateurs",
           icon: UserCheck,
+        },
+        {
+          href: "/admin/parametres",
+          label: "Paramètres & Alertes",
+          icon: Settings,
         },
       ],
     },
@@ -141,10 +136,10 @@ export function AdminSidebar({
         />
       )}
 
-      {/* Sidebar Container (Desktop & Mobile Drawer) */}
+      {/* Sidebar Container (Desktop & Mobile Drawer) — NO HORIZONTAL SCROLL */}
       <aside
         className={cn(
-          "sticky top-0 h-screen shrink-0 border-r border-white/10 bg-brand-blue-dark text-white flex flex-col justify-between overflow-y-auto transition-all duration-300 z-50",
+          "sticky top-0 h-screen shrink-0 border-r border-white/10 bg-brand-blue-dark text-white flex flex-col justify-between overflow-y-auto overflow-x-hidden transition-all duration-300 z-50 select-none no-scrollbar",
           // Mobile Drawer styling
           "fixed inset-y-0 left-0 md:relative",
           isMobileOpen ? "translate-x-0 w-72 shadow-2xl" : "-translate-x-full md:translate-x-0",
@@ -156,7 +151,7 @@ export function AdminSidebar({
           {/* Logo & Retract Icon Toggle */}
           <div className="flex items-center justify-between border-b border-white/10 px-3.5 py-4">
             <Link href="/admin" onClick={handleNavClick} className="flex items-center gap-3 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white p-1 shadow-xs">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white p-1 shadow-xs border border-white/20">
                 <Image
                   src="/brand/logo-digiset.png"
                   alt="Logo DigiSET"
@@ -199,31 +194,31 @@ export function AdminSidebar({
           </div>
 
           {/* Action Rapide : Publier Actualité */}
-          <div className={cn("pt-4 pb-2", isCollapsed && !isMobileOpen ? "px-2" : "px-4")}>
+          <div className={cn("pt-4 pb-2", isCollapsed && !isMobileOpen ? "px-2" : "px-3.5")}>
             <Link
               href="/admin/actualites"
               onClick={handleNavClick}
               title="Publier une actualité"
               className={cn(
-                "flex items-center justify-center gap-2 rounded-lg bg-brand-orange text-xs font-bold text-white shadow-sm transition-all hover:bg-brand-orange-dark active:scale-[0.98]",
+                "flex items-center justify-center gap-2 rounded-xl bg-brand-orange text-xs font-bold text-white shadow-md transition-all duration-200 hover:bg-brand-orange-dark hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
                 isCollapsed && !isMobileOpen ? "h-10 w-10 p-0" : "w-full px-4 py-2.5"
               )}
             >
               <PlusCircle className="h-4 w-4 shrink-0" />
-              {(!isCollapsed || isMobileOpen) && <span>Publier une actualité</span>}
+              {(!isCollapsed || isMobileOpen) && <span className="truncate">Publier une actualité</span>}
             </Link>
           </div>
 
-          {/* Navigation par Groupes */}
+          {/* Navigation par Groupes — Effet Pointer & Survol Amélioré */}
           <nav className={cn("flex flex-col gap-4 py-3", isCollapsed && !isMobileOpen ? "px-2" : "px-3")}>
             {NAV_GROUPS.map((group) => (
               <div key={group.title}>
                 {(!isCollapsed || isMobileOpen) && (
-                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/40">
+                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/40 truncate">
                     {group.title}
                   </p>
                 )}
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col gap-1">
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const isActive =
@@ -238,20 +233,20 @@ export function AdminSidebar({
                         onClick={handleNavClick}
                         title={isCollapsed && !isMobileOpen ? item.label : undefined}
                         className={cn(
-                          "group relative flex items-center rounded-lg text-xs font-medium transition-colors",
+                          "group relative flex items-center rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer select-none",
                           isCollapsed && !isMobileOpen
-                            ? "justify-center h-10 w-10 p-0 mx-auto"
-                            : "justify-between px-3 py-2",
+                            ? "justify-center h-10 w-10 p-0 mx-auto hover:scale-110"
+                            : "justify-between px-3 py-2.5 hover:translate-x-1",
                           isActive
-                            ? "bg-white/15 font-bold text-white shadow-xs"
-                            : "text-white/80 hover:bg-white/10 hover:text-white"
+                            ? "bg-white/20 font-bold text-white shadow-md ring-1 ring-white/20 border-l-4 border-brand-orange"
+                            : "text-white/80 hover:bg-white/15 hover:text-white"
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <Icon
                             className={cn(
-                              "h-4 w-4 shrink-0 transition-colors",
-                              isActive ? "text-brand-orange" : "text-white/60 group-hover:text-white"
+                              "h-4 w-4 shrink-0 transition-transform group-hover:scale-110",
+                              isActive ? "text-brand-orange" : "text-white/70 group-hover:text-white"
                             )}
                           />
                           {(!isCollapsed || isMobileOpen) && (
@@ -262,7 +257,7 @@ export function AdminSidebar({
                         {item.badge && item.badge > 0 && (
                           <span
                             className={cn(
-                              "flex items-center justify-center rounded-full bg-brand-orange font-extrabold text-white shrink-0",
+                              "flex items-center justify-center rounded-full bg-brand-orange font-extrabold text-white shrink-0 shadow-sm",
                               isCollapsed && !isMobileOpen
                                 ? "absolute -top-1 -right-1 h-4 min-w-[16px] px-1 text-[9px] ring-2 ring-brand-blue-dark"
                                 : "h-5 min-w-[20px] px-1.5 text-[10px]"
@@ -270,11 +265,6 @@ export function AdminSidebar({
                           >
                             {item.badge}
                           </span>
-                        )}
-
-                        {/* Barre d'activation latérale */}
-                        {isActive && (
-                          <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-orange" />
                         )}
                       </Link>
                     );
@@ -285,22 +275,13 @@ export function AdminSidebar({
           </nav>
         </div>
 
-        {/* Pied de Sidebar : Voir le site public */}
-        <div className={cn("border-t border-white/10", isCollapsed && !isMobileOpen ? "p-2 text-center" : "p-4")}>
-          <Link
-            href="/"
-            target="_blank"
-            onClick={handleNavClick}
-            title="Voir le site public"
-            className={cn(
-              "flex items-center justify-between rounded-lg bg-white/5 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white",
-              isCollapsed && !isMobileOpen ? "h-9 w-9 justify-center p-0 mx-auto" : "px-3 py-2 w-full"
-            )}
-          >
-            {(!isCollapsed || isMobileOpen) && <span>Voir le site public</span>}
-            <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-          </Link>
-        </div>
+        {/* Pied de Sidebar : Version & Profil */}
+        {(!isCollapsed || isMobileOpen) && (
+          <div className="border-t border-white/10 p-3.5 text-[10px] text-white/50 flex items-center justify-between">
+            <span>DigiSET OS v1.2</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-400" title="En ligne" />
+          </div>
+        )}
       </aside>
     </>
   );
