@@ -1,46 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, Settings, LogOut, Inbox, FileText, Briefcase, Microscope, Mail, ArrowRight, User, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
+import {
+  Bell,
+  LogOut,
+  User,
+  Settings,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Menu,
+  FileText,
+  Briefcase,
+  Microscope,
+  Mail,
+  Inbox,
+  ShieldCheck,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { createClient } from "@/lib/supabase/client";
-
-interface NotificationItem {
-  id: string;
-  typeLabel: string;
-  name: string;
-  date: string;
-  type: "registration" | "training" | "lab" | "contact";
-}
-
-function getInitials(name: string): string {
-  if (!name) return "DS";
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
-
-function formatDisplayName(email?: string | null, rawName?: string | null): string {
-  if (rawName && rawName.trim().length > 0) return rawName;
-  if (email) {
-    const handle = email.split("@")[0];
-    return handle.charAt(0).toUpperCase() + handle.slice(1);
-  }
-  return "Administrateur";
-}
 
 interface AdminHeaderProps {
   isCollapsed?: boolean;
@@ -48,12 +35,40 @@ interface AdminHeaderProps {
   onOpenMobile?: () => void;
 }
 
+interface NotificationItem {
+  id: string;
+  typeLabel: string;
+  name: string;
+  type: "registration" | "training" | "lab" | "contact";
+}
+
+function getInitials(name: string): string {
+  if (!name) return "AD";
+  const parts = name.trim().split(" ");
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
+}
+
+function formatDisplayName(email: string, fullName?: string): string {
+  if (fullName && fullName.trim().length > 0) {
+    return fullName.trim();
+  }
+  if (!email) return "Administrateur";
+  const localPart = email.split("@")[0];
+  const cleaned = localPart.replace(/[._-]/g, " ");
+  return cleaned
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile }: AdminHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("Administrateur");
-  const [userRole, setUserRole] = useState<string>("Super-Administrateur");
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
@@ -66,17 +81,24 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
         const newSubmissions = json.data.filter((item: { status: string }) => item.status === "nouveau");
         setUnreadCount(newSubmissions.length);
 
-        const formatted: NotificationItem[] = newSubmissions.slice(0, 5).map((item: { id: string; type: string; fullName?: string; name?: string; createdAt: string }) => {
-          let label = "Candidature";
-          if (item.type === "training-request") label = "Formation Continue";
-          if (item.type === "lab-request") label = "Location Laboratoire";
+        const formatted: NotificationItem[] = newSubmissions.slice(0, 6).map((item: { id: string; type: string; full_name?: string; company_name?: string; institution_name?: string; contact_name?: string; name?: string }) => {
+          let label = "Inscription";
+          if (item.type === "training" || item.type === "training-request") label = "Formation Continue";
+          if (item.type === "lab" || item.type === "lab-request") label = "Location Laboratoire";
           if (item.type === "contact") label = "Message Contact";
+
+          const displayName =
+            item.full_name ||
+            item.company_name ||
+            item.institution_name ||
+            item.contact_name ||
+            item.name ||
+            "Nouveau prospect";
 
           return {
             id: item.id,
             typeLabel: label,
-            name: item.fullName || item.name || "Demandeur",
-            date: new Date(item.createdAt).toLocaleDateString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+            name: displayName,
             type: item.type as "registration" | "training" | "lab" | "contact",
           };
         });
@@ -103,7 +125,7 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
         }
       }
 
-      // Si pas de session Supabase active (mode dev), essayer de lire les identifiants locaux
+      // Mode local / secours
       setUserEmail("direction@digiset-gabon.com");
       setUserName("Dr ABAGA ABESSOLO");
     }
@@ -145,8 +167,10 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
     switch (type) {
       case "registration":
         return <FileText className="h-4 w-4 text-brand-orange" />;
+      case "training":
       case "training-request":
         return <Briefcase className="h-4 w-4 text-brand-blue" />;
+      case "lab":
       case "lab-request":
         return <Microscope className="h-4 w-4 text-purple-600" />;
       default:
@@ -188,13 +212,13 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
         <h1 className="font-heading text-sm sm:text-lg font-bold text-brand-blue-dark truncate">
           {getPageTitle()}
         </h1>
-        <span className="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[11px] sm:text-xs font-semibold text-brand-blue hidden lg:inline-block shrink-0">
+        <span className="rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-[11px] sm:text-xs font-semibold text-brand-blue hidden lg:inline-block shrink-0">
           Espace Admin
         </span>
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Menu Déroulant Notifications Interactif */}
+        {/* Menu Déroulant Notifications sans affichage de date */}
         <DropdownMenu>
           <DropdownMenuTrigger className="relative rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-brand-blue-dark focus:outline-none cursor-pointer">
             <Bell className="h-5 w-5" />
@@ -205,7 +229,7 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
             )}
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-80 p-0 shadow-xl border border-gray-200 rounded-xl overflow-hidden">
+          <DropdownMenuContent align="end" className="w-80 p-0 shadow-xl border border-gray-200 rounded-2xl overflow-hidden">
             <div className="bg-brand-blue-dark p-3.5 text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Bell className="h-4 w-4 text-brand-orange" />
@@ -238,7 +262,6 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
                     <div className="space-y-0.5 flex-1 min-w-0">
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="font-bold text-brand-blue">{notif.typeLabel}</span>
-                        <span className="text-slate-400 text-[10px]">{notif.date}</span>
                       </div>
                       <p className="font-semibold text-slate-800 truncate">{notif.name}</p>
                       <p className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
@@ -250,67 +273,65 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
               )}
             </div>
 
-            <div className="border-t border-gray-100 p-2.5 text-center bg-gray-50">
-              <Link
-                href="/admin/soumissions"
-                className="inline-flex items-center gap-1 text-xs font-bold text-brand-blue hover:text-brand-blue-dark"
-              >
-                Voir toutes les soumissions <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
+            {unreadCount > 0 && (
+              <div className="p-2.5 bg-slate-50 border-t border-slate-100 text-center">
+                <Link
+                  href="/admin/soumissions"
+                  className="text-[11px] font-bold text-brand-blue hover:text-brand-blue-dark transition-colors"
+                >
+                  Voir toutes les soumissions →
+                </Link>
+              </div>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Bouton Paramètres */}
-        <Link
-          href="/admin/parametres"
-          className="rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-brand-blue-dark"
-          title="Paramètres"
-        >
-          <Settings className="h-5 w-5" />
-        </Link>
-
-        <div className="h-6 w-px bg-gray-200" />
-
-        {/* Profil Administrateur Personnalisé */}
+        {/* Profil Administrateur */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-gray-100 focus:outline-none cursor-pointer">
-            <Avatar className="h-9 w-9 border border-brand-blue/20 ring-2 ring-brand-blue/10">
-              <AvatarFallback className="bg-brand-blue text-xs font-bold text-white uppercase shadow-xs">
-                {userInitials}
-              </AvatarFallback>
-            </Avatar>
-            <div className="hidden text-left sm:block">
-              <p className="text-xs font-bold leading-tight text-gray-900 line-clamp-1 max-w-[150px]">
-                {userName}
-              </p>
-              <p className="text-[11px] font-medium text-gray-500">
-                {userRole}
-              </p>
+          <DropdownMenuTrigger className="flex items-center gap-2.5 rounded-full p-1 transition-colors hover:bg-gray-100 focus:outline-none cursor-pointer">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-blue text-xs font-bold text-white shadow-xs">
+              {userInitials}
+            </div>
+            <div className="hidden text-left md:block">
+              <p className="text-xs font-bold text-gray-900 leading-none">{userName}</p>
+              <p className="text-[10px] font-medium text-gray-500 mt-0.5 leading-none">Super-Administrateur</p>
             </div>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="font-bold text-gray-900">
-                {userName}
-              </DropdownMenuLabel>
-              <p className="px-2 pb-1.5 text-[11px] text-gray-500 truncate">
-                {userEmail || "Connecté au back-office"}
-              </p>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/admin/parametres")} className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4 text-gray-500" />
-                Paramètres généraux
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+          <DropdownMenuContent align="end" className="w-56 shadow-xl border border-gray-200 rounded-xl">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-xs font-bold leading-none text-gray-900">{userName}</p>
+                <p className="text-[11px] leading-none text-gray-500 truncate">
+                  {userEmail || "direction@digiset-gabon.com"}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+
             <DropdownMenuSeparator />
+
+            <DropdownMenuItem asChild>
+              <Link href="/admin/utilisateurs" className="cursor-pointer text-xs flex items-center gap-2">
+                <User className="h-4 w-4 text-gray-500" />
+                <span>Mon Profil Admin</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link href="/admin/parametres" className="cursor-pointer text-xs flex items-center gap-2">
+                <Settings className="h-4 w-4 text-gray-500" />
+                <span>Paramètres & Notifications</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
             <DropdownMenuItem
               onClick={handleLogout}
-              className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
+              className="cursor-pointer text-xs font-bold text-red-600 hover:text-red-700 hover:bg-red-50 flex items-center gap-2"
             >
-              <LogOut className="mr-2 h-4 w-4" />
-              Déconnexion
+              <LogOut className="h-4 w-4" />
+              <span>Se Déconnecter</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -318,4 +339,3 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
     </header>
   );
 }
-
