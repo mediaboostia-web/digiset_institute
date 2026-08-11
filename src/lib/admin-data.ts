@@ -228,6 +228,35 @@ Se préparer aujourd'hui, c'est garantir la continuité et la performance de vot
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
   },
+  {
+    id: "news-5",
+    slug: "cyberscurit-le-bouclier-indispensable-pour-booster-la-performance-de-votre-entreprise-au-gabon",
+    title: "Cybersécurité : Le bouclier indispensable pour booster la performance de votre entreprise au Gabon !",
+    cover_image_url: "/images/img/Image_3.jpg",
+    excerpt:
+      "À Libreville comme à Akanda, protéger les données et les systèmes de son entreprise est devenu le levier stratégique n°1 pour sécuriser sa croissance.",
+    body: `À Libreville comme à Akanda, protéger les données et les systèmes de son entreprise est devenu le levier stratégique n°1 pour sécuriser sa croissance.
+
+## Pourquoi la Cybersécurité est une Priorité au Gabon
+
+Dans un contexte de digitalisation accélérée des entreprises et des administrations gabonaises, les menaces informatiques (phishing, attaques de logiciels malveillants, vols de données financières) représentent un risque majeur pour la pérennité des organisations.
+
+## La Réponse de DigiSET Institute
+
+**DigiSET Institute** propose des programmes de formation certifiants et des services de conseil haut niveau :
+- **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Formation d'experts en défense réseau et audit SI.
+- **[Formations Continues pour Entreprises](/programmes/formation-continue)** : Sensibilisation des équipes et formation technique sur mesure.
+- **[Consulting IT & Audits de Sécurité](/services/consulting-it)** : Diagnostic de vulnérabilité et accompagnement à la conformité.
+
+Se préparer aujourd'hui, c'est garantir la continuité et la performance de votre entreprise demain.`,
+    status: "published",
+    category: "Formations & Certifications",
+    tags: ["Cybersécurité", "Gabon Tech", "Protection des Données", "Entreprises", "Akanda"],
+    cta_text: "Découvrir la Licence Cybersécurité",
+    cta_url: "/programmes/licence-professionnelle/cybersecurite",
+    published_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
 ];
 
 export function calculateKPIs(submissions: AnySubmission[]) {
