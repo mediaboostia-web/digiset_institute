@@ -230,30 +230,57 @@ Se préparer aujourd'hui, c'est garantir la continuité et la performance de vot
   },
   {
     id: "news-5",
-    slug: "cyberscurit-le-bouclier-indispensable-pour-booster-la-performance-de-votre-entreprise-au-gabon",
-    title: "Cybersécurité : Le bouclier indispensable pour booster la performance de votre entreprise au Gabon !",
-    cover_image_url: "/images/img/Image_3.jpg",
+    slug: "lintelligence-artificielle-et-la-cyberscurit-les-mtiers-en-or-de-2026",
+    title: "L'Intelligence Artificielle et la Cybersécurité : Les métiers en or de 2026 !",
+    cover_image_url: "/images/img/Image_4.jpg",
     excerpt:
-      "À Libreville comme à Akanda, protéger les données et les systèmes de son entreprise est devenu le levier stratégique n°1 pour sécuriser sa croissance.",
-    body: `À Libreville comme à Akanda, protéger les données et les systèmes de son entreprise est devenu le levier stratégique n°1 pour sécuriser sa croissance.
+      "Tu veux un job d'avenir qui paye bien et recrute partout ? Au Gabon et en Afrique, la tech explose. Découvrez nos formations d'excellence en IA et Cybersécurité pour la rentrée 2026.",
+    body: `Tu veux un job d'avenir qui paye bien et recrute partout ? Au Gabon et en Afrique, la tech explose. 
 
-## Pourquoi la Cybersécurité est une Priorité au Gabon
+## Pourquoi l'IA et la Cybersécurité sont les Secteurs N°1 en 2026
 
-Dans un contexte de digitalisation accélérée des entreprises et des administrations gabonaises, les menaces informatiques (phishing, attaques de logiciels malveillants, vols de données financières) représentent un risque majeur pour la pérennité des organisations.
+Les entreprises privées comme les services publics connaissent une transformation digitale rapide. Les besoins en experts qualifiés capables de déployer des modèles d'intelligence artificielle et de sécuriser les infrastructures réseaux n'ont jamais été aussi élevés à Libreville et dans toute la sous-région.
 
-## La Réponse de DigiSET Institute
+## Les Parcours d'Excellence chez DigiSET Institute
 
-**DigiSET Institute** propose des programmes de formation certifiants et des services de conseil haut niveau :
-- **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Formation d'experts en défense réseau et audit SI.
-- **[Formations Continues pour Entreprises](/programmes/formation-continue)** : Sensibilisation des équipes et formation technique sur mesure.
-- **[Consulting IT & Audits de Sécurité](/services/consulting-it)** : Diagnostic de vulnérabilité et accompagnement à la conformité.
+- **[Licence Pro IA & Data Science](/programmes/licence-professionnelle/ia-data-science)** : Apprenez à concevoir des algorithmes prédictifs et traiter la Big Data.
+- **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Devenez un spécialiste de la sécurité opérationnelle et de l'audit de systèmes.
+- **[Classe Préparatoire MP2I](/programmes/classe-preparatoire)** : Le tremplin idéal pour viser les grandes écoles d'ingénieurs.
 
-Se préparer aujourd'hui, c'est garantir la continuité et la performance de votre entreprise demain.`,
+Rejoignez les pionniers du numérique et préparez dès aujourd'hui votre intégration professionnelle pour septembre 2026.`,
     status: "published",
     category: "Formations & Certifications",
-    tags: ["Cybersécurité", "Gabon Tech", "Protection des Données", "Entreprises", "Akanda"],
-    cta_text: "Découvrir la Licence Cybersécurité",
-    cta_url: "/programmes/licence-professionnelle/cybersecurite",
+    tags: ["IA", "Cybersécurité", "Métiers d'avenir", "Licence Pro", "Gabon"],
+    cta_text: "Déposer ma candidature",
+    cta_url: "/inscription/candidature",
+    published_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "news-6",
+    slug: "lintelligence-artificielle-et-la-cybersecurite-les-metiers-en-or-de-2026",
+    title: "L'Intelligence Artificielle et la Cybersécurité : Les métiers en or de 2026 !",
+    cover_image_url: "/images/img/Image_4.jpg",
+    excerpt:
+      "Tu veux un job d'avenir qui paye bien et recrute partout ? Au Gabon et en Afrique, la tech explose. Découvrez nos formations d'excellence en IA et Cybersécurité pour la rentrée 2026.",
+    body: `Tu veux un job d'avenir qui paye bien et recrute partout ? Au Gabon et en Afrique, la tech explose. 
+
+## Pourquoi l'IA et la Cybersécurité sont les Secteurs N°1 en 2026
+
+Les entreprises privées comme les services publics connaissent une transformation digitale rapide. Les besoins en experts qualifiés capables de déployer des modèles d'intelligence artificielle et de sécuriser les infrastructures réseaux n'ont jamais été aussi élevés à Libreville et dans toute la sous-région.
+
+## Les Parcours d'Excellence chez DigiSET Institute
+
+- **[Licence Pro IA & Data Science](/programmes/licence-professionnelle/ia-data-science)** : Apprenez à concevoir des algorithmes prédictifs et traiter la Big Data.
+- **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Devenez un spécialiste de la sécurité opérationnelle et de l'audit de systèmes.
+- **[Classe Préparatoire MP2I](/programmes/classe-preparatoire)** : Le tremplin idéal pour viser les grandes écoles d'ingénieurs.
+
+Rejoignez les pionniers du numérique et préparez dès aujourd'hui votre intégration professionnelle pour septembre 2026.`,
+    status: "published",
+    category: "Formations & Certifications",
+    tags: ["IA", "Cybersécurité", "Métiers d'avenir", "Licence Pro", "Gabon"],
+    cta_text: "Déposer ma candidature",
+    cta_url: "/inscription/candidature",
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
   },
