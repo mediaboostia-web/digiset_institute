@@ -20,6 +20,7 @@ import {
   X,
   PanelLeftClose,
   PanelLeftOpen,
+  LucideIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -32,6 +33,19 @@ interface AdminSidebarProps {
   pendingSubmissionsCount?: number;
 }
 
+interface NavItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  badge?: number;
+  v2Badge?: string;
+}
+
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
 export function AdminSidebar({
   isCollapsed = false,
   onToggle,
@@ -41,7 +55,7 @@ export function AdminSidebar({
 }: AdminSidebarProps) {
   const pathname = usePathname();
 
-  const NAV_GROUPS = [
+  const NAV_GROUPS: NavGroup[] = [
     {
       title: "Fonctionnalités V1 (Actives)",
       items: [
