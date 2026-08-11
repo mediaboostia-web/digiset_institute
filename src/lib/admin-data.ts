@@ -104,7 +104,7 @@ export interface TeamMember {
 // Réception des soumissions : démarre vide pour enregistrer les vrais prospects et étudiants
 export const INITIAL_SUBMISSIONS: AnySubmission[] = [];
 
-// Actualité officielle initiale du lancement avec maillage interne SEO
+// Actualités officielles initiales du lancement avec maillage interne SEO
 export const INITIAL_NEWS: NewsItem[] = [
   {
     id: "news-1",
@@ -199,9 +199,66 @@ Consultez nos grilles tarifaires et **[effectuez votre réservation en ligne](/s
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
   },
+  {
+    id: "news-4",
+    slug: "cybersecurite-le-bouclier-indispensable-pour-booster-la-performance-de-votre-entreprise-au-gabon",
+    title: "Cybersécurité : Le bouclier indispensable pour booster la performance de votre entreprise au Gabon !",
+    cover_image_url: "/images/img/Image_3.jpg",
+    excerpt:
+      "À Libreville comme à Akanda, protéger les données et les systèmes de son entreprise est devenu le levier stratégique n°1 pour sécuriser sa croissance.",
+    body: `À Libreville comme à Akanda, protéger les données et les systèmes de son entreprise est devenu le levier stratégique n°1 pour sécuriser sa croissance.
+
+## Pourquoi la Cybersécurité est une Priorité au Gabon
+
+Dans un contexte de digitalisation accélérée des entreprises et des administrations gabonaises, les menaces informatiques (phishing, attaques de logiciels malveillants, vols de données financières) représentent un risque majeur pour la pérennité des organisations.
+
+## La Réponse de DigiSET Institute
+
+**DigiSET Institute** propose des programmes de formation certifiants et des services de conseil haut niveau :
+- **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Formation d'experts en défense réseau et audit SI.
+- **[Formations Continues pour Entreprises](/programmes/formation-continue)** : Sensibilisation des équipes et formation technique sur mesure.
+- **[Consulting IT & Audits de Sécurité](/services/consulting-it)** : Diagnostic de vulnérabilité et accompagnement à la conformité.
+
+Se préparer aujourd'hui, c'est garantir la continuité et la performance de votre entreprise demain.`,
+    status: "published",
+    category: "Formations & Certifications",
+    tags: ["Cybersécurité", "Gabon Tech", "Protection des Données", "Entreprises", "Akanda"],
+    cta_text: "Découvrir la Licence Cybersécurité",
+    cta_url: "/programmes/licence-professionnelle/cybersecurite",
+    published_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
 ];
 
-// Organigramme officiel initial de l'établissement
+export function calculateKPIs(submissions: AnySubmission[]) {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const registrations7d = submissions.filter(
+    (s) => s.type === "registration" && new Date(s.created_at) >= sevenDaysAgo
+  ).length;
+
+  const training7d = submissions.filter(
+    (s) => s.type === "training" && new Date(s.created_at) >= sevenDaysAgo
+  ).length;
+
+  const lab7d = submissions.filter(
+    (s) => s.type === "lab" && new Date(s.created_at) >= sevenDaysAgo
+  ).length;
+
+  const pendingSubmissions = submissions.filter(
+    (s) => s.status === "nouveau" || s.status === "en_cours"
+  ).length;
+
+  return {
+    registrations7d,
+    training7d,
+    lab7d,
+    totalSubmissions: submissions.length,
+    pendingSubmissions,
+  };
+}
+
 export const INITIAL_TEAM: TeamMember[] = [
   {
     id: "team-1",
@@ -209,41 +266,46 @@ export const INITIAL_TEAM: TeamMember[] = [
     role_title: "Fondateur & Directeur Général",
     pole: "Direction Générale",
     photo_url: "/brand/fondateur.png",
-    bio: "Docteur en Ingénierie & Enseignement Supérieur du Numérique. Fondateur de DigiSET Institute et porteur de la vision académique et technologique de l'établissement à Akanda, Gabon.",
+    bio: "Docteur en informatique, expert en systèmes de paiement et gouvernance du numérique.",
     email: "direction@digiset-gabon.com",
+    linkedin_url: "https://linkedin.com",
     sort_order: 1,
     created_at: new Date().toISOString(),
   },
+  {
+    id: "team-2",
+    full_name: "Prof. Jean-Marc ONDO",
+    role_title: "Directeur des Études & Maquettes ECTS",
+    pole: "Direction Académique",
+    photo_url: "/images/img/Image6.jpg",
+    bio: "Enseignant-chercheur, responsable de l'accréditation et des programmes académiques.",
+    email: "etudes@digiset-gabon.com",
+    linkedin_url: "https://linkedin.com",
+    sort_order: 2,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "team-3",
+    full_name: "Dr. Sylvie NGUEMA",
+    role_title: "Présidente du Conseil Scientifique",
+    pole: "Direction Académique",
+    photo_url: "/images/img/Image7.jpg",
+    bio: "Docteur en Mathématiques Appliquées, conseillère en recherche et partenariats.",
+    email: "conseil@digiset-gabon.com",
+    linkedin_url: "https://linkedin.com",
+    sort_order: 3,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "team-4",
+    full_name: "Ing. Patrick ELLA",
+    role_title: "Chef du Pôle Cybersécurité & Labos SOC",
+    pole: "Corps Professoral",
+    photo_url: "/images/img/Image_4.jpg",
+    bio: "Ingénieur réseaux et expert certifié Cisco CCNA CyberOps & CompTIA Security+.",
+    email: "cyber@digiset-gabon.com",
+    linkedin_url: "https://linkedin.com",
+    sort_order: 4,
+    created_at: new Date().toISOString(),
+  },
 ];
-
-export function calculateKPIs(submissions: AnySubmission[]) {
-  const totalSubmissions = submissions.length;
-  const pendingSubmissions = submissions.filter((s) => s.status === "nouveau").length;
-  const registrationsCount = submissions.filter((s) => s.type === "registration").length;
-  const trainingCount = submissions.filter((s) => s.type === "training").length;
-  const labCount = submissions.filter((s) => s.type === "lab").length;
-  const contactCount = submissions.filter((s) => s.type === "contact").length;
-
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const registrations7d = submissions.filter(
-    (s) => s.type === "registration" && s.created_at >= sevenDaysAgo
-  ).length;
-  const training7d = submissions.filter(
-    (s) => s.type === "training" && s.created_at >= sevenDaysAgo
-  ).length;
-  const lab7d = submissions.filter(
-    (s) => s.type === "lab" && s.created_at >= sevenDaysAgo
-  ).length;
-
-  return {
-    totalSubmissions,
-    pendingSubmissions,
-    registrationsCount,
-    trainingCount,
-    labCount,
-    contactCount,
-    registrations7d,
-    training7d,
-    lab7d,
-  };
-}

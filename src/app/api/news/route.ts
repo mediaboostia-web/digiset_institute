@@ -1,8 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { INITIAL_NEWS, type NewsItem, type ContentStatus } from "@/lib/admin-data";
-
-// Fallback / Store dynamique d'articles en mémoire vive serveur
-let globalNewsStore: NewsItem[] = [...INITIAL_NEWS];
+import { getGlobalNews, getNewsBySlug, addNewsItem, updateNewsItem, deleteNewsItem, slugify } from "@/lib/news-store";
+import type { NewsItem, ContentStatus } from "@/lib/admin-data";
 
 function encodeArticleBody(body: string, meta: { category?: string; tags?: string[]; cta_text?: string; cta_url?: string }): string {
   const metaJSON = JSON.stringify(meta);
@@ -27,13 +25,20 @@ function decodeArticleBody(rawBody: string): { body: string; category?: string; 
  * GET /api/news
  * ?status=published -> public visitors
  * ?status=all -> admin back-office
- * ?slug=... -> single article page
+ * ?slug=... -> single article query
  */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const statusParam = searchParams.get("status") || "published";
     const slugParam = searchParams.get("slug");
+
+    if (slugParam) {
+      const singleItem = getNewsBySlug(slugParam);
+      if (singleItem) {
+        return NextResponse.json({ ok: true, data: [singleItem] });
+      }
+    }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -74,18 +79,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Fallback store mémoire
-    let filtered = [...globalNewsStore];
+    // Fallback unifié depuis news-store
+    const allStoreNews = getGlobalNews(statusParam === "all" ? "all" : "published");
+    let result = allStoreNews;
+
     if (slugParam) {
-      filtered = filtered.filter((n) => n.slug === slugParam);
-    } else if (statusParam !== "all") {
-      filtered = filtered.filter((n) => n.status === "published");
+      const match = getNewsBySlug(slugParam);
+      result = match ? [match] : [];
     }
 
-    return NextResponse.json({ ok: true, data: filtered });
+    return NextResponse.json({ ok: true, data: result });
   } catch (error) {
     console.error("[api/news GET]", error);
-    return NextResponse.json({ ok: true, data: globalNewsStore });
+    return NextResponse.json({ ok: true, data: getGlobalNews("published") });
   }
 }
 
@@ -102,12 +108,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "Titre et contenu obligatoires" }, { status: 400 });
     }
 
-    const finalSlug = (slug || title)
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const finalSlug = slug ? slugify(slug) : slugify(title);
 
     const newArticle: NewsItem = {
       id: `news-${Date.now()}`,
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
       category: category || "Institutionnel",
       excerpt: excerpt || "",
       body: articleBody,
-      cover_image_url: cover_image_url || "/brand/fondateur.png",
+      cover_image_url: cover_image_url || "/images/img/Image_3.jpg",
       status: status || "published",
       published_at: status === "published" ? new Date().toISOString() : new Date().toISOString(),
       created_at: new Date().toISOString(),
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
       cta_url: cta_url || "/inscription/candidature",
     };
 
-    globalNewsStore.unshift(newArticle);
+    addNewsItem(newArticle);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -160,7 +161,6 @@ export async function POST(request: NextRequest) {
 
 /**
  * PATCH /api/news
- * Modification ou changement de statut
  */
 export async function PATCH(request: NextRequest) {
   try {
@@ -171,23 +171,17 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "ID manquant" }, { status: 400 });
     }
 
-    globalNewsStore = globalNewsStore.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          ...(title && { title }),
-          ...(slug && { slug }),
-          ...(category && { category }),
-          ...(excerpt !== undefined && { excerpt }),
-          ...(articleBody !== undefined && { body: articleBody }),
-          ...(cover_image_url !== undefined && { cover_image_url }),
-          ...(status && { status, published_at: status === "published" ? new Date().toISOString() : item.published_at }),
-          ...(tags && { tags }),
-          ...(cta_text && { cta_text }),
-          ...(cta_url && { cta_url }),
-        };
-      }
-      return item;
+    updateNewsItem(id, {
+      title,
+      slug,
+      category,
+      excerpt,
+      body: articleBody,
+      cover_image_url,
+      status,
+      tags,
+      cta_text,
+      cta_url,
     });
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -200,7 +194,7 @@ export async function PATCH(request: NextRequest) {
         updated_at: new Date().toISOString(),
       };
       if (title) updatePayload.title = title;
-      if (slug) updatePayload.slug = slug;
+      if (slug) updatePayload.slug = slugify(slug);
       if (excerpt !== undefined) updatePayload.excerpt = excerpt;
       if (cover_image_url !== undefined) updatePayload.cover_image_url = cover_image_url;
       if (status) {
@@ -230,7 +224,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "ID manquant" }, { status: 400 });
     }
 
-    globalNewsStore = globalNewsStore.filter((item) => item.id !== id);
+    deleteNewsItem(id);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

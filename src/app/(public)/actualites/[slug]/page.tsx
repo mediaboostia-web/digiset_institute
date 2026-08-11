@@ -4,28 +4,33 @@ import { notFound } from "next/navigation";
 import { HeroSection } from "@/components/shared/hero-section";
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { FormattedArticleBody } from "@/components/shared/formatted-article-body";
-import { INITIAL_NEWS, NewsItem } from "@/lib/admin-data";
+import { getNewsBySlug } from "@/lib/news-store";
+import { NewsItem } from "@/lib/admin-data";
 import { Calendar, ArrowLeft, Tag, Sparkles, ArrowRight } from "lucide-react";
 
-async function getArticleBySlug(slug: string): Promise<NewsItem | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/news?slug=${slug}&status=published`, {
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
-        return json.data[0];
-      }
-    }
-  } catch (err) {
-    console.error("Erreur récupération article par slug:", err);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const article = getNewsBySlug(slug);
+
+  if (!article) {
+    return {
+      title: "Article Non Trouvé | DigiSET Institute",
+    };
   }
 
-  // Fallback sur la liste statique
-  const fallbackMatch = INITIAL_NEWS.find((n) => n.slug === slug);
-  return fallbackMatch || INITIAL_NEWS[0];
+  return {
+    title: `${article.title} | DigiSET Institute`,
+    description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      images: [article.cover_image_url || "/brand/fondateur.png"],
+    },
+  };
 }
 
 export default async function ArticleDetailPage({
@@ -34,7 +39,27 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+
+  // Récupération dynamique via le store unifié (garantit la présence de tout article créé en admin)
+  let article: NewsItem | null = getNewsBySlug(slug);
+
+  // Fallback de secours par API distante si non trouvé en mémoire locale
+  if (!article) {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sitewebdigisetinstitute.vercel.app";
+      const res = await fetch(`${baseUrl}/api/news?slug=${slug}&status=published`, {
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
+          article = json.data[0];
+        }
+      }
+    } catch {
+      // Ignorer
+    }
+  }
 
   if (!article) {
     notFound();
