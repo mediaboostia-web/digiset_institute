@@ -28,14 +28,14 @@ export default function AdminDashboardLayout({
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F8F9FB] relative">
+    <div className="flex h-screen w-full overflow-hidden bg-[#F8F9FB] relative">
       <AdminSidebar
         isCollapsed={isCollapsed}
         onToggle={toggleCollapse}
         isMobileOpen={isMobileOpen}
         onCloseMobile={() => setIsMobileOpen(false)}
       />
-      <div className="flex flex-1 flex-col overflow-x-hidden min-w-0 transition-all duration-300">
+      <div className="flex flex-1 flex-col h-screen overflow-y-auto overflow-x-hidden min-w-0 transition-all duration-300">
         <AdminHeader
           isCollapsed={isCollapsed}
           onToggleSidebar={toggleCollapse}
