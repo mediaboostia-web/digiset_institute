@@ -4,8 +4,9 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { HeroSection } from "@/components/shared/hero-section";
-import { Calendar, ArrowRight, Eye, Share2, Sparkles, Filter } from "lucide-react";
+import { Calendar, ArrowRight, Eye, Share2, Sparkles, Filter, Search, X } from "lucide-react";
 import { INITIAL_NEWS, NewsItem } from "@/lib/admin-data";
+import { Input } from "@/components/ui/input";
 
 const CATEGORIES = [
   "Tous",
@@ -19,6 +20,7 @@ const CATEGORIES = [
 
 export default function ActualitesPage() {
   const [selectedCategory, setSelectedCategory] = useState("Tous");
+  const [searchQuery, setSearchQuery] = useState("");
   const [articles, setArticles] = useState<NewsItem[]>(INITIAL_NEWS);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,9 +42,19 @@ export default function ActualitesPage() {
   }, []);
 
   const filteredArticles = useMemo(() => {
-    if (selectedCategory === "Tous") return articles;
-    return articles.filter((a) => a.category === selectedCategory);
-  }, [articles, selectedCategory]);
+    return articles.filter((a) => {
+      const matchesCategory = selectedCategory === "Tous" || a.category === selectedCategory;
+      if (!matchesCategory) return false;
+
+      if (searchQuery.trim() === "") return true;
+      const q = searchQuery.toLowerCase().trim();
+      return (
+        a.title.toLowerCase().includes(q) ||
+        a.excerpt.toLowerCase().includes(q) ||
+        (a.tags && a.tags.some((t) => t.toLowerCase().includes(q)))
+      );
+    });
+  }, [articles, selectedCategory, searchQuery]);
 
   return (
     <div>
@@ -53,34 +65,55 @@ export default function ActualitesPage() {
         breadcrumbs={[{ label: "Actualités" }]}
       />
 
-      <section className="py-12 bg-white border-b border-border">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
+      <section className="py-10 sm:py-12 bg-white border-b border-border">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
           
-          {/* BARRE DE FILTRES PAR CATÉGORIES — PARFAITEMENT AJUSTÉE SUR MOBILE */}
-          <div className="space-y-3 border-b border-slate-100 pb-5">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
-              <Filter className="h-4 w-4 text-brand-orange shrink-0" />
-              <span>Filtrer par catégorie :</span>
+          {/* BARRE DE RECHERCHE MOBILE & DESKTOP VISIBLE ET 100% FONCTIONNELLE */}
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5 shadow-2xs space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-orange" />
+              <Input
+                type="text"
+                placeholder="Rechercher un article, un sujet (ex: Cybersécurité, IA, Concours 2026...)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 h-11 rounded-xl text-xs sm:text-sm bg-white border-slate-200 shadow-2xs focus:border-brand-blue font-medium text-slate-900"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
-            {/* Barre de défilement horizontal fluide sur mobile */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 no-scrollbar sm:flex-wrap -mx-4 px-4 sm:mx-0 sm:px-0">
-              {CATEGORIES.map((cat) => {
-                const isSelected = selectedCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`shrink-0 whitespace-nowrap rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer shadow-xs ${
-                      isSelected
-                        ? "bg-brand-blue text-white shadow-md ring-2 ring-brand-blue/30"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
+            {/* BARRE DE FILTRES PAR CATÉGORIES — DEFILEMENT FLUIDE ET RESPONSIVE */}
+            <div className="space-y-2 pt-1 border-t border-slate-200/80">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                <Filter className="h-3.5 w-3.5 text-brand-orange shrink-0" />
+                <span>Catégories d'articles :</span>
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 no-scrollbar sm:flex-wrap -mx-2 px-2 sm:mx-0 sm:px-0">
+                {CATEGORIES.map((cat) => {
+                  const isSelected = selectedCategory === cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+                        isSelected
+                          ? "bg-brand-blue text-white shadow-md ring-2 ring-brand-blue/30"
+                          : "bg-white text-slate-700 hover:bg-slate-200/80 border border-slate-200"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -99,16 +132,19 @@ export default function ActualitesPage() {
             <div className="py-16 text-center border rounded-2xl bg-slate-50 space-y-3">
               <Sparkles className="h-8 w-8 text-brand-orange mx-auto" />
               <h3 className="font-heading text-base font-bold text-slate-900">
-                Aucun article dans cette catégorie
+                Aucun article ne correspond à votre recherche
               </h3>
               <p className="text-xs text-slate-500">
-                Sélectionnez une autre catégorie pour consulter nos publications.
+                Essayez d'autres mots-clés ou modifiez la catégorie sélectionnée.
               </p>
               <button
-                onClick={() => setSelectedCategory("Tous")}
+                onClick={() => {
+                  setSelectedCategory("Tous");
+                  setSearchQuery("");
+                }}
                 className="mt-2 text-xs font-bold text-brand-blue hover:underline"
               >
-                Afficher toutes les actualités →
+                Réinitialiser la recherche →
               </button>
             </div>
           ) : (

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Search, GraduationCap, Briefcase, Award, Monitor, FlaskConical, Building2, ShieldCheck, ArrowRight } from "lucide-react";
+import { ChevronDown, Search, GraduationCap, Briefcase, Award, Monitor, FlaskConical, Building2, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { AnnouncementBanner } from "@/components/layout/announcement-banner";
 
 const SEARCH_CATALOG = [
@@ -16,6 +16,7 @@ const SEARCH_CATALOG = [
   { title: "Consulting IT & Audits", category: "Services", url: "/services/consulting-it", desc: "Accompagnement, SOC & projets de transformation digitale" },
   { title: "Location de Laboratoires TP", category: "Services", url: "/services/location-laboratoires", desc: "Mise à disposition des labos TP pour lycées et prépas" },
   { title: "Institution & Mot du Fondateur", category: "À Propos", url: "/institution", desc: "Gouvernance 3 rangs, Conseil académique & vision" },
+  { title: "Actualités & Articles", category: "Presse", url: "/actualites", desc: "Toute l'actualité institutionnelle et académique de DigiSET Institute" },
   { title: "Candidature Rentrée Septembre 2026", category: "Inscription", url: "/inscription/candidature", desc: "Formulaire d'inscription en ligne étudiants" },
 ];
 
@@ -47,7 +48,7 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  // Verrouillage strict du scroll de l'écran principal quand la recherche mobile est ouverte
+  // Verrouillage du scroll quand le panneau de recherche est ouvert
   useEffect(() => {
     if (searchOpen) {
       document.body.style.overflow = "hidden";
@@ -76,11 +77,11 @@ export function Header() {
       }`}
     >
       <AnnouncementBanner />
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-20 gap-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8 h-16 sm:h-20 gap-2 sm:gap-3">
         
         {/* Logo Officiel DigiSET */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <div className="relative h-11 w-36 sm:h-14 sm:w-44 bg-transparent p-1 flex items-center justify-center transition-opacity hover:opacity-90">
+        <Link href="/" className="flex items-center gap-2 shrink-0 group">
+          <div className="relative h-10 w-32 sm:h-14 sm:w-44 bg-transparent p-0.5 flex items-center justify-center transition-opacity hover:opacity-90">
             <Image
               src="/brand/Digiset Logo officiel.png"
               alt="Logo Officiel DigiSET Institute"
@@ -270,6 +271,14 @@ export function Header() {
             )}
           </div>
 
+          {/* Actualités */}
+          <Link
+            href="/actualites"
+            className="py-2 text-slate-800 hover:text-brand-orange transition-colors"
+          >
+            Actualités
+          </Link>
+
           {/* Contact */}
           <Link
             href="/contact"
@@ -279,17 +288,19 @@ export function Header() {
           </Link>
         </nav>
 
-        {/* Barre de Recherche Interactive sur Mobile */}
-        <div className="lg:hidden flex-1 max-w-[210px] sm:max-w-xs">
+        {/* BARRE DE RECHERCHE INTERACTIVE HAUTEMENT VISIBLE SUR MOBILE */}
+        <div className="lg:hidden flex items-center gap-2 flex-1 justify-end max-w-[200px] sm:max-w-xs">
           <button
             onClick={() => setSearchOpen(true)}
-            className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all shadow-2xs border bg-slate-100/90 text-slate-600 border-slate-300 hover:bg-slate-200/90"
+            type="button"
+            className="w-full flex items-center justify-between gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition-all shadow-2xs border bg-slate-100/90 text-slate-700 border-slate-300 hover:bg-slate-200 cursor-pointer active:scale-95"
+            title="Rechercher sur tout le site"
           >
-            <div className="flex items-center gap-2 truncate">
-              <Search className="h-3.5 w-3.5 text-brand-orange shrink-0" />
-              <span className="truncate">Rechercher...</span>
+            <div className="flex items-center gap-1.5 truncate">
+              <Search className="h-4 w-4 text-brand-orange shrink-0" />
+              <span className="truncate text-[11px] font-bold text-slate-800">Rechercher...</span>
             </div>
-            <span className="text-[9px] uppercase tracking-widest font-bold text-brand-orange bg-brand-orange/10 px-1.5 py-0.5 rounded-md shrink-0">
+            <span className="text-[9px] uppercase tracking-wider font-extrabold text-white bg-brand-orange px-1.5 py-0.5 rounded shrink-0 shadow-2xs">
               Go
             </span>
           </button>
@@ -307,9 +318,9 @@ export function Header() {
 
       </div>
 
-      {/* Modal de Recherche Mobile Ultra-Interactive */}
+      {/* Modal de Recherche Mobile Ultra-Interactive & 100% Fonctionnelle */}
       {searchOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex flex-col bg-slate-900/95 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="lg:hidden fixed inset-0 z-[100] flex flex-col bg-slate-900/95 backdrop-blur-md animate-in fade-in duration-200">
           <div className="p-4 bg-slate-900 border-b border-white/15 flex items-center justify-between gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-orange" />
@@ -318,8 +329,8 @@ export function Header() {
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Rechercher une formation (ex: IA, Cybersécurité, Prépa...)"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/10 text-white text-xs placeholder:text-slate-400 border border-white/20 focus:outline-hidden focus:border-brand-orange focus:ring-1 focus:ring-brand-orange"
+                placeholder="Rechercher une formation, un article (ex: IA, Cybersécurité...)..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/10 text-white text-xs placeholder:text-slate-400 border border-white/20 focus:outline-hidden focus:border-brand-orange focus:ring-1 focus:ring-brand-orange font-medium"
               />
             </div>
             <button
@@ -327,15 +338,15 @@ export function Header() {
                 setSearchOpen(false);
                 setSearchQuery("");
               }}
-              className="p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 shrink-0 text-xs font-bold"
+              className="p-2.5 rounded-xl bg-white/10 text-white hover:bg-white/20 shrink-0 text-xs font-bold cursor-pointer"
             >
-              Fermer
+              <X className="h-4 w-4" />
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              {searchQuery ? `Résultats de recherche (${filteredSearch.length})` : "Formations & Services Populaires"}
+              {searchQuery ? `Résultats trouvés (${filteredSearch.length})` : "Formations & Services Populaires"}
             </div>
 
             {filteredSearch.length > 0 ? (
@@ -348,7 +359,7 @@ export function Header() {
                       setSearchOpen(false);
                       setSearchQuery("");
                     }}
-                    className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-orange/50 transition-all space-y-1"
+                    className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-orange/50 transition-all space-y-1 cursor-pointer"
                   >
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-extrabold text-white">{item.title}</span>
@@ -363,7 +374,7 @@ export function Header() {
             ) : (
               <div className="text-center py-10 space-y-2 text-slate-400">
                 <Search className="h-8 w-8 mx-auto opacity-40 text-brand-orange" />
-                <p className="text-xs">Aucune formation ne correspond à &quot;{searchQuery}&quot;</p>
+                <p className="text-xs">Aucun résultat ne correspond à &quot;{searchQuery}&quot;</p>
               </div>
             )}
           </div>
@@ -377,7 +388,7 @@ export function Header() {
               }}
               className="w-full flex items-center justify-center gap-2 rounded-xl bg-brand-orange py-3 text-xs font-bold text-white shadow-md hover:bg-brand-orange-dark transition-colors"
             >
-              Accéder au formulaire de candidature
+              <span>Accéder au formulaire de candidature</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
