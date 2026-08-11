@@ -37,13 +37,13 @@ export function AdminSidebar({
   onToggle,
   isMobileOpen = false,
   onCloseMobile,
-  pendingSubmissionsCount = 2,
+  pendingSubmissionsCount = 0,
 }: AdminSidebarProps) {
   const pathname = usePathname();
 
   const NAV_GROUPS = [
     {
-      title: "Navigation Principale",
+      title: "Fonctionnalités V1 (Actives)",
       items: [
         {
           href: "/admin",
@@ -56,65 +56,67 @@ export function AdminSidebar({
           icon: Inbox,
           badge: pendingSubmissionsCount,
         },
-      ],
-    },
-    {
-      title: "Gestion des Contenus",
-      items: [
-        {
-          href: "/admin/programmes",
-          label: "Offres & Cursus",
-          icon: GraduationCap,
-        },
         {
           href: "/admin/actualites",
-          label: "Actualités & Blog",
+          label: "Actualités & Articles",
           icon: Newspaper,
-        },
-        {
-          href: "/admin/galerie",
-          label: "Médiathèque & Photos",
-          icon: ImageIcon,
-        },
-        {
-          href: "/admin/temoignages",
-          label: "Témoignages & Avis",
-          icon: Quote,
-        },
-        {
-          href: "/admin/partenaires",
-          label: "Partenaires Officiels",
-          icon: Building2,
         },
         {
           href: "/admin/equipe",
           label: "Organigramme & Équipe",
           icon: Users,
         },
+        {
+          href: "/admin/parametres",
+          label: "Paramètres & Notifications",
+          icon: Settings,
+        },
       ],
     },
     {
-      title: "Administration & Système",
+      title: "Extensions & Modules V2",
       items: [
         {
-          href: "/admin/documents",
-          label: "Documents PDF",
-          icon: FolderDown,
+          href: "/admin/programmes",
+          label: "Offres & Cursus",
+          icon: GraduationCap,
+          v2Badge: "V2",
+        },
+        {
+          href: "/admin/galerie",
+          label: "Médiathèque & Photos",
+          icon: ImageIcon,
+          v2Badge: "V2",
+        },
+        {
+          href: "/admin/temoignages",
+          label: "Témoignages & Avis",
+          icon: Quote,
+          v2Badge: "V2",
+        },
+        {
+          href: "/admin/partenaires",
+          label: "Partenaires Officiels",
+          icon: Building2,
+          v2Badge: "V2",
         },
         {
           href: "/admin/pages",
           label: "Pages libres & SEO",
           icon: FileText,
+          v2Badge: "V2",
+        },
+        {
+          href: "/admin/documents",
+          label: "Documents PDF",
+          icon: FolderDown,
+          v2Badge: "V2",
         },
         {
           href: "/admin/utilisateurs",
           label: "Gestion Administrateurs",
           icon: UserCheck,
-        },
-        {
-          href: "/admin/parametres",
-          label: "Paramètres & Alertes",
-          icon: Settings,
+          v2Badge: "V2",
         },
       ],
     },
@@ -136,7 +138,7 @@ export function AdminSidebar({
         />
       )}
 
-      {/* Sidebar Container (Desktop & Mobile Drawer) — NO HORIZONTAL SCROLL */}
+      {/* Sidebar Container (Desktop & Mobile Drawer) — SANS DEBORDEMENT LATÉRAL */}
       <aside
         className={cn(
           "sticky top-0 h-screen shrink-0 border-r border-white/10 bg-brand-blue-dark text-white flex flex-col justify-between overflow-y-auto overflow-x-hidden transition-all duration-300 z-50 select-none no-scrollbar",
@@ -209,13 +211,13 @@ export function AdminSidebar({
             </Link>
           </div>
 
-          {/* Navigation par Groupes — Effet Pointer & Survol Amélioré */}
+          {/* Navigation Réordonnée : V1 en Haut, V2 en Bas */}
           <nav className={cn("flex flex-col gap-4 py-3", isCollapsed && !isMobileOpen ? "px-2" : "px-3")}>
             {NAV_GROUPS.map((group) => (
               <div key={group.title}>
                 {(!isCollapsed || isMobileOpen) && (
-                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/40 truncate">
-                    {group.title}
+                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/40 truncate flex items-center justify-between">
+                    <span>{group.title}</span>
                   </p>
                 )}
                 <div className="flex flex-col gap-1">
@@ -254,7 +256,7 @@ export function AdminSidebar({
                           )}
                         </div>
 
-                        {item.badge && item.badge > 0 && (
+                        {item.badge && item.badge > 0 ? (
                           <span
                             className={cn(
                               "flex items-center justify-center rounded-full bg-brand-orange font-extrabold text-white shrink-0 shadow-sm",
@@ -264,6 +266,12 @@ export function AdminSidebar({
                             )}
                           >
                             {item.badge}
+                          </span>
+                        ) : null}
+
+                        {item.v2Badge && (!isCollapsed || isMobileOpen) && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white/50 group-hover:bg-brand-orange/30 group-hover:text-white transition-colors">
+                            {item.v2Badge}
                           </span>
                         )}
                       </Link>
@@ -275,7 +283,7 @@ export function AdminSidebar({
           </nav>
         </div>
 
-        {/* Pied de Sidebar : Version & Profil */}
+        {/* Pied de Sidebar : Version & Statut */}
         {(!isCollapsed || isMobileOpen) && (
           <div className="border-t border-white/10 p-3.5 text-[10px] text-white/50 flex items-center justify-between">
             <span>DigiSET OS v1.2</span>
