@@ -110,18 +110,14 @@ export default function InstitutionPage() {
 
   useEffect(() => {
     async function loadTeam() {
+      // 1. Restauration instantanée depuis le cache local pour 0ms d'attente
       if (typeof window !== "undefined") {
-        const isModified = localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true";
         const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (cached) {
           try {
             const parsed = JSON.parse(cached);
-            if (Array.isArray(parsed)) {
+            if (Array.isArray(parsed) && parsed.length > 0) {
               setTeamMembers(parsed);
-              if (isModified) {
-                setIsLoading(false);
-                return;
-              }
             }
           } catch {
             // Ignorer
@@ -129,25 +125,20 @@ export default function InstitutionPage() {
         }
       }
 
+      // 2. Synchronisation serveur
       try {
         const res = await fetch("/api/team");
         const json = await res.json();
         if (json.ok && Array.isArray(json.data)) {
-          if (typeof window !== "undefined" && localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true") {
-            const localCache = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (localCache) {
-              try {
-                const parsedLocal = JSON.parse(localCache);
-                if (Array.isArray(parsedLocal)) {
-                  setTeamMembers(parsedLocal);
-                  return;
-                }
-              } catch {
-                // Ignorer
-              }
-            }
-          }
           setTeamMembers(json.data);
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));
+              if (json.user_modified) {
+                localStorage.setItem(LOCAL_STORAGE_MODIFIED_KEY, "true");
+              }
+            } catch {}
+          }
         }
       } catch (err) {
         console.error("Erreur chargement organigramme public:", err);

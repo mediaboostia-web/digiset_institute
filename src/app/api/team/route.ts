@@ -1,19 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getGlobalTeam, addTeamMember, updateTeamMember, deleteTeamMember } from "@/lib/team-store";
+import { getGlobalTeam, addTeamMember, updateTeamMember, deleteTeamMember, isTeamUserModified } from "@/lib/team-store";
 import { TeamMember } from "@/lib/admin-data";
 
 export async function GET() {
   const cacheHeaders = {
-    "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
   };
 
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
     if (supabaseUrl) {
-      // 1. Passer par le client SSR officiel avec transmission du Cookie JWT (RLS natif)
       const supabase = await createClient();
       const { data, error } = await supabase
         .from("team_members")
@@ -21,16 +20,22 @@ export async function GET() {
         .order("sort_order", { ascending: true });
 
       if (!error && Array.isArray(data) && data.length > 0) {
-        return NextResponse.json({ ok: true, data }, { headers: cacheHeaders });
+        return NextResponse.json({ ok: true, data, user_modified: true }, { headers: cacheHeaders });
       }
     }
 
     const team = getGlobalTeam();
-    return NextResponse.json({ ok: true, data: team }, { headers: cacheHeaders });
+    return NextResponse.json(
+      { ok: true, data: team, user_modified: isTeamUserModified() },
+      { headers: cacheHeaders }
+    );
   } catch (error) {
     console.error("[api/team GET]", error);
     const team = getGlobalTeam();
-    return NextResponse.json({ ok: true, data: team }, { headers: cacheHeaders });
+    return NextResponse.json(
+      { ok: true, data: team, user_modified: isTeamUserModified() },
+      { headers: cacheHeaders }
+    );
   }
 }
 
@@ -56,18 +61,16 @@ export async function POST(request: NextRequest) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
     if (supabaseUrl) {
-      // Tenter d'abord l'écriture légale avec jeton de session RLS (SSR client)
       const supabase = await createClient();
       const { error: rlsError } = await supabase.from("team_members").upsert([saved]);
 
-      // Si RLS requiert les droits d'administration d'arrière-plan, utiliser le client Admin
       if (rlsError && process.env.SUPABASE_SERVICE_ROLE_KEY) {
         const admin = createAdminClient();
         await admin.from("team_members").upsert([saved]);
       }
     }
 
-    return NextResponse.json({ ok: true, data: saved });
+    return NextResponse.json({ ok: true, data: saved, team: getGlobalTeam() });
   } catch (error) {
     console.error("[api/team POST]", error);
     return NextResponse.json({ ok: false, error: "Erreur enregistrement membre" }, { status: 500 });
@@ -93,7 +96,7 @@ export async function PATCH(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ ok: true, data: updated });
+    return NextResponse.json({ ok: true, data: updated, team: getGlobalTeam() });
   } catch (error) {
     console.error("[api/team PATCH]", error);
     return NextResponse.json({ ok: false, error: "Erreur modification membre" }, { status: 500 });
@@ -123,7 +126,7 @@ export async function DELETE(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ ok: true, id, deleted });
+    return NextResponse.json({ ok: true, id, deleted, team: getGlobalTeam() });
   } catch (error) {
     console.error("[api/team DELETE]", error);
     return NextResponse.json({ ok: false, error: "Erreur suppression membre" }, { status: 500 });

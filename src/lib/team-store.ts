@@ -5,16 +5,23 @@ import path from "path";
 const TMP_FILE_PATH = path.join(process.cwd(), ".next", "digiset_team_cache.json");
 const ALT_TMP_PATH = "/tmp/digiset_team_cache.json";
 
-let isStoreInitialized = false;
-let isUserModifiedStore = false;
+declare global {
+  var digisetTeamStoreMemory: TeamMember[] | undefined;
+  var digisetTeamIsUserModified: boolean | undefined;
+}
 
 function loadStore(): TeamMember[] {
+  if (globalThis.digisetTeamStoreMemory && Array.isArray(globalThis.digisetTeamStoreMemory)) {
+    return globalThis.digisetTeamStoreMemory;
+  }
+
   try {
     if (fs.existsSync(TMP_FILE_PATH)) {
       const data = fs.readFileSync(TMP_FILE_PATH, "utf-8");
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) {
-        isStoreInitialized = true;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        globalThis.digisetTeamStoreMemory = parsed;
+        globalThis.digisetTeamIsUserModified = true;
         return parsed;
       }
     }
@@ -26,8 +33,9 @@ function loadStore(): TeamMember[] {
     if (fs.existsSync(ALT_TMP_PATH)) {
       const data = fs.readFileSync(ALT_TMP_PATH, "utf-8");
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) {
-        isStoreInitialized = true;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        globalThis.digisetTeamStoreMemory = parsed;
+        globalThis.digisetTeamIsUserModified = true;
         return parsed;
       }
     }
@@ -35,11 +43,14 @@ function loadStore(): TeamMember[] {
     // Ignorer
   }
 
-  isStoreInitialized = true;
-  return [...INITIAL_TEAM];
+  const initial = [...INITIAL_TEAM];
+  globalThis.digisetTeamStoreMemory = initial;
+  return initial;
 }
 
 function saveStore(items: TeamMember[]) {
+  globalThis.digisetTeamStoreMemory = items;
+  globalThis.digisetTeamIsUserModified = true;
   try {
     const json = JSON.stringify(items, null, 2);
     try {
@@ -57,46 +68,34 @@ function saveStore(items: TeamMember[]) {
   }
 }
 
-let teamStoreMemory: TeamMember[] = loadStore();
-
 export function getGlobalTeam(): TeamMember[] {
-  if (!isStoreInitialized) {
-    teamStoreMemory = loadStore();
-  }
-  return [...teamStoreMemory].sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
+  const current = loadStore();
+  return [...current].sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
 }
 
 export function isTeamUserModified(): boolean {
-  return isUserModifiedStore;
+  return !!globalThis.digisetTeamIsUserModified;
 }
 
 export function addTeamMember(member: TeamMember): TeamMember {
-  if (!isStoreInitialized) {
-    teamStoreMemory = loadStore();
-  }
-  isUserModifiedStore = true;
-
+  const current = loadStore();
   const newMember: TeamMember = {
     ...member,
     id: member.id || `team-${Date.now()}`,
-    sort_order: member.sort_order || teamStoreMemory.length + 1,
+    sort_order: member.sort_order || current.length + 1,
     created_at: member.created_at || new Date().toISOString(),
   };
 
-  teamStoreMemory = [...teamStoreMemory.filter((m) => m.id !== newMember.id), newMember];
-  saveStore(teamStoreMemory);
+  const updated = [...current.filter((m) => m.id !== newMember.id), newMember];
+  saveStore(updated);
   return newMember;
 }
 
 export function updateTeamMember(id: string, updates: Partial<TeamMember>): TeamMember | null {
-  if (!isStoreInitialized) {
-    teamStoreMemory = loadStore();
-  }
-  isUserModifiedStore = true;
-
+  const current = loadStore();
   let updatedMember: TeamMember | null = null;
 
-  teamStoreMemory = teamStoreMemory.map((m) => {
+  const updated = current.map((m) => {
     if (m.id === id) {
       updatedMember = { ...m, ...updates };
       return updatedMember;
@@ -104,18 +103,14 @@ export function updateTeamMember(id: string, updates: Partial<TeamMember>): Team
     return m;
   });
 
-  saveStore(teamStoreMemory);
+  saveStore(updated);
   return updatedMember;
 }
 
 export function deleteTeamMember(id: string): boolean {
-  if (!isStoreInitialized) {
-    teamStoreMemory = loadStore();
-  }
-  isUserModifiedStore = true;
-
-  const initialLength = teamStoreMemory.length;
-  teamStoreMemory = teamStoreMemory.filter((m) => m.id !== id);
-  saveStore(teamStoreMemory);
-  return teamStoreMemory.length < initialLength;
+  const current = loadStore();
+  const initialLength = current.length;
+  const updated = current.filter((m) => m.id !== id);
+  saveStore(updated);
+  return updated.length < initialLength;
 }

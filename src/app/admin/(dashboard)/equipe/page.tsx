@@ -74,19 +74,14 @@ export default function AdminTeamPage() {
   const fetchTeam = async () => {
     setIsLoading(true);
 
-    // 1. Restauration instantanée depuis le cache local si l'administrateur a déjà personnalisé l'équipe
+    // 1. Restauration instantanée depuis le cache local pour 0ms d'attente
     if (typeof window !== "undefined") {
-      const isModified = localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true";
       const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed)) {
+          if (Array.isArray(parsed) && parsed.length > 0) {
             setTeamList(parsed);
-            if (isModified) {
-              setIsLoading(false);
-              return;
-            }
           }
         } catch {
           // Ignorer
@@ -94,26 +89,20 @@ export default function AdminTeamPage() {
       }
     }
 
-    // 2. Synchronisation serveur si non encore personnalisé
+    // 2. Synchronisation serveur prioritaire pour synchroniser tous les comptes Super Admin (Dr Abaga, Bodri, Mobile)
     try {
       const res = await fetch("/api/team");
       const json = await res.json();
       if (json.ok && Array.isArray(json.data)) {
-        if (typeof window !== "undefined" && localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true") {
-          const localCache = localStorage.getItem(LOCAL_STORAGE_KEY);
-          if (localCache) {
-            try {
-              const parsedLocal = JSON.parse(localCache);
-              if (Array.isArray(parsedLocal)) {
-                setTeamList(parsedLocal);
-                return;
-              }
-            } catch {
-              // Ignorer
-            }
-          }
-        }
         setTeamList(json.data);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));
+            if (json.user_modified) {
+              localStorage.setItem(LOCAL_STORAGE_MODIFIED_KEY, "true");
+            }
+          } catch {}
+        }
       }
     } catch (err) {
       console.error("Erreur chargement équipe:", err);

@@ -34,36 +34,52 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     async function loadData() {
-      // 1. Charger les actualités depuis le cache local v2 puis l'API
+      // 1. Restauration instantanée 0ms depuis le cache local (particulièrement efficace sur mobile)
       if (typeof window !== "undefined") {
-        const cachedNews = localStorage.getItem("digiset_news_local_cache_v2");
+        const cachedNews = localStorage.getItem("digiset_news_local_cache_v5");
+        const cachedSubmissions = localStorage.getItem("digiset_submissions_local_cache");
         if (cachedNews) {
           try {
             const parsed = JSON.parse(cachedNews);
-            if (Array.isArray(parsed)) {
-              setNewsList(parsed);
-            }
+            if (Array.isArray(parsed)) setNewsList(parsed);
+          } catch {}
+        }
+        if (cachedSubmissions) {
+          try {
+            const parsed = JSON.parse(cachedSubmissions);
+            if (Array.isArray(parsed)) setSubmissions(parsed);
           } catch {}
         }
       }
 
+      // 2. Chargement parallèle ultra-rapide des requêtes API (News + Submissions)
       try {
-        const newsRes = await fetch("/api/news?status=all");
-        const newsJson = await newsRes.json();
+        const [newsRes, subsRes] = await Promise.all([
+          fetch("/api/news?status=all"),
+          fetch("/api/admin/submissions"),
+        ]);
+
+        const [newsJson, subsJson] = await Promise.all([
+          newsRes.json(),
+          subsRes.json(),
+        ]);
+
         if (newsJson.ok && Array.isArray(newsJson.data)) {
           setNewsList(newsJson.data);
           if (typeof window !== "undefined") {
-            localStorage.setItem("digiset_news_local_cache_v2", JSON.stringify(newsJson.data));
+            try {
+              localStorage.setItem("digiset_news_local_cache_v5", JSON.stringify(newsJson.data));
+            } catch {}
           }
         }
-      } catch {}
 
-      // 2. Charger les soumissions
-      try {
-        const res = await fetch("/api/admin/submissions");
-        const json = await res.json();
-        if (json.ok && Array.isArray(json.data)) {
-          setSubmissions(json.data);
+        if (subsJson.ok && Array.isArray(subsJson.data)) {
+          setSubmissions(subsJson.data);
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem("digiset_submissions_local_cache", JSON.stringify(subsJson.data));
+            } catch {}
+          }
         }
       } catch (err) {
         console.error("Erreur chargement tableau de bord:", err);
