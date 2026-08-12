@@ -10,10 +10,6 @@ import {
   Upload,
   X,
   Mail,
-  Linkedin,
-  Facebook,
-  Shield,
-  Building,
   UserCheck,
   FileImage,
 } from "lucide-react";
