@@ -8,15 +8,20 @@ import {
   Trash2,
   Copy,
   Check,
-  Plus,
   Image as ImageIcon,
-  Sparkles,
-  ExternalLink,
+  Edit2,
+  Tag,
+  X,
+  Save,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { MediaItem } from "@/lib/media-store";
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
+const LOCAL_STORAGE_KEY = "digiset_media_local_cache_v3";
 
 export default function AdminGalleryPage() {
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
@@ -26,15 +31,49 @@ export default function AdminGalleryPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
+  // Modal d'Édition d'Étiquette & Titre
+  const [editingMedia, setEditingMedia] = useState<MediaItem | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editCategory, setEditCategory] = useState("Campus & Équipements");
+  const [customCategory, setCustomCategory] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const saveToLocalStorage = (data: MediaItem[]) => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn("Erreur écriture localStorage média:", e);
+      }
+    }
+  };
 
   const fetchMedia = async () => {
     setIsLoading(true);
+
+    // 1. Restauration instantanée depuis le cache navigateur local (anti-disparition au rafraîchissement)
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMediaList(parsed);
+          }
+        } catch {
+          // Ignorer
+        }
+      }
+    }
+
+    // 2. Synchronisation serveur
     try {
       const res = await fetch("/api/media");
       const json = await res.json();
-      if (json.ok && Array.isArray(json.data)) {
+      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
         setMediaList(json.data);
+        saveToLocalStorage(json.data);
       }
     } catch (err) {
       console.error("Erreur chargement médiathèque:", err);
@@ -53,24 +92,28 @@ export default function AdminGalleryPage() {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64Url = reader.result as string;
+        const defaultTitle = file.name.replace(/\.[^/.]+$/, "");
+        
         const newMediaPayload = {
-          title: file.name.replace(/\.[^/.]+$/, ""),
+          id: `media-${Date.now()}`,
+          title: defaultTitle,
           url: base64Url,
-          category: "Campus & Uploads",
+          category: selectedCategory !== "Tous" ? selectedCategory : "Campus & Équipements",
           size: `${Math.round(file.size / 1024)} KB`,
           dimensions: "Importé",
+          created_at: new Date().toISOString(),
         };
 
+        const updated = [newMediaPayload, ...mediaList];
+        setMediaList(updated);
+        saveToLocalStorage(updated);
+
         try {
-          const res = await fetch("/api/media", {
+          await fetch("/api/media", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newMediaPayload),
           });
-          const json = await res.json();
-          if (json.ok && json.data) {
-            setMediaList((prev) => [json.data, ...prev]);
-          }
         } catch (err) {
           console.error("Erreur ajout photo médiathèque:", err);
         }
@@ -79,11 +122,56 @@ export default function AdminGalleryPage() {
     }
   };
 
+  const handleOpenEditModal = (media: MediaItem) => {
+    setEditingMedia(media);
+    setEditTitle(media.title);
+    if (["Équipe & Direction", "Campus & Bâtiments", "Campus & Étudiants", "Laboratoires & TP", "Événements & Cérémonies", "Campus & Équipements"].includes(media.category)) {
+      setEditCategory(media.category);
+      setCustomCategory("");
+    } else {
+      setEditCategory("Personnalisé");
+      setCustomCategory(media.category);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingMedia) return;
+
+    const finalCat = editCategory === "Personnalisé" ? (customCategory.trim() || "Général") : editCategory;
+
+    const updatedMedia = mediaList.map((m) =>
+      m.id === editingMedia.id
+        ? { ...m, title: editTitle.trim() || m.title, category: finalCat }
+        : m
+    );
+
+    setMediaList(updatedMedia);
+    saveToLocalStorage(updatedMedia);
+    setEditingMedia(null);
+
+    try {
+      await fetch("/api/media", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingMedia.id,
+          title: editTitle.trim(),
+          category: finalCat,
+        }),
+      });
+    } catch (err) {
+      console.error("Erreur mise à jour photo:", err);
+    }
+  };
+
   const handleDelete = async (id: string) => {
-    setMediaList((prev) => prev.filter((m) => m.id !== id));
+    const updated = mediaList.filter((m) => m.id !== id);
+    setMediaList(updated);
+    saveToLocalStorage(updated);
+    setDeleteTarget(null);
+
     try {
       await fetch(`/api/media?id=${id}`, { method: "DELETE" });
-      await fetchMedia();
     } catch (err) {
       console.error("Erreur suppression photo:", err);
     }
@@ -95,7 +183,14 @@ export default function AdminGalleryPage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const categories = ["Tous", "Équipe & Direction", "Campus & Bâtiments", "Campus & Étudiants", "Laboratoires & TP", "Campus & Uploads"];
+  const categories = [
+    "Tous",
+    "Équipe & Direction",
+    "Campus & Bâtiments",
+    "Campus & Étudiants",
+    "Laboratoires & TP",
+    "Campus & Équipements",
+  ];
 
   const filteredMedia = mediaList.filter((m) => {
     const matchesCat = selectedCategory === "Tous" || m.category === selectedCategory;
@@ -115,8 +210,8 @@ export default function AdminGalleryPage() {
             <FileImage className="h-6 w-6 text-brand-orange" />
             Médiathèque & Banque d&apos;Images Officielle
           </h1>
-          <p className="text-xs text-slate-500">
-            Stockez, organisez et réutilisez toutes les photos du campus, des laboratoires et de l&apos;équipe pour vos articles et pages.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Gérez vos étiquettes personnalisées et conservez vos photos de campus et d&apos;équipe en toute sécurité.
           </p>
         </div>
 
@@ -142,7 +237,7 @@ export default function AdminGalleryPage() {
           <div className="relative flex-1 w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
-              placeholder="Rechercher une photo dans la banque de médias..."
+              placeholder="Rechercher par titre ou étiquette..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 text-xs bg-slate-50"
@@ -169,7 +264,7 @@ export default function AdminGalleryPage() {
 
       {/* Grille des Médias */}
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs">
-        {isLoading ? (
+        {isLoading && mediaList.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((n) => (
               <div key={n} className="h-48 rounded-xl bg-slate-200 animate-pulse" />
@@ -178,9 +273,9 @@ export default function AdminGalleryPage() {
         ) : filteredMedia.length === 0 ? (
           <div className="py-16 text-center space-y-3">
             <ImageIcon className="h-10 w-10 text-slate-300 mx-auto" />
-            <p className="text-sm font-bold text-slate-700">Aucune image dans cette catégorie.</p>
+            <p className="text-sm font-bold text-slate-700">Aucune image trouvée.</p>
             <p className="text-xs text-slate-500">
-              Importez des photos pour enrichir la médiathèque de DigiSET Institute.
+              Cliquez sur &quot;Importer une nouvelle photo&quot; pour ajouter vos visuels à la banque média.
             </p>
           </div>
         ) : (
@@ -196,7 +291,8 @@ export default function AdminGalleryPage() {
                     alt={media.title}
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <span className="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                  <span className="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <Tag className="h-3 w-3 text-brand-orange" />
                     {media.category}
                   </span>
                 </div>
@@ -220,24 +316,105 @@ export default function AdminGalleryPage() {
                       </>
                     ) : (
                       <>
-                        <Copy className="h-3.5 w-3.5" /> Copier l&apos;URL
+                        <Copy className="h-3.5 w-3.5" /> URL
                       </>
                     )}
                   </button>
 
-                  <button
-                    onClick={() => setDeleteTarget({ id: media.id, name: media.title })}
-                    className="text-slate-400 hover:text-red-600 p-1 cursor-pointer transition-colors"
-                    title="Supprimer la photo"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleOpenEditModal(media)}
+                      className="text-slate-500 hover:text-brand-blue p-1.5 rounded-lg hover:bg-slate-200 cursor-pointer transition-colors"
+                      title="Modifier l'étiquette et le titre"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+
+                    <button
+                      onClick={() => setDeleteTarget({ id: media.id, name: media.title })}
+                      className="text-slate-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 cursor-pointer transition-colors"
+                      title="Supprimer la photo"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Modal d'Édition du Titre & Étiquette */}
+      <Dialog open={editingMedia !== null} onOpenChange={(open) => !open && setEditingMedia(null)}>
+        <DialogContent className="sm:max-w-md rounded-2xl p-6 bg-white shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-gray-900 flex items-center gap-2">
+              <Tag className="h-5 w-5 text-brand-orange" />
+              Modifier l&apos;Étiquette et le Titre
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-gray-700">Titre de l&apos;image</Label>
+              <Input
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                placeholder="Ex: Laboratoire de Réseaux & Optique"
+                className="text-xs"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-gray-700">Choisir une Étiquette / Catégorie</Label>
+              <select
+                value={editCategory}
+                onChange={(e) => setEditCategory(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-gray-200 text-xs font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue"
+              >
+                <option value="Campus & Équipements">Campus & Équipements</option>
+                <option value="Équipe & Direction">Équipe & Direction</option>
+                <option value="Campus & Bâtiments">Campus & Bâtiments</option>
+                <option value="Campus & Étudiants">Campus & Étudiants</option>
+                <option value="Laboratoires & TP">Laboratoires & TP</option>
+                <option value="Événements & Cérémonies">Événements & Cérémonies</option>
+                <option value="Personnalisé">+ Créer une étiquette personnalisée...</option>
+              </select>
+            </div>
+
+            {editCategory === "Personnalisé" && (
+              <div className="space-y-1.5 pt-1">
+                <Label className="text-xs font-bold text-brand-blue">Saisir votre étiquette sur-mesure</Label>
+                <Input
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  placeholder="Ex: Remise des Diplômes 2026"
+                  className="text-xs border-brand-blue"
+                />
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setEditingMedia(null)}
+              className="text-xs rounded-xl"
+            >
+              Annuler
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSaveEdit}
+              className="bg-brand-blue hover:bg-brand-blue-dark text-white text-xs font-bold rounded-xl gap-2"
+            >
+              <Save className="h-4 w-4" /> Enregistrer l&apos;étiquette
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Modal de Confirmation de Suppression */}
       <ConfirmDeleteDialog
@@ -250,7 +427,7 @@ export default function AdminGalleryPage() {
         }}
         itemName={deleteTarget?.name}
         title="Supprimer la photo"
-        description="Cette photo sera retirée de la Médiathèque."
+        description="Cette photo sera définitivement retirée de la Médiathèque."
       />
     </div>
   );

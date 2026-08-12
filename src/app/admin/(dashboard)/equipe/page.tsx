@@ -92,6 +92,21 @@ export default function AdminTeamPage() {
       const res = await fetch("/api/team");
       const json = await res.json();
       if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
+        // Préférer le stockage local s'il contient les membres ajoutés par l'administrateur
+        if (typeof window !== "undefined") {
+          const localCache = localStorage.getItem(LOCAL_STORAGE_KEY);
+          if (localCache) {
+            try {
+              const parsedLocal = JSON.parse(localCache);
+              if (Array.isArray(parsedLocal) && parsedLocal.length >= json.data.length) {
+                setTeamList(parsedLocal);
+                return;
+              }
+            } catch {
+              // Ignorer
+            }
+          }
+        }
         setTeamList(json.data);
         saveToLocalStorage(json.data);
       }

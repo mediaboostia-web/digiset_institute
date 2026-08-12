@@ -116,12 +116,16 @@ function saveMediaStore(items: MediaItem[]) {
 let mediaMemory: MediaItem[] = loadMediaStore();
 
 export function getGlobalMedia(): MediaItem[] {
-  mediaMemory = loadMediaStore();
+  if (!mediaMemory || mediaMemory.length === 0) {
+    mediaMemory = loadMediaStore();
+  }
   return mediaMemory;
 }
 
 export function addMediaItem(item: Omit<MediaItem, "id" | "created_at"> & { id?: string }): MediaItem {
-  mediaMemory = loadMediaStore();
+  if (!mediaMemory || mediaMemory.length === 0) {
+    mediaMemory = loadMediaStore();
+  }
   const newItem: MediaItem = {
     id: item.id || `media-${Date.now()}`,
     title: item.title,
@@ -137,8 +141,28 @@ export function addMediaItem(item: Omit<MediaItem, "id" | "created_at"> & { id?:
   return newItem;
 }
 
+export function updateMediaItem(id: string, updates: Partial<MediaItem>): MediaItem | null {
+  if (!mediaMemory || mediaMemory.length === 0) {
+    mediaMemory = loadMediaStore();
+  }
+  let updatedItem: MediaItem | null = null;
+
+  mediaMemory = mediaMemory.map((m) => {
+    if (m.id === id) {
+      updatedItem = { ...m, ...updates };
+      return updatedItem;
+    }
+    return m;
+  });
+
+  saveMediaStore(mediaMemory);
+  return updatedItem;
+}
+
 export function deleteMediaItem(id: string): boolean {
-  mediaMemory = loadMediaStore();
+  if (!mediaMemory || mediaMemory.length === 0) {
+    mediaMemory = loadMediaStore();
+  }
   const initialLen = mediaMemory.length;
   mediaMemory = mediaMemory.filter((m) => m.id !== id);
   saveMediaStore(mediaMemory);

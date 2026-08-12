@@ -50,8 +50,10 @@ function saveStore(items: TeamMember[]) {
 let teamStoreMemory: TeamMember[] = loadStore();
 
 export function getGlobalTeam(): TeamMember[] {
-  teamStoreMemory = loadStore();
-  return teamStoreMemory.sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
+  if (!teamStoreMemory || teamStoreMemory.length === 0) {
+    teamStoreMemory = loadStore();
+  }
+  return [...teamStoreMemory].sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
 }
 
 export function addTeamMember(member: TeamMember): TeamMember {
