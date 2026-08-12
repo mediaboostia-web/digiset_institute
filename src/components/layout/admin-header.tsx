@@ -125,7 +125,21 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
       }
 
       // Mode local / secours
-      setUserEmail("direction@digiset-gabon.com");
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("digiset_admin_credentials_v2");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.email) {
+              setUserEmail(parsed.email);
+              setUserName(formatDisplayName(parsed.email, "Dr ABAGA ABESSOLO"));
+              return;
+            }
+          } catch {}
+        }
+      }
+
+      setUserEmail("contact@digiset-gabon.com");
       setUserName("Dr ABAGA ABESSOLO");
     }
 

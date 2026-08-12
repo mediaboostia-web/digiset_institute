@@ -65,7 +65,7 @@ export default function AdminSettingsPage() {
   const [adminProfileForm, setAdminProfileForm] = useState({
     fullName: "Dr ABAGA ABESSOLO Michel Audrey",
     roleTitle: "Fondateur & Directeur Général",
-    email: "direction@digiset-gabon.com",
+    email: "contact@digiset-gabon.com",
     phone: "+241 07 40 00 00",
   });
 
@@ -73,7 +73,7 @@ export default function AdminSettingsPage() {
 
   const saveAdminCredentialsToStorage = (emailVal?: string, passwordVal?: string) => {
     if (typeof window !== "undefined") {
-      let currentEmail = adminProfileForm.email || "direction@digiset-gabon.com";
+      let currentEmail = adminProfileForm.email || "contact@digiset-gabon.com";
       let currentPassword = "DigiSET2026@";
 
       const stored = localStorage.getItem("digiset_admin_credentials_v2");

@@ -269,11 +269,11 @@ export default function AdminUsersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        disabled={user.email.toLowerCase() === "direction@digiset-gabon.com"}
+                        disabled={user.email.toLowerCase() === "contact@digiset-gabon.com"}
                         onClick={() => setDeleteTarget({ id: user.id, name: user.full_name })}
                         className="text-red-600 hover:bg-red-50 hover:text-red-700 h-8 w-8 p-0 cursor-pointer disabled:opacity-30"
                         title={
-                          user.email.toLowerCase() === "direction@digiset-gabon.com"
+                          user.email.toLowerCase() === "contact@digiset-gabon.com"
                             ? "Le compte de la Direction Générale ne peut pas être supprimé"
                             : "Supprimer cet utilisateur"
                         }

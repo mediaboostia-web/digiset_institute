@@ -86,6 +86,11 @@ export function AdminSidebar({
           icon: Users,
         },
         {
+          href: "/admin/utilisateurs",
+          label: "Comptes & Droits Admin",
+          icon: UserCheck,
+        },
+        {
           href: "/admin/parametres",
           label: "Paramètres & Notifications",
           icon: Settings,
@@ -123,12 +128,6 @@ export function AdminSidebar({
           href: "/admin/documents",
           label: "Documents PDF",
           icon: FolderDown,
-          v2Badge: "V2",
-        },
-        {
-          href: "/admin/utilisateurs",
-          label: "Gestion Administrateurs",
-          icon: UserCheck,
           v2Badge: "V2",
         },
       ],

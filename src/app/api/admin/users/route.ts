@@ -14,7 +14,7 @@ export interface AdminUserAccount {
 // Fallback / Initial default superadmin account
 const DEFAULT_SUPERADMIN: AdminUserAccount = {
   id: "admin-dir-001",
-  email: "direction@digiset-gabon.com",
+  email: "contact@digiset-gabon.com",
   full_name: "Dr ABAGA ABESSOLO Michel Audrey",
   role: "super_admin",
   created_at: "2026-08-01T00:00:00.000Z",

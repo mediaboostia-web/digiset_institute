@@ -328,7 +328,7 @@ export default function AdminLoginPage() {
                   type="email"
                   required
                   disabled={lockoutSeconds > 0}
-                  placeholder="direction@digiset-gabon.com"
+                  placeholder="contact@digiset-gabon.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 text-xs h-11 bg-white border-gray-300 focus:border-brand-blue font-medium"
