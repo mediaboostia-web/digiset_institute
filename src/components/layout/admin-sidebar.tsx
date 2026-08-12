@@ -107,7 +107,7 @@ export function AdminSidebar({
         />
       )}
 
-      {/* Sidebar Container (Desktop & Mobile Drawer) — 100% RESPONSIVE ET FLUIDE */}
+      {/* Sidebar Container (Desktop & Mobile Drawer) */}
       <aside
         className={cn(
           "sticky top-0 h-screen shrink-0 border-r border-white/10 bg-brand-blue-dark text-white flex flex-col justify-between overflow-y-auto overflow-x-hidden transition-all duration-300 z-50 select-none no-scrollbar",
@@ -151,28 +151,12 @@ export function AdminSidebar({
             </button>
           </div>
 
-          {/* Action Rapide : Publier Actualité */}
-          <div className={cn("pt-4 pb-2", isCollapsed && !isMobileOpen ? "px-2" : "px-3.5")}>
-            <Link
-              href="/admin/actualites"
-              onClick={handleNavClick}
-              title="Publier une actualité"
-              className={cn(
-                "flex items-center justify-center gap-2 rounded-xl bg-brand-orange text-xs font-bold text-white shadow-md transition-all duration-200 hover:bg-brand-orange-dark hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
-                isCollapsed && !isMobileOpen ? "h-10 w-10 p-0" : "w-full px-4 py-2.5"
-              )}
-            >
-              <PlusCircle className="h-4 w-4 shrink-0" />
-              {(!isCollapsed || isMobileOpen) && <span className="truncate">Publier une actualité</span>}
-            </Link>
-          </div>
-
-          {/* Navigation Principale V1 */}
-          <nav className={cn("flex flex-col gap-4 py-3", isCollapsed && !isMobileOpen ? "px-2" : "px-3")}>
+          {/* Navigation Principale */}
+          <nav className={cn("flex flex-col gap-4 py-4", isCollapsed && !isMobileOpen ? "px-2" : "px-3")}>
             {NAV_GROUPS.map((group) => (
               <div key={group.title}>
                 {(!isCollapsed || isMobileOpen) && (
-                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/40 truncate flex items-center justify-between">
+                  <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-white/40 truncate flex items-center justify-between">
                     <span>{group.title}</span>
                   </p>
                 )}
@@ -233,13 +217,30 @@ export function AdminSidebar({
           </nav>
         </div>
 
-        {/* Pied de Sidebar : Version & Statut */}
-        {(!isCollapsed || isMobileOpen) && (
-          <div className="border-t border-white/10 p-3.5 text-[10px] text-white/50 flex items-center justify-between">
-            <span>DigiSET OS v1.2</span>
-            <span className="h-2 w-2 rounded-full bg-emerald-400" title="En ligne" />
-          </div>
-        )}
+        {/* Section Basse de la Sidebar : Bouton Action Rapide & Pied de Page */}
+        <div className="space-y-3 p-3">
+          {/* Bouton de Publication Positionné en Bas */}
+          <Link
+            href="/admin/actualites"
+            onClick={handleNavClick}
+            title="Publier une actualité"
+            className={cn(
+              "flex items-center justify-center gap-2 rounded-xl bg-brand-orange text-xs font-bold text-white shadow-md transition-all duration-200 hover:bg-brand-orange-dark hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
+              isCollapsed && !isMobileOpen ? "h-10 w-10 p-0 mx-auto" : "w-full px-4 py-2.5"
+            )}
+          >
+            <PlusCircle className="h-4 w-4 shrink-0" />
+            {(!isCollapsed || isMobileOpen) && <span className="truncate">Publier une actualité</span>}
+          </Link>
+
+          {/* Pied de Sidebar : Statut Plateforme */}
+          {(!isCollapsed || isMobileOpen) && (
+            <div className="border-t border-white/10 pt-3 text-[10px] text-white/50 flex items-center justify-between">
+              <span>DigiSET Institute</span>
+              <span className="h-2 w-2 rounded-full bg-emerald-400" title="Plateforme en ligne" />
+            </div>
+          )}
+        </div>
       </aside>
     </>
   );
