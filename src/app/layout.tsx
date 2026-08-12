@@ -17,16 +17,16 @@ const inter = Inter({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://digiset-gabon.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.digiset-gabon.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "DigiSET Institute — Établissement Supérieur Privé aux Métiers du Numérique (Gabon)",
+    default: "DigiSET Institute — Établissement Supérieur Privé aux Métiers du Numérique (Akanda, Gabon)",
     template: "%s | DigiSET Institute",
   },
   description:
-    "DigiSET Institute (Akanda, Gabon) forme les futurs leaders en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique). Classe préparatoire MP2I (120 ECTS), Licence Professionnelle (60 ECTS), certifications Cisco, AWS, Microsoft, Linux et location de laboratoires TP haute technologie.",
+    "DigiSET Institute (Akanda, Libreville - Gabon) est l'établissement supérieur privé de référence dédié aux métiers du numérique. Formations d'excellence Bac+2 et Bac+3 : Classe Préparatoire Scientifique MP2I, Licence Pro IA & Data Science, Cybersécurité et Systèmes de Paiement Électronique (Monétique). Laboratoires TP haute technologie, certifications internationales (Cisco, AWS, Microsoft) et accompagnement d'avenir.",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -42,16 +42,18 @@ export const metadata: Metadata = {
   },
   keywords: [
     "DigiSET Institute",
+    "DigiSET Akanda Gabon",
     "Dr ABAGA ABESSOLO Michel Audrey",
-    "École supérieure numérique Gabon",
     "Université privée informatique Libreville Akanda",
+    "École supérieure du numérique Gabon",
     "Formation IA et Data Science Gabon",
-    "Licence Cybersécurité Akanda",
-    "Systèmes de Paiement Électronique Monétique PCI-DSS",
-    "Classe Préparatoire MP2I Gabon ECTS",
+    "Licence Pro Cybersécurité Akanda",
+    "Systèmes de Paiement Électronique Monétique PCI-DSS Gabon",
+    "Classe Préparatoire Scientifique MP2I Gabon ECTS",
     "Certifications Cisco AWS Microsoft Linux CompTIA Gabon",
-    "Location laboratoires TP physique chimie Gabon",
+    "Location laboratoires TP physique électricité optique Gabon",
     "Formation continue entreprises Libreville",
+    "Angondje Carrefour Moussavou Akanda",
   ],
   authors: [{ name: "DigiSET Institute", url: siteUrl }],
   creator: "DigiSET Institute",
@@ -73,9 +75,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_GA",
     url: siteUrl,
-    title: "DigiSET Institute — Établissement Supérieur Privé aux Métiers du Numérique",
+    title: "DigiSET Institute — Établissement Supérieur Privé aux Métiers du Numérique (Akanda, Gabon)",
     description:
-      "Formations d'excellence en Intelligence Artificielle, Cybersécurité et Monétique à Akanda, Gabon. Découvrez nos diplômes Bac+2 et Bac+3 et nos laboratoires de TP haute technologie.",
+      "Formations d'excellence en Intelligence Artificielle, Cybersécurité, Monétique et Classe Prépa MP2I à Akanda, Gabon. Laboratoires TP haute technologie et certifications internationales.",
     siteName: "DigiSET Institute",
     images: [
       {
@@ -88,9 +90,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DigiSET Institute — L'Excellence Numérique au Gabon",
+    title: "DigiSET Institute — L'Excellence Numérique à Akanda, Gabon",
     description:
-      "Classe Préparatoire MP2I, Licence Pro IA, Cybersécurité & Monétique à Akanda. Pratique 100% en laboratoire et certifications internationales.",
+      "Classe Préparatoire MP2I, Licences Pro IA, Cybersécurité & Monétique à Akanda. Apprentissage pratique en laboratoire et certifications internationales.",
     images: [`${siteUrl}/images/img/Hero_image1.jpg`],
   },
 };
@@ -102,17 +104,23 @@ export default function RootLayout({
 }>) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
+    "@type": "CollegeOrUniversity",
     name: "DigiSET Institute",
     alternateName: "Digital Science, Engineering and Technology Institute",
     url: siteUrl,
     logo: `${siteUrl}/brand/Digiset Logo officiel.png`,
     image: `${siteUrl}/images/img/Hero_image1.jpg`,
     description:
-      "Établissement supérieur privé de formation aux métiers du numérique : IA & Data Science, Cybersécurité, Systèmes de Paiement Électronique et location de laboratoires de travaux pratiques.",
+      "Établissement supérieur privé de formation aux métiers du numérique : IA & Data Science, Cybersécurité, Systèmes de Paiement Électronique (Monétique), Classe Préparatoire MP2I et location de laboratoires de travaux pratiques.",
+    hasMap: "https://maps.app.goo.gl/UqxLEnz4v7BHb7be7",
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 0.4988,
+      longitude: 9.4290,
+    },
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Angondje, Carrefour Moussavou",
+      streetAddress: "Angondjé, Carrefour Moussavou (Bvd de la 5e République)",
       addressLocality: "Akanda",
       addressRegion: "Estuaire",
       addressCountry: "GA",
@@ -122,11 +130,12 @@ export default function RootLayout({
       name: "Dr ABAGA ABESSOLO Michel Audrey",
       jobTitle: "Fondateur & Directeur Général",
     },
-    telephone: "+24174000000",
+    telephone: "+241 07 40 00 00",
     email: "contact@digiset-gabon.com",
     sameAs: [
-      "https://facebook.com",
-      "https://linkedin.com",
+      "https://facebook.com/digisetgabon",
+      "https://linkedin.com/company/digisetgabon",
+      "https://maps.app.goo.gl/UqxLEnz4v7BHb7be7",
     ],
   };
 
