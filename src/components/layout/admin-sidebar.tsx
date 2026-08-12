@@ -21,7 +21,6 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   LucideIcon,
-  FolderImage,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
