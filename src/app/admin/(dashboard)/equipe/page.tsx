@@ -434,13 +434,37 @@ export default function AdminTeamPage() {
                   )}
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Adresse email professionnelle</label>
+                    <Input
+                      type="email"
+                      placeholder="direction@digiset-gabon.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                      className="text-xs bg-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Profil LinkedIn (URL)</label>
+                    <Input
+                      type="url"
+                      placeholder="https://linkedin.com/in/nom-profil"
+                      value={formData.linkedin_url}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, linkedin_url: e.target.value }))}
+                      className="text-xs bg-white"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700">Adresse email professionnelle</label>
+                  <label className="font-bold text-slate-700">Profil / Page Facebook (URL)</label>
                   <Input
-                    type="email"
-                    placeholder="direction@digiset-gabon.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    type="url"
+                    placeholder="https://facebook.com/nom-page"
+                    value={formData.facebook_url}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, facebook_url: e.target.value }))}
                     className="text-xs bg-white"
                   />
                 </div>

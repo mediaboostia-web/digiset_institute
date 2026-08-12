@@ -21,6 +21,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   LucideIcon,
+  FolderImage,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -76,6 +77,11 @@ export function AdminSidebar({
           icon: Newspaper,
         },
         {
+          href: "/admin/galerie",
+          label: "Médiathèque & Banque Média",
+          icon: ImageIcon,
+        },
+        {
           href: "/admin/equipe",
           label: "Organigramme & Équipe",
           icon: Users,
@@ -94,12 +100,6 @@ export function AdminSidebar({
           href: "/admin/programmes",
           label: "Offres & Cursus",
           icon: GraduationCap,
-          v2Badge: "V2",
-        },
-        {
-          href: "/admin/galerie",
-          label: "Médiathèque & Photos",
-          icon: ImageIcon,
           v2Badge: "V2",
         },
         {
