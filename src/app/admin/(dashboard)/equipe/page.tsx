@@ -165,7 +165,7 @@ export default function AdminTeamPage() {
     if (!formData.full_name || !formData.role_title) return;
 
     const payload: TeamMember = {
-      id: editingMember ? editingMember.id : `team-${Date.now()}`,
+      id: editingMember ? editingMember.id : (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `00000000-0000-4000-8000-${Date.now().toString(16).padStart(12, "0")}`),
       full_name: formData.full_name,
       role_title: formData.role_title,
       pole: formData.pole || "Direction Générale",

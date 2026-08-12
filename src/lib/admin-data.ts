@@ -289,7 +289,7 @@ export function calculateKPIs(submissions: AnySubmission[]) {
 
 export const INITIAL_TEAM: TeamMember[] = [
   {
-    id: "team-1",
+    id: "2f6a1361-e552-4d46-b523-83ddc15dceff",
     full_name: "Dr ABAGA ABESSOLO Michel Audrey",
     role_title: "Fondateur & Directeur Général",
     pole: "Direction Générale",
@@ -301,7 +301,7 @@ export const INITIAL_TEAM: TeamMember[] = [
     created_at: new Date().toISOString(),
   },
   {
-    id: "team-2",
+    id: "01d227e2-c725-4c17-8141-57f9cf73bac3",
     full_name: "Prof. Jean-Marc ONDO",
     role_title: "Directeur des Études & Maquettes ECTS",
     pole: "Direction Académique",
@@ -313,7 +313,7 @@ export const INITIAL_TEAM: TeamMember[] = [
     created_at: new Date().toISOString(),
   },
   {
-    id: "team-3",
+    id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
     full_name: "Dr. Sylvie NGUEMA",
     role_title: "Présidente du Conseil Scientifique",
     pole: "Direction Académique",
@@ -325,7 +325,7 @@ export const INITIAL_TEAM: TeamMember[] = [
     created_at: new Date().toISOString(),
   },
   {
-    id: "team-4",
+    id: "e4e7c10b-8a82-4f36-a123-9c8d7e6f5a4b",
     full_name: "Ing. Patrick ELLA",
     role_title: "Chef du Pôle Cybersécurité & Labos SOC",
     pole: "Corps Professoral",
