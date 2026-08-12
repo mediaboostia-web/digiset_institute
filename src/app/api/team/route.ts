@@ -1,21 +1,21 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getGlobalTeam, addTeamMember, updateTeamMember, deleteTeamMember } from "@/lib/team-store";
 import { TeamMember } from "@/lib/admin-data";
 
 export async function GET() {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && supabaseAnonKey) {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      const { data, error } = await supabase
+    if (supabaseUrl && serviceRoleKey) {
+      const admin = createAdminClient();
+      const { data, error } = await admin
         .from("team_members")
         .select("*")
         .order("sort_order", { ascending: true });
 
-      if (!error && data && Array.isArray(data) && data.length > 0) {
+      if (!error && Array.isArray(data) && data.length > 0) {
         return NextResponse.json({ ok: true, data });
       }
     }
@@ -49,12 +49,14 @@ export async function POST(request: NextRequest) {
     const saved = addTeamMember(newMember);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && supabaseAnonKey) {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      await supabase.from("team_members").insert([saved]);
+    if (supabaseUrl && serviceRoleKey) {
+      const admin = createAdminClient();
+      const { error: dbError } = await admin.from("team_members").upsert([saved]);
+      if (dbError) {
+        console.warn("Supabase team insert notice:", dbError.message);
+      }
     }
 
     return NextResponse.json({ ok: true, data: saved });
@@ -72,12 +74,14 @@ export async function PATCH(request: NextRequest) {
     const updated = updateTeamMember(id, updates);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && supabaseAnonKey) {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      await supabase.from("team_members").update(updates).eq("id", id);
+    if (supabaseUrl && serviceRoleKey) {
+      const admin = createAdminClient();
+      const { error: dbError } = await admin.from("team_members").update(updates).eq("id", id);
+      if (dbError) {
+        console.warn("Supabase team update notice:", dbError.message);
+      }
     }
 
     return NextResponse.json({ ok: true, data: updated });
@@ -99,12 +103,14 @@ export async function DELETE(request: NextRequest) {
     const deleted = deleteTeamMember(id);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && supabaseAnonKey) {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      await supabase.from("team_members").delete().eq("id", id);
+    if (supabaseUrl && serviceRoleKey) {
+      const admin = createAdminClient();
+      const { error: dbError } = await admin.from("team_members").delete().eq("id", id);
+      if (dbError) {
+        console.warn("Supabase team delete notice:", dbError.message);
+      }
     }
 
     return NextResponse.json({ ok: true, id, deleted });
