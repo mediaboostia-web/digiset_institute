@@ -10,6 +10,7 @@ import {
   AlertCircle,
   KeyRound,
   ShieldCheck,
+  ShieldAlert,
   Globe,
   Megaphone,
   Mail,
@@ -28,6 +29,7 @@ import { useSiteSettings } from "@/lib/site-settings";
 export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState("etablissement");
   const [siteSettings, updateSiteSettings] = useSiteSettings();
+  const [currentUserRole, setCurrentUserRole] = useState<"super_admin" | "editor" | "admin">("super_admin");
 
   // ---------------------------------------------------------------------------
   // 1. État : Informations de l'Établissement & Annonces
@@ -48,6 +50,7 @@ export default function AdminSettingsPage() {
 
   const handleSaveInstitution = (e: React.FormEvent) => {
     e.preventDefault();
+    if (currentUserRole === "editor") return;
     updateSiteSettings({
       institutionAddress: institutionForm.address,
       institutionPhone1: institutionForm.phone1,
@@ -77,6 +80,7 @@ export default function AdminSettingsPage() {
       if (activeSession) {
         try {
           const parsed = JSON.parse(activeSession);
+          if (parsed.role) setCurrentUserRole(parsed.role);
           if (parsed.email) {
             setAdminProfileForm((prev) => ({
               ...prev,
@@ -234,6 +238,19 @@ export default function AdminSettingsPage() {
           Gérez les coordonnées officielles de DigiSET, vos alertes emails Resend, votre profil et la sécurité de votre compte.
         </p>
       </div>
+
+      {/* Avertissement Rôle Éditeur */}
+      {currentUserRole === "editor" && (
+        <div className="flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 p-4 text-xs text-amber-900 font-medium shadow-xs">
+          <ShieldAlert className="h-5 w-5 text-amber-600 shrink-0" />
+          <div>
+            <p className="font-bold">Accès Réduit — Rôle Éditeur de Contenu</p>
+            <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
+              Vous êtes connecté avec un compte Éditeur. La configuration de l&apos;établissement, les clés API Resend et les notifications globales sont gérées exclusivement par les Super-Administrateurs.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Navigation par Onglets */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
