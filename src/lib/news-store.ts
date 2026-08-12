@@ -62,7 +62,9 @@ export function slugify(text: string): string {
 }
 
 export function getGlobalNews(status: "published" | "all" = "published"): NewsItem[] {
-  newsStoreMemory = loadStore();
+  if (!newsStoreMemory || newsStoreMemory.length === 0) {
+    newsStoreMemory = loadStore();
+  }
   if (status === "all") return newsStoreMemory;
   return newsStoreMemory.filter((item) => item.status === "published");
 }
@@ -85,7 +87,9 @@ function normalizeStem(text: string): string {
 export function getNewsBySlug(slug: string): NewsItem | null {
   if (!slug) return null;
 
-  newsStoreMemory = loadStore();
+  if (!newsStoreMemory || newsStoreMemory.length === 0) {
+    newsStoreMemory = loadStore();
+  }
   const targetSlug = slug.toLowerCase().trim();
   const targetNormalized = slugify(slug);
   const targetStem = normalizeStem(slug);
@@ -125,7 +129,9 @@ export function getNewsBySlug(slug: string): NewsItem | null {
 }
 
 export function addNewsItem(item: NewsItem): NewsItem {
-  newsStoreMemory = loadStore();
+  if (!newsStoreMemory || newsStoreMemory.length === 0) {
+    newsStoreMemory = loadStore();
+  }
   const baseSlug = item.slug ? slugify(item.slug) : slugify(item.title);
   
   let finalSlug = baseSlug;
@@ -148,7 +154,9 @@ export function addNewsItem(item: NewsItem): NewsItem {
 }
 
 export function updateNewsItem(id: string, updates: Partial<NewsItem>): NewsItem | null {
-  newsStoreMemory = loadStore();
+  if (!newsStoreMemory || newsStoreMemory.length === 0) {
+    newsStoreMemory = loadStore();
+  }
   let updatedItem: NewsItem | null = null;
   newsStoreMemory = newsStoreMemory.map((item) => {
     if (item.id === id) {
@@ -172,7 +180,9 @@ export function updateNewsItem(id: string, updates: Partial<NewsItem>): NewsItem
 }
 
 export function deleteNewsItem(id: string): boolean {
-  newsStoreMemory = loadStore();
+  if (!newsStoreMemory || newsStoreMemory.length === 0) {
+    newsStoreMemory = loadStore();
+  }
   const initialLength = newsStoreMemory.length;
   newsStoreMemory = newsStoreMemory.filter((item) => item.id !== id);
   saveStore(newsStoreMemory);

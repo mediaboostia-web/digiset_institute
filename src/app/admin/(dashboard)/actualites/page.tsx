@@ -107,6 +107,20 @@ export default function AdminNewsPage() {
       const res = await fetch("/api/news?status=all");
       const json = await res.json();
       if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
+        if (typeof window !== "undefined") {
+          const localCache = localStorage.getItem(LOCAL_STORAGE_NEWS_KEY);
+          if (localCache) {
+            try {
+              const parsedLocal = JSON.parse(localCache);
+              if (Array.isArray(parsedLocal) && parsedLocal.length >= json.data.length) {
+                setNewsList(parsedLocal);
+                return;
+              }
+            } catch {
+              // Ignorer
+            }
+          }
+        }
         setNewsList(json.data);
         saveNewsToLocalStorage(json.data);
       }
