@@ -72,12 +72,12 @@ export function ProgramCard({
         </div>
 
         {/* Titre */}
-        <h3 className="font-heading text-lg font-bold text-foreground group-hover:text-brand-blue transition-colors line-clamp-2">
+        <h3 className="font-heading text-lg font-bold text-foreground group-hover:text-brand-blue transition-colors leading-snug">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="mt-2.5 text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+        <p className="mt-2.5 text-sm text-muted-foreground leading-relaxed">
           {description}
         </p>
 
@@ -96,10 +96,10 @@ export function ProgramCard({
         {/* Points clés */}
         {highlights.length > 0 && (
           <ul className="mt-4 space-y-1.5 text-xs text-slate-700">
-            {highlights.slice(0, 3).map((item, idx) => (
+            {highlights.map((item, idx) => (
               <li key={idx} className="flex items-start gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span className="line-clamp-1">{item}</span>
+                <span className="font-medium leading-snug">{item}</span>
               </li>
             ))}
           </ul>

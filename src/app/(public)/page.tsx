@@ -352,10 +352,11 @@ export default function AccueilPage() {
               duration="1 à 2 ans (60 - 120 ECTS)"
               targetPublic="Bacheliers scientifiques & diplômés Bac+2"
               highlights={[
-                "Classe Préparatoire MP2I (2 ans)",
-                "Option IA & Data Science",
-                "Option Cybersécurité & Audit SI",
-                "Option Systèmes de Paiement Électronique",
+                "Classe préparatoire MP2I (2ans)",
+                "Licence Pro (1an)",
+                "- option IA & Data science",
+                "- option Cybersécurité",
+                "- option Systèmes de paiement électronique",
               ]}
               href="/programmes"
               ctaText="Découvrir la Formation Initiale"
@@ -561,12 +562,12 @@ export default function AccueilPage() {
                 <div className="p-3 text-center bg-slate-50 flex items-center justify-between text-xs">
                   <span className="font-semibold text-slate-700 truncate">📍 Angondje, Carrefour Moussavou, Akanda</span>
                   <a
-                    href="https://maps.google.com/maps?q=Angondje,+Carrefour+Moussavou,+Akanda,+Libreville,+Gabon"
+                    href="https://maps.app.goo.gl/UqxLEnz4v7BHb7be7"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 font-bold text-brand-blue hover:underline shrink-0"
                   >
-                    GPS →
+                    Ouvrir sur Google Maps →
                   </a>
                 </div>
               </div>

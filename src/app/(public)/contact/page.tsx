@@ -88,7 +88,7 @@ export default function ContactPage() {
                 </div>
                 <div className="text-center pt-1">
                   <a
-                    href="https://maps.google.com/maps?q=Angondje,+Carrefour+Moussavou,+Akanda,+Libreville,+Gabon"
+                    href="https://maps.app.goo.gl/UqxLEnz4v7BHb7be7"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs font-bold text-brand-blue hover:underline inline-flex items-center gap-1"

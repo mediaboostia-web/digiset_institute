@@ -30,10 +30,15 @@ export function Footer() {
             </p>
 
             <div className="space-y-2 pt-2 text-sm text-slate-300">
-              <div className="flex items-start gap-2.5">
+              <a
+                href="https://maps.app.goo.gl/UqxLEnz4v7BHb7be7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2.5 hover:text-brand-orange transition-colors"
+              >
                 <MapPin className="h-4 w-4 text-brand-orange shrink-0 mt-1" />
                 <span>Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon</span>
-              </div>
+              </a>
               <div className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 text-brand-orange shrink-0" />
                 <span>+241 (0) 74 00 00 00 / +241 (0) 66 00 00 00</span>
