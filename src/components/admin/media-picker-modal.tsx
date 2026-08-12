@@ -17,7 +17,7 @@ import {
   Search,
   Check,
   Plus,
-  FolderImage,
+  FileImage,
   X,
   Sparkles,
   Trash2,
@@ -130,7 +130,7 @@ export function MediaPickerModal({
         <DialogHeader className="p-5 bg-slate-50 border-b border-slate-200 shrink-0 flex flex-row items-center justify-between">
           <div>
             <DialogTitle className="font-heading text-lg font-bold text-slate-900 flex items-center gap-2">
-              <FolderImage className="h-5 w-5 text-brand-orange" />
+              <FileImage className="h-5 w-5 text-brand-orange" />
               {title}
             </DialogTitle>
             <DialogDescription className="text-xs text-slate-600 font-medium mt-0.5">

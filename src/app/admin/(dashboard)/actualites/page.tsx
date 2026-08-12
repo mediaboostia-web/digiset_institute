@@ -22,7 +22,7 @@ import {
   Sparkles,
   MousePointerClick,
   Save,
-  FolderImage,
+  FileImage,
 } from "lucide-react";
 import { NewsItem, ContentStatus } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
@@ -518,7 +518,7 @@ export default function AdminNewsPage() {
                       onClick={() => setIsMediaPickerOpen(true)}
                       className="bg-brand-blue hover:bg-brand-blue-dark text-white text-[11px] font-bold px-3 py-1 rounded-lg gap-1.5 cursor-pointer shadow-xs"
                     >
-                      <FolderImage className="h-3.5 w-3.5 text-brand-orange" />
+                      <FileImage className="h-3.5 w-3.5 text-brand-orange" />
                       <span>Ouvrir la Médiathèque</span>
                     </Button>
                   </label>
@@ -558,7 +558,7 @@ export default function AdminNewsPage() {
                       onClick={() => setIsMediaPickerOpen(true)}
                       className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 text-center cursor-pointer hover:bg-slate-100/80 transition-colors"
                     >
-                      <FolderImage className="h-8 w-8 text-brand-orange mb-2" />
+                      <FileImage className="h-8 w-8 text-brand-orange mb-2" />
                       <p className="text-xs font-bold text-slate-900">Cliquez pour ouvrir la Médiathèque et choisir ou importer une photo</p>
                       <p className="text-[11px] text-slate-500 mt-1">Accédez à la banque d'images de l'institut ou téléversez un nouveau fichier</p>
                     </div>

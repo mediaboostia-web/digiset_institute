@@ -15,7 +15,7 @@ import {
   Shield,
   Building,
   UserCheck,
-  FolderImage,
+  FileImage,
 } from "lucide-react";
 import { TeamMember, INITIAL_TEAM } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
@@ -396,7 +396,7 @@ export default function AdminTeamPage() {
                       onClick={() => setIsMediaPickerOpen(true)}
                       className="bg-brand-blue hover:bg-brand-blue-dark text-white text-[11px] font-bold px-3 py-1 rounded-lg gap-1.5 cursor-pointer"
                     >
-                      <FolderImage className="h-3.5 w-3.5 text-brand-orange" />
+                      <FileImage className="h-3.5 w-3.5 text-brand-orange" />
                       <span>Ouvrir la Médiathèque</span>
                     </Button>
                   </label>
@@ -432,7 +432,7 @@ export default function AdminTeamPage() {
                       onClick={() => setIsMediaPickerOpen(true)}
                       className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white p-5 text-center cursor-pointer hover:bg-slate-100/80 transition-colors"
                     >
-                      <FolderImage className="h-7 w-7 text-brand-orange mb-1" />
+                      <FileImage className="h-7 w-7 text-brand-orange mb-1" />
                       <span className="text-xs font-bold text-slate-900">Ouvrir la Médiathèque pour choisir ou importer une photo</span>
                     </div>
                   )}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  FolderImage,
+  FileImage,
   Upload,
   Search,
   Trash2,
@@ -112,7 +112,7 @@ export default function AdminGalleryPage() {
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <FolderImage className="h-6 w-6 text-brand-orange" />
+            <FileImage className="h-6 w-6 text-brand-orange" />
             Médiathèque & Banque d&apos;Images Officielle
           </h1>
           <p className="text-xs text-slate-500">
