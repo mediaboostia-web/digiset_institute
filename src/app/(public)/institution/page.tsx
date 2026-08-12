@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { HeroSection } from "@/components/shared/hero-section";
 import { FounderSection } from "@/components/shared/founder-section";
-import { Globe, Mail, Phone, Loader2 } from "lucide-react";
+import { Globe, Mail, Phone, Loader2, UserCheck } from "lucide-react";
 
 interface TeamMember {
   id?: string;
@@ -24,17 +24,14 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
   const photo = member.photo_url || "/brand/fondateur.png";
 
   return (
-    <div className="group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-xs hover:border-2 hover:border-brand-blue hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+    <div className="group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-xs hover:border-2 hover:border-brand-blue hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-full">
       <div>
         {/* Photo avec cadre soigné */}
-        <div className="relative h-48 w-full rounded-xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
-          <Image
+        <div className="relative h-52 w-full rounded-xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
+          <img
             src={photo}
             alt={member.full_name}
-            fill
-            unoptimized
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, 300px"
+            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {member.pole && (
             <div className="absolute top-2.5 right-2.5 bg-brand-blue/90 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-xs">
@@ -81,15 +78,6 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
               <Mail className="h-3.5 w-3.5" />
             </a>
           )}
-          {member.phone && (
-            <a
-              href={`tel:${member.phone}`}
-              className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-brand-blue hover:text-white transition-colors"
-              aria-label={`Téléphone de ${member.full_name}`}
-            >
-              <Phone className="h-3.5 w-3.5" />
-            </a>
-          )}
         </div>
         <span className="text-[10px] text-slate-400 font-medium">DigiSET Campus</span>
       </div>
@@ -118,15 +106,26 @@ export default function InstitutionPage() {
     loadTeam();
   }, []);
 
-  // Découpage dynamique par pôle
-  const rang1 = teamMembers.filter((m) => m.pole === "Direction Générale" || m.role_title.includes("Fondateur") || m.role_title.includes("Directeur Général"));
-  const rang2 = teamMembers.filter((m) => (m.pole === "Direction Académique" || m.pole === "Corps Professoral") && !rang1.includes(m));
-  const rang3 = teamMembers.filter((m) => !rang1.includes(m) && !rang2.includes(m));
+  // Classification sans AUCUNE duplication de membres
+  const rang1 = teamMembers.filter(
+    (m) =>
+      m.pole === "Direction Générale" ||
+      m.role_title.toLowerCase().includes("fondateur") ||
+      m.role_title.toLowerCase().includes("directeur général")
+  );
 
-  // Fallback si filtre vide
-  const finalRang1 = rang1.length > 0 ? rang1 : teamMembers.slice(0, 1);
-  const finalRang2 = rang2.length > 0 ? rang2 : teamMembers.slice(1, 3);
-  const finalRang3 = rang3.length > 0 ? rang3 : teamMembers.slice(3);
+  const rang2 = teamMembers.filter(
+    (m) =>
+      !rang1.some((r1) => r1.id === m.id) &&
+      (m.pole === "Direction Académique" ||
+        m.pole === "Pôles de Formation" ||
+        m.role_title.toLowerCase().includes("directeur des études") ||
+        m.role_title.toLowerCase().includes("conseil"))
+  );
+
+  const rang3 = teamMembers.filter(
+    (m) => !rang1.some((r1) => r1.id === m.id) && !rang2.some((r2) => r2.id === m.id)
+  );
 
   // Partenaires
   const PARTENAIRES_OFFICIELS = [
@@ -195,10 +194,16 @@ export default function InstitutionPage() {
               <Loader2 className="h-8 w-8 animate-spin text-brand-blue mx-auto" />
               <p className="text-xs font-semibold text-slate-500">Chargement de l&apos;organigramme en direct...</p>
             </div>
+          ) : teamMembers.length === 0 ? (
+            <div className="py-12 text-center space-y-2">
+              <UserCheck className="h-10 w-10 text-slate-300 mx-auto" />
+              <p className="text-sm font-bold text-slate-700">Aucun membre dans l&apos;organigramme pour le moment.</p>
+              <p className="text-xs text-slate-500">Ajoutez des membres depuis l&apos;Espace d&apos;Administration / Organigramme.</p>
+            </div>
           ) : (
             <>
               {/* RANG 1 : Direction Générale */}
-              {finalRang1.length > 0 && (
+              {rang1.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
                     <span className="h-3 w-3 rounded-full bg-brand-orange" />
@@ -206,16 +211,16 @@ export default function InstitutionPage() {
                       Rang 1 — Direction Générale & Présidence
                     </h3>
                   </div>
-                  <div className="flex justify-center">
-                    <div className="w-full max-w-sm">
-                      <TeamMemberCard member={finalRang1[0]} />
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {rang1.map((m) => (
+                      <TeamMemberCard key={m.id} member={m} />
+                    ))}
                   </div>
                 </div>
               )}
 
               {/* RANG 2 : Pôles Formations & Académique */}
-              {finalRang2.length > 0 && (
+              {rang2.length > 0 && (
                 <div className="space-y-4 pt-4">
                   <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
                     <span className="h-3 w-3 rounded-full bg-brand-blue" />
@@ -223,16 +228,16 @@ export default function InstitutionPage() {
                       Rang 2 — Pôles Formations & Direction Académique
                     </h3>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                    {finalRang2.map((m, i) => (
-                      <TeamMemberCard key={m.id || i} member={m} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {rang2.map((m) => (
+                      <TeamMemberCard key={m.id} member={m} />
                     ))}
                   </div>
                 </div>
               )}
 
               {/* RANG 3 : Pôle Services, Partenariats & Plateaux TP */}
-              {finalRang3.length > 0 && (
+              {rang3.length > 0 && (
                 <div className="space-y-4 pt-4">
                   <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
                     <span className="h-3 w-3 rounded-full bg-emerald-600" />
@@ -240,9 +245,9 @@ export default function InstitutionPage() {
                       Rang 3 — Pôle Services, Partenariats & Plateaux Techniques TP
                     </h3>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {finalRang3.map((m, i) => (
-                      <TeamMemberCard key={m.id || i} member={m} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {rang3.map((m) => (
+                      <TeamMemberCard key={m.id} member={m} />
                     ))}
                   </div>
                 </div>
@@ -258,18 +263,18 @@ export default function InstitutionPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
           
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-orange">
-              Stratégie & Partenariats
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-orange bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
+              Certifications & Partenariats
             </span>
             <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900">
-              Partenaires Institutionnels & Technologiques
+              Partenaires Technologiques Officiels
             </h2>
             <p className="text-xs sm:text-sm text-slate-600">
-              Nos alliances avec les éditeurs mondiaux et organismes officiels garantissent la qualité et la certification de nos diplômes.
+              Nos cursus académiques préparent directement aux diplômes certifiants reconnus par les géants mondiaux du secteur.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {PARTENAIRES_OFFICIELS.map((partner, idx) => (
               <div
                 key={idx}

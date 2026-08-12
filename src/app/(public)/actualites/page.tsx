@@ -157,12 +157,10 @@ export default function ActualitesPage() {
                   <Link href={`/actualites/${article.slug}`} className="block flex-1">
                     {/* Cover Image */}
                     <div className="relative h-52 w-full bg-slate-100 overflow-hidden border-b border-slate-100">
-                      <Image
+                      <img
                         src={article.cover_image_url || "/brand/fondateur.png"}
                         alt={article.title}
-                        fill
-                        unoptimized
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       {article.category && (
                         <div className="absolute top-3 left-3 bg-brand-orange text-white text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">

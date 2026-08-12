@@ -256,34 +256,6 @@ Rejoignez les pionniers du numérique et préparez dès aujourd'hui votre intég
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
   },
-  {
-    id: "news-6",
-    slug: "lintelligence-artificielle-et-la-cybersecurite-les-metiers-en-or-de-2026",
-    title: "L'Intelligence Artificielle et la Cybersécurité : Les métiers en or de 2026 !",
-    cover_image_url: "/images/img/Image_4.jpg",
-    excerpt:
-      "Tu veux un job d'avenir qui paye bien et recrute partout ? Au Gabon et en Afrique, la tech explose. Découvrez nos formations d'excellence en IA et Cybersécurité pour la rentrée 2026.",
-    body: `Tu veux un job d'avenir qui paye bien et recrute partout ? Au Gabon et en Afrique, la tech explose. 
-
-## Pourquoi l'IA et la Cybersécurité sont les Secteurs N°1 en 2026
-
-Les entreprises privées comme les services publics connaissent une transformation digitale rapide. Les besoins en experts qualifiés capables de déployer des modèles d'intelligence artificielle et de sécuriser les infrastructures réseaux n'ont jamais été aussi élevés à Libreville et dans toute la sous-région.
-
-## Les Parcours d'Excellence chez DigiSET Institute
-
-- **[Licence Pro IA & Data Science](/programmes/licence-professionnelle/ia-data-science)** : Apprenez à concevoir des algorithmes prédictifs et traiter la Big Data.
-- **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Devenez un spécialiste de la sécurité opérationnelle et de l'audit de systèmes.
-- **[Classe Préparatoire MP2I](/programmes/classe-preparatoire)** : Le tremplin idéal pour viser les grandes écoles d'ingénieurs.
-
-Rejoignez les pionniers du numérique et préparez dès aujourd'hui votre intégration professionnelle pour septembre 2026.`,
-    status: "published",
-    category: "Formations & Certifications",
-    tags: ["IA", "Cybersécurité", "Métiers d'avenir", "Licence Pro", "Gabon"],
-    cta_text: "Déposer ma candidature",
-    cta_url: "/inscription/candidature",
-    published_at: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-  },
 ];
 
 export function calculateKPIs(submissions: AnySubmission[]) {

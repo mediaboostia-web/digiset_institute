@@ -69,6 +69,11 @@ export default function AdminNewsPage() {
   const [editingArticle, setEditingArticle] = useState<NewsItem | null>(null);
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
+  // Modal d'insertion de lien personnalisé sans prompt alert
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [customLinkText, setCustomLinkText] = useState("Postuler maintenant");
+  const [customLinkUrl, setCustomLinkUrl] = useState("/inscription/candidature");
+
   const fetchArticles = async () => {
     setIsLoading(true);
     try {
@@ -108,7 +113,7 @@ export default function AdminNewsPage() {
     customCategory: "",
     excerpt: "",
     body: "",
-    cover_image_url: "/images/img/Image_3.jpg",
+    cover_image_url: "",
     status: "published",
     tags: "",
     cta_text: "Déposer une candidature",
@@ -143,7 +148,7 @@ export default function AdminNewsPage() {
       customCategory: isStandardCategory ? "" : article.category || "",
       excerpt: article.excerpt,
       body: article.body,
-      cover_image_url: article.cover_image_url || "/images/img/Image_3.jpg",
+      cover_image_url: article.cover_image_url || "",
       status: article.status,
       tags: article.tags ? article.tags.join(", ") : "",
       cta_text: article.cta_text || "",
@@ -173,12 +178,11 @@ export default function AdminNewsPage() {
     }));
   };
 
-  const insertCustomLink = () => {
-    const text = prompt("Texte sur lequel ajouter le lien (ex: Candidater en ligne) :", "Postuler maintenant");
-    if (!text) return;
-    const url = prompt("Lien de destination (ex: /inscription/candidature ou https://...) :", "/inscription/candidature");
-    if (!url) return;
-    insertTextToBody(`[${text}](${url})`);
+  const handleConfirmInsertLink = () => {
+    if (customLinkText && customLinkUrl) {
+      insertTextToBody(`[${customLinkText}](${customLinkUrl})`);
+    }
+    setIsLinkModalOpen(false);
   };
 
   const handleSaveArticle = async (e: React.FormEvent) => {
@@ -427,12 +431,11 @@ export default function AdminNewsPage() {
         )}
       </div>
 
-      {/* Modal d'Édition / Création — CONNECTÉ À LA MÉDIATHÈQUE */}
+      {/* Modal d'Édition / Création */}
       {isModalOpen && (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="max-w-4xl w-[96vw] max-h-[90vh] flex flex-col p-0 overflow-hidden border-2 border-slate-200 shadow-2xl rounded-2xl bg-white">
             
-            {/* Header Fixe */}
             <DialogHeader className="border-b border-slate-200 p-5 bg-slate-50/90 shrink-0">
               <DialogTitle className="font-heading text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Newspaper className="h-5 w-5 text-brand-orange" />
@@ -443,10 +446,8 @@ export default function AdminNewsPage() {
               </DialogDescription>
             </DialogHeader>
 
-            {/* Formulaire complet */}
             <form onSubmit={handleSaveArticle} className="flex flex-col flex-1 overflow-hidden min-h-0">
               
-              {/* Corps du formulaire défilant */}
               <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-xs max-h-[calc(90vh-140px)]">
                 
                 {/* Section 1 : Titre, Slug & Catégorie */}
@@ -538,7 +539,7 @@ export default function AdminNewsPage() {
                         <button
                           type="button"
                           onClick={() => setIsMediaPickerOpen(true)}
-                          className="text-[11px] font-bold text-brand-orange hover:underline mt-1 block"
+                          className="text-[11px] font-bold text-brand-orange hover:underline mt-1 block cursor-pointer"
                         >
                           Changer de photo via la Médiathèque →
                         </button>
@@ -590,11 +591,11 @@ export default function AdminNewsPage() {
                     <span className="text-[11px] text-slate-500 font-medium">Ajoutez des liens cliquables pour stimuler les candidatures</span>
                   </div>
 
-                  {/* Boutons d'incitation SEO */}
+                  {/* Boutons d'incitation SEO SANS PROMPT ALERT */}
                   <div className="flex flex-wrap items-center gap-1.5">
                     <button
                       type="button"
-                      onClick={insertCustomLink}
+                      onClick={() => setIsLinkModalOpen(true)}
                       className="px-2.5 py-1 rounded-md bg-brand-blue text-white text-[11px] font-bold hover:bg-brand-blue-dark transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <LinkIcon className="h-3 w-3" /> Lien personnalisé...
@@ -709,6 +710,63 @@ export default function AdminNewsPage() {
               </div>
 
             </form>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* MODAL SHADCN PROPRE POUR AJOUT DE LIEN PERSONNALISÉ (REMPLACE LES PROMPT BROWSER) */}
+      {isLinkModalOpen && (
+        <Dialog open={isLinkModalOpen} onOpenChange={setIsLinkModalOpen}>
+          <DialogContent className="max-w-md w-[92vw] p-6 rounded-2xl bg-white border border-slate-200 shadow-2xl">
+            <DialogHeader className="space-y-1">
+              <DialogTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <LinkIcon className="h-4 w-4 text-brand-orange" />
+                Insérer un lien personnalisé dans l&apos;article
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate-500">
+                Définissez le texte affiché et la page web de destination.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-3 text-xs">
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700">Texte affiché sur le lien *</label>
+                <Input
+                  value={customLinkText}
+                  onChange={(e) => setCustomLinkText(e.target.value)}
+                  placeholder="ex. Postuler maintenant ou En savoir plus"
+                  className="text-xs bg-slate-50 h-9 font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700">URL / Lien de destination *</label>
+                <Input
+                  value={customLinkUrl}
+                  onChange={(e) => setCustomLinkUrl(e.target.value)}
+                  placeholder="ex. /inscription/candidature ou https://..."
+                  className="text-xs bg-slate-50 h-9 font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsLinkModalOpen(false)}
+                className="text-xs font-bold bg-white hover:bg-slate-100"
+              >
+                Annuler
+              </Button>
+              <Button
+                type="button"
+                onClick={handleConfirmInsertLink}
+                className="bg-brand-blue hover:bg-brand-blue-dark text-white text-xs font-extrabold px-4 py-2 rounded-xl"
+              >
+                Insérer le lien
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       )}

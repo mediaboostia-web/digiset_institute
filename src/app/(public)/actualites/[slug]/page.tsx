@@ -113,13 +113,10 @@ export default async function ArticleDetailPage({
           {/* Image de couverture */}
           {article.cover_image_url && (
             <div className="relative h-64 sm:h-96 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-slate-100">
-              <Image
+              <img
                 src={article.cover_image_url}
                 alt={article.title}
-                fill
-                unoptimized
-                className="object-cover"
-                priority
+                className="h-full w-full object-cover"
               />
             </div>
           )}
