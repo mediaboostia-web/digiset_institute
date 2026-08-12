@@ -10,7 +10,7 @@ function loadStore(): TeamMember[] {
     if (fs.existsSync(TMP_FILE_PATH)) {
       const data = fs.readFileSync(TMP_FILE_PATH, "utf-8");
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
   } catch {
     // Ignorer
@@ -20,7 +20,7 @@ function loadStore(): TeamMember[] {
     if (fs.existsSync(ALT_TMP_PATH)) {
       const data = fs.readFileSync(ALT_TMP_PATH, "utf-8");
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
   } catch {
     // Ignorer

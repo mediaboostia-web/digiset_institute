@@ -78,7 +78,7 @@ export default function AdminTeamPage() {
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed)) {
+          if (Array.isArray(parsed) && parsed.length > 0) {
             setTeamList(parsed);
           }
         } catch {
@@ -91,7 +91,7 @@ export default function AdminTeamPage() {
     try {
       const res = await fetch("/api/team");
       const json = await res.json();
-      if (json.ok && Array.isArray(json.data)) {
+      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
         setTeamList(json.data);
         saveToLocalStorage(json.data);
       }

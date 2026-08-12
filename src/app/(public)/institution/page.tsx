@@ -114,7 +114,7 @@ export default function InstitutionPage() {
         if (cached) {
           try {
             const parsed = JSON.parse(cached);
-            if (Array.isArray(parsed)) {
+            if (Array.isArray(parsed) && parsed.length > 0) {
               setTeamMembers(parsed);
               setIsLoading(false);
             }
@@ -127,7 +127,7 @@ export default function InstitutionPage() {
       try {
         const res = await fetch("/api/team");
         const json = await res.json();
-        if (json.ok && Array.isArray(json.data)) {
+        if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
           setTeamMembers(json.data);
           if (typeof window !== "undefined") {
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));

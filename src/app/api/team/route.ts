@@ -15,7 +15,7 @@ export async function GET() {
         .select("*")
         .order("sort_order", { ascending: true });
 
-      if (!error && data && Array.isArray(data)) {
+      if (!error && data && Array.isArray(data) && data.length > 0) {
         return NextResponse.json({ ok: true, data });
       }
     }
