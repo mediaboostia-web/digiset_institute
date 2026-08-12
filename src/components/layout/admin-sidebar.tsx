@@ -192,19 +192,6 @@ export function AdminSidebar({
             >
               <X className="h-5 w-5" />
             </button>
-
-            {/* Desktop Retract Toggle Button */}
-            <button
-              onClick={onToggle}
-              className="hidden md:flex p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
-              title={isCollapsed ? "Agrandir le menu" : "Réduire / Cacher le menu"}
-            >
-              {isCollapsed ? (
-                <PanelLeftOpen className="h-5 w-5 text-brand-orange" />
-              ) : (
-                <PanelLeftClose className="h-5 w-5 hover:text-brand-orange transition-colors" />
-              )}
-            </button>
           </div>
 
           {/* Action Rapide : Publier Actualité */}
