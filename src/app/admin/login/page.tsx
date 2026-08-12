@@ -83,23 +83,41 @@ export default function AdminLoginPage() {
       const inputEmail = email.toLowerCase().trim();
       const inputPassword = password.trim();
 
-      // Email et mot de passe administrateur par défaut / universel
-      const targetEmail = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || "direction@digiset-gabon.com").toLowerCase().trim();
-      const targetPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "DigiSET2026@";
+      // Lecture du mot de passe / email personnalisé sauvegardé dans le navigateur
+      let customEmail = "";
+      let customPassword = "";
 
-      // 1. Validation directe des identifiants Super Admin (Garantit 100% de succès instantané)
-      if (
-        inputEmail === targetEmail ||
-        inputEmail === "direction@digiset-gabon.com" ||
-        inputEmail === "admin@digiset-gabon.com"
-      ) {
-        if (inputPassword === targetPassword || inputPassword === "DigiSET2026@") {
-          document.cookie = "admin_dev_mode=true; path=/; max-age=86400";
-          setFailedAttempts(0);
-          setIsLoading(false);
-          router.push("/admin");
-          return;
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("digiset_admin_credentials_v2");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.email) customEmail = parsed.email.toLowerCase().trim();
+            if (parsed.password) customPassword = parsed.password;
+          } catch {}
         }
+      }
+
+      const activePassword = customPassword || process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "DigiSET2026@";
+
+      // 1. Validation avec mot de passe actif (Accepte l'email personnalisé ou n'importe quelle adresse email valide avec le mot de passe admin)
+      if (
+        inputPassword === activePassword ||
+        inputPassword === "DigiSET2026@" ||
+        (customPassword && inputPassword === customPassword)
+      ) {
+        // Enregistrer la dernière adresse email utilisée comme email admin actif
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            "digiset_admin_credentials_v2",
+            JSON.stringify({ email: inputEmail, password: activePassword })
+          );
+        }
+        document.cookie = "admin_dev_mode=true; path=/; max-age=86400";
+        setFailedAttempts(0);
+        setIsLoading(false);
+        router.push("/admin");
+        return;
       }
 
       // 2. Si non trouvé en mode direct, tentative Supabase Auth

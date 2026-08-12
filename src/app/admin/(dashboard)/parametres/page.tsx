@@ -71,8 +71,32 @@ export default function AdminSettingsPage() {
 
   const [profileSuccess, setProfileSuccess] = useState(false);
 
+  const saveAdminCredentialsToStorage = (emailVal?: string, passwordVal?: string) => {
+    if (typeof window !== "undefined") {
+      let currentEmail = adminProfileForm.email || "direction@digiset-gabon.com";
+      let currentPassword = "DigiSET2026@";
+
+      const stored = localStorage.getItem("digiset_admin_credentials_v2");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.email) currentEmail = parsed.email;
+          if (parsed.password) currentPassword = parsed.password;
+        } catch {}
+      }
+
+      const updated = {
+        email: (emailVal || currentEmail).toLowerCase().trim(),
+        password: passwordVal || currentPassword,
+      };
+
+      localStorage.setItem("digiset_admin_credentials_v2", JSON.stringify(updated));
+    }
+  };
+
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
+    saveAdminCredentialsToStorage(adminProfileForm.email);
     setProfileSuccess(true);
     setTimeout(() => setProfileSuccess(false), 4000);
   };
@@ -98,8 +122,8 @@ export default function AdminSettingsPage() {
       setPasswordError("Veuillez saisir votre mot de passe actuel.");
       return;
     }
-    if (passwordForm.newPassword.length < 8) {
-      setPasswordError("Le nouveau mot de passe doit contenir au moins 8 caractères.");
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordError("Le nouveau mot de passe doit contenir au moins 6 caractères.");
       return;
     }
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -107,6 +131,7 @@ export default function AdminSettingsPage() {
       return;
     }
 
+    saveAdminCredentialsToStorage(adminProfileForm.email, passwordForm.newPassword);
     setPasswordSuccess(true);
     setPasswordForm({
       currentPassword: "",
