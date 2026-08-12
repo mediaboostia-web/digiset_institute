@@ -45,26 +45,28 @@ const POLE_OPTIONS = [
   "Secrétariat & Administration",
 ];
 
-const LOCAL_STORAGE_KEY = "digiset_team_local_cache_v2";
+const LOCAL_STORAGE_KEY = "digiset_team_local_cache_v5";
+const LOCAL_STORAGE_MODIFIED_KEY = "digiset_team_is_user_modified_v5";
 
 export default function AdminTeamPage() {
-  const [teamList, setTeamList] = useState<TeamMember[]>(INITIAL_TEAM);
+  const [teamList, setTeamList] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [poleFilter, setPoleFilter] = useState("all");
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
-  // Modal State
+  // Modal d'édition/création & Médiathèque
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
-  const saveToLocalStorage = (list: TeamMember[]) => {
+  const saveToLocalStorage = (data: TeamMember[]) => {
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(list));
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+        localStorage.setItem(LOCAL_STORAGE_MODIFIED_KEY, "true");
       } catch (e) {
-        console.error("Erreur sauvegarde local storage:", e);
+        console.warn("Erreur sauvegarde local storage équipe:", e);
       }
     }
   };
@@ -72,14 +74,19 @@ export default function AdminTeamPage() {
   const fetchTeam = async () => {
     setIsLoading(true);
 
-    // 1. Restauration instantanée depuis le cache navigateur local
+    // 1. Restauration instantanée depuis le cache local si l'administrateur a déjà personnalisé l'équipe
     if (typeof window !== "undefined") {
+      const isModified = localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true";
       const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             setTeamList(parsed);
+            if (isModified) {
+              setIsLoading(false);
+              return;
+            }
           }
         } catch {
           // Ignorer
@@ -87,18 +94,17 @@ export default function AdminTeamPage() {
       }
     }
 
-    // 2. Synchronisation serveur
+    // 2. Synchronisation serveur si non encore personnalisé
     try {
       const res = await fetch("/api/team");
       const json = await res.json();
-      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
-        // Préférer le stockage local s'il contient les membres ajoutés par l'administrateur
-        if (typeof window !== "undefined") {
+      if (json.ok && Array.isArray(json.data)) {
+        if (typeof window !== "undefined" && localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true") {
           const localCache = localStorage.getItem(LOCAL_STORAGE_KEY);
           if (localCache) {
             try {
               const parsedLocal = JSON.parse(localCache);
-              if (Array.isArray(parsedLocal) && parsedLocal.length >= json.data.length) {
+              if (Array.isArray(parsedLocal)) {
                 setTeamList(parsedLocal);
                 return;
               }
@@ -108,7 +114,6 @@ export default function AdminTeamPage() {
           }
         }
         setTeamList(json.data);
-        saveToLocalStorage(json.data);
       }
     } catch (err) {
       console.error("Erreur chargement équipe:", err);

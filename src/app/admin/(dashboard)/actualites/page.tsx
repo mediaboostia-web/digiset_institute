@@ -74,12 +74,14 @@ export default function AdminNewsPage() {
   const [customLinkText, setCustomLinkText] = useState("Postuler maintenant");
   const [customLinkUrl, setCustomLinkUrl] = useState("/inscription/candidature");
 
-  const LOCAL_STORAGE_NEWS_KEY = "digiset_news_local_cache_v2";
+  const LOCAL_STORAGE_NEWS_KEY = "digiset_news_local_cache_v5";
+  const LOCAL_STORAGE_NEWS_MODIFIED_KEY = "digiset_news_is_user_modified_v5";
 
   const saveNewsToLocalStorage = (list: NewsItem[]) => {
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem(LOCAL_STORAGE_NEWS_KEY, JSON.stringify(list));
+        localStorage.setItem(LOCAL_STORAGE_NEWS_MODIFIED_KEY, "true");
       } catch (e) {
         console.error("Erreur sauvegarde local storage news:", e);
       }
@@ -90,12 +92,17 @@ export default function AdminNewsPage() {
     setIsLoading(true);
 
     if (typeof window !== "undefined") {
+      const isModified = localStorage.getItem(LOCAL_STORAGE_NEWS_MODIFIED_KEY) === "true";
       const cached = localStorage.getItem(LOCAL_STORAGE_NEWS_KEY);
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             setNewsList(parsed);
+            if (isModified) {
+              setIsLoading(false);
+              return;
+            }
           }
         } catch {
           // Ignorer
@@ -106,13 +113,13 @@ export default function AdminNewsPage() {
     try {
       const res = await fetch("/api/news?status=all");
       const json = await res.json();
-      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
-        if (typeof window !== "undefined") {
+      if (json.ok && Array.isArray(json.data)) {
+        if (typeof window !== "undefined" && localStorage.getItem(LOCAL_STORAGE_NEWS_MODIFIED_KEY) === "true") {
           const localCache = localStorage.getItem(LOCAL_STORAGE_NEWS_KEY);
           if (localCache) {
             try {
               const parsedLocal = JSON.parse(localCache);
-              if (Array.isArray(parsedLocal) && parsedLocal.length >= json.data.length) {
+              if (Array.isArray(parsedLocal)) {
                 setNewsList(parsedLocal);
                 return;
               }
@@ -122,7 +129,6 @@ export default function AdminNewsPage() {
           }
         }
         setNewsList(json.data);
-        saveNewsToLocalStorage(json.data);
       }
     } catch (err) {
       console.error("Erreur chargement actualités:", err);

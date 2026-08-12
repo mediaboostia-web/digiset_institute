@@ -101,7 +101,8 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
   );
 }
 
-const LOCAL_STORAGE_KEY = "digiset_team_local_cache_v2";
+const LOCAL_STORAGE_KEY = "digiset_team_local_cache_v5";
+const LOCAL_STORAGE_MODIFIED_KEY = "digiset_team_is_user_modified_v5";
 
 export default function InstitutionPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -110,13 +111,17 @@ export default function InstitutionPage() {
   useEffect(() => {
     async function loadTeam() {
       if (typeof window !== "undefined") {
+        const isModified = localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true";
         const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (cached) {
           try {
             const parsed = JSON.parse(cached);
-            if (Array.isArray(parsed) && parsed.length > 0) {
+            if (Array.isArray(parsed)) {
               setTeamMembers(parsed);
-              setIsLoading(false);
+              if (isModified) {
+                setIsLoading(false);
+                return;
+              }
             }
           } catch {
             // Ignorer
@@ -127,11 +132,22 @@ export default function InstitutionPage() {
       try {
         const res = await fetch("/api/team");
         const json = await res.json();
-        if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
-          setTeamMembers(json.data);
-          if (typeof window !== "undefined") {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));
+        if (json.ok && Array.isArray(json.data)) {
+          if (typeof window !== "undefined" && localStorage.getItem(LOCAL_STORAGE_MODIFIED_KEY) === "true") {
+            const localCache = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (localCache) {
+              try {
+                const parsedLocal = JSON.parse(localCache);
+                if (Array.isArray(parsedLocal)) {
+                  setTeamMembers(parsedLocal);
+                  return;
+                }
+              } catch {
+                // Ignorer
+              }
+            }
           }
+          setTeamMembers(json.data);
         }
       } catch (err) {
         console.error("Erreur chargement organigramme public:", err);
