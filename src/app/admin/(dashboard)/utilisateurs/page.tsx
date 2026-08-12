@@ -291,85 +291,87 @@ export default function AdminUsersPage() {
 
       {/* Modal d'ajout d'utilisateur */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-heading text-lg font-bold text-slate-900 flex items-center gap-2">
-              <UserPlus className="h-5 w-5 text-brand-orange" />
+        <DialogContent className="sm:max-w-xl w-[95vw] rounded-2xl p-0 gap-0 overflow-hidden shadow-2xl border border-slate-200 bg-white max-h-[92vh] flex flex-col">
+          <DialogHeader className="p-5 sm:p-6 pb-4 bg-slate-50 border-b border-slate-200 shrink-0">
+            <DialogTitle className="font-heading text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
+                <UserPlus className="h-5 w-5" />
+              </div>
               Créer un Compte Administrateur
             </DialogTitle>
-            <DialogDescription className="text-xs text-slate-500">
+            <DialogDescription className="text-xs sm:text-sm text-slate-500 mt-1">
               Renseignez les identifiants pour permettre à un collaborateur d'accéder au back-office.
             </DialogDescription>
           </DialogHeader>
 
-          {modalError && (
-            <div className="flex items-start gap-2 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700 border border-red-200">
-              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-              <span>{modalError}</span>
-            </div>
-          )}
+          <form onSubmit={handleCreateUser} className="p-5 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto max-h-[75vh] text-xs sm:text-sm">
+            {modalError && (
+              <div className="flex items-start gap-2.5 rounded-xl bg-red-50 p-3.5 text-xs font-medium text-red-700 border border-red-200">
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{modalError}</span>
+              </div>
+            )}
 
-          {modalSuccess && (
-            <div className="flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-xs font-bold text-emerald-800 border border-emerald-200">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-              <span>{modalSuccess}</span>
-            </div>
-          )}
+            {modalSuccess && (
+              <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 p-3.5 text-xs font-bold text-emerald-800 border border-emerald-200">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                <span>{modalSuccess}</span>
+              </div>
+            )}
 
-          <form onSubmit={handleCreateUser} className="space-y-4 text-xs">
-            <div className="space-y-1.5">
-              <label className="font-bold text-slate-700">Nom et Prénom *</label>
+            <div className="space-y-2">
+              <label className="font-bold text-slate-700 text-xs sm:text-sm">Nom et Prénom *</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   required
                   placeholder="ex: Jean-Claude MBOUMBA"
                   value={formData.full_name}
                   onChange={(e) => setFormData((prev) => ({ ...prev, full_name: e.target.value }))}
-                  className="pl-9 text-xs h-10"
+                  className="pl-10 text-xs sm:text-sm h-11 rounded-xl bg-white border-slate-300 font-medium text-slate-800 focus:border-brand-blue shadow-xs"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-bold text-slate-700">Adresse Email Professionnelle *</label>
+            <div className="space-y-2">
+              <label className="font-bold text-slate-700 text-xs sm:text-sm">Adresse Email Professionnelle *</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   type="email"
                   required
                   placeholder="collaborateur@digiset-gabon.com"
                   value={formData.email}
                   onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                  className="pl-9 text-xs h-10"
+                  className="pl-10 text-xs sm:text-sm h-11 rounded-xl bg-white border-slate-300 font-medium text-slate-800 focus:border-brand-blue shadow-xs"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-bold text-slate-700">Mot de Passe *</label>
+            <div className="space-y-2">
+              <label className="font-bold text-slate-700 text-xs sm:text-sm">Mot de Passe *</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
-                  className="pl-9 pr-10 text-xs h-10"
+                  className="pl-10 pr-10 text-xs sm:text-sm h-11 rounded-xl bg-white border-slate-300 font-medium text-slate-800 focus:border-brand-blue shadow-xs"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-bold text-slate-700">Rôle & Droits d'Accès *</label>
+            <div className="space-y-2">
+              <label className="font-bold text-slate-700 text-xs sm:text-sm">Rôle & Droits d'Accès *</label>
               <Select
                 value={formData.role}
                 onValueChange={(val) => {
@@ -378,30 +380,36 @@ export default function AdminUsersPage() {
                   }
                 }}
               >
-                <SelectTrigger className="h-10 text-xs">
+                <SelectTrigger className="h-11 rounded-xl text-xs sm:text-sm bg-white border-slate-300 font-medium text-slate-800 shadow-xs focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue">
                   <SelectValue placeholder="Sélectionner un rôle" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="editor">Éditeur de Contenu (Publication & Rédaction)</SelectItem>
-                  <SelectItem value="admin">Administrateur (Gestion des Contenus & Soumissions)</SelectItem>
-                  <SelectItem value="super_admin">Super Administrateur (Accès Total & Gestion Comptes)</SelectItem>
+                <SelectContent className="rounded-xl shadow-xl border-slate-200">
+                  <SelectItem value="editor" className="rounded-lg text-xs sm:text-sm py-2.5">
+                    Éditeur de Contenu (Publication & Rédaction)
+                  </SelectItem>
+                  <SelectItem value="admin" className="rounded-lg text-xs sm:text-sm py-2.5">
+                    Administrateur (Gestion des Contenus & Soumissions)
+                  </SelectItem>
+                  <SelectItem value="super_admin" className="rounded-lg text-xs sm:text-sm py-2.5">
+                    Super Administrateur (Accès Total & Gestion Comptes)
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+            <div className="pt-4 flex flex-col-reverse sm:flex-row items-center justify-end gap-3 border-t border-slate-100">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-xs h-9 font-semibold"
+                className="w-full sm:w-auto text-xs sm:text-sm h-11 rounded-xl font-bold px-5"
               >
                 Annuler
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs h-9 px-4"
+                className="w-full sm:w-auto bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs sm:text-sm h-11 rounded-xl px-6 shadow-md cursor-pointer"
               >
                 {isSubmitting ? "Création en cours..." : "Créer le Compte Administrateur"}
               </Button>
