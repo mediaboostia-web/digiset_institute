@@ -235,7 +235,7 @@ export default function AdminSettingsPage() {
           Paramètres du Back-Office & Sécurité
         </h1>
         <p className="text-xs text-gray-500 mt-1">
-          Gérez les coordonnées officielles de DigiSET, vos alertes emails Resend, votre profil et la sécurité de votre compte.
+          Gérez les coordonnées officielles de DigiSET, vos alertes emails automatiques, votre profil et la sécurité de votre compte.
         </p>
       </div>
 
@@ -246,7 +246,7 @@ export default function AdminSettingsPage() {
           <div>
             <p className="font-bold">Accès Réduit — Rôle Éditeur de Contenu</p>
             <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
-              Vous êtes connecté avec un compte Éditeur. La configuration de l&apos;établissement, les clés API Resend et les notifications globales sont gérées exclusivement par les Super-Administrateurs.
+              Vous êtes connecté avec un compte Éditeur. La configuration de l&apos;établissement et les notifications globales sont gérées exclusivement par les Super-Administrateurs.
             </p>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function AdminSettingsPage() {
           </TabsTrigger>
           <TabsTrigger value="notifications" className="text-xs font-bold gap-2 px-4">
             <Mail className="h-4 w-4 text-purple-600" />
-            Notifications & Emailing (Resend)
+            Notifications & Service Emailing
           </TabsTrigger>
           <TabsTrigger value="profil" className="text-xs font-bold gap-2 px-4">
             <UserCheck className="h-4 w-4 text-brand-blue" />
