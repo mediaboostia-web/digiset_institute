@@ -97,6 +97,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { CookieBanner } from "@/components/layout/cookie-banner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -107,23 +109,22 @@ export default function RootLayout({
     "@type": "CollegeOrUniversity",
     name: "DigiSET Institute",
     alternateName: "Digital Science, Engineering and Technology Institute",
-    url: siteUrl,
-    logo: `${siteUrl}/brand/Digiset Logo officiel.png`,
-    image: `${siteUrl}/images/img/Hero_image1.jpg`,
+    url: "https://www.digiset-gabon.com",
+    logo: "https://www.digiset-gabon.com/brand/logo-digiset.png",
+    image: "https://www.digiset-gabon.com/brand/logo-digiset.png",
     description:
-      "Établissement supérieur privé de formation aux métiers du numérique : IA & Data Science, Cybersécurité, Systèmes de Paiement Électronique (Monétique), Classe Préparatoire MP2I et location de laboratoires de travaux pratiques.",
-    hasMap: "https://maps.app.goo.gl/UqxLEnz4v7BHb7be7",
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 0.4988,
-      longitude: 9.4290,
-    },
+      "Établissement supérieur privé d'ingénierie et de technologies numériques à Akanda, Gabon. Formations certifiantes et diplômantes en IA & Data Science, Cybersécurité, Systèmes de Paiement et Prépa MP2I.",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Angondjé, Carrefour Moussavou (Bvd de la 5e République)",
+      streetAddress: "Angondjé, Carrefour Moussavou",
       addressLocality: "Akanda",
       addressRegion: "Estuaire",
       addressCountry: "GA",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "0.4988",
+      longitude: "9.4290",
     },
     founder: {
       "@type": "Person",
@@ -157,6 +158,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-body">
         {children}
         <Toaster />
+        <CookieBanner />
       </body>
     </html>
   );
