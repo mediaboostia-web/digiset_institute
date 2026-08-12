@@ -58,6 +58,8 @@ export default function AdminUsersPage() {
     role: "editor" as "super_admin" | "editor" | "admin",
   });
 
+  const [currentUserRole, setCurrentUserRole] = useState<"super_admin" | "editor" | "admin">("super_admin");
+
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
@@ -75,9 +77,19 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     fetchUsers();
+    if (typeof window !== "undefined") {
+      const activeSession = localStorage.getItem("digiset_admin_active_session");
+      if (activeSession) {
+        try {
+          const parsed = JSON.parse(activeSession);
+          if (parsed.role) setCurrentUserRole(parsed.role);
+        } catch {}
+      }
+    }
   }, []);
 
   const openAddModal = () => {
+    if (currentUserRole === "editor") return;
     setModalError("");
     setModalSuccess("");
     setFormData({
@@ -168,12 +180,27 @@ export default function AdminUsersPage() {
 
         <Button
           onClick={openAddModal}
-          className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs h-10 px-5 shadow-xs cursor-pointer"
+          disabled={currentUserRole === "editor"}
+          title={currentUserRole === "editor" ? "Réservé aux Super-Administrateurs" : "Ajouter un nouvel administrateur"}
+          className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs h-10 px-5 shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <UserPlus className="h-4 w-4" />
           Ajouter un Administrateur
         </Button>
       </div>
+
+      {/* Avertissement Rôle Éditeur */}
+      {currentUserRole === "editor" && (
+        <div className="flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 p-4 text-xs text-amber-900 font-medium shadow-xs">
+          <ShieldAlert className="h-5 w-5 text-amber-600 shrink-0" />
+          <div>
+            <p className="font-bold">Accès Réduit — Rôle Éditeur de Contenu</p>
+            <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
+              Vous êtes actuellement connecté avec un compte Éditeur. La création et la suppression d&apos;administrateurs sont réservées exclusivement aux Super-Administrateurs.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Barre de recherche et Filtre */}
       <div className="flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
@@ -269,11 +296,13 @@ export default function AdminUsersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        disabled={user.email.toLowerCase() === "contact@digiset-gabon.com"}
+                        disabled={currentUserRole === "editor" || user.email.toLowerCase() === "contact@digiset-gabon.com"}
                         onClick={() => setDeleteTarget({ id: user.id, name: user.full_name })}
-                        className="text-red-600 hover:bg-red-50 hover:text-red-700 h-8 w-8 p-0 cursor-pointer disabled:opacity-30"
+                        className="text-red-600 hover:bg-red-50 hover:text-red-700 h-8 w-8 p-0 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         title={
-                          user.email.toLowerCase() === "contact@digiset-gabon.com"
+                          currentUserRole === "editor"
+                            ? "Action réservée aux Super-Administrateurs"
+                            : user.email.toLowerCase() === "contact@digiset-gabon.com"
                             ? "Le compte de la Direction Générale ne peut pas être supprimé"
                             : "Supprimer cet utilisateur"
                         }

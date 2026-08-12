@@ -71,6 +71,30 @@ export default function AdminSettingsPage() {
 
   const [profileSuccess, setProfileSuccess] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const activeSession = localStorage.getItem("digiset_admin_active_session");
+      if (activeSession) {
+        try {
+          const parsed = JSON.parse(activeSession);
+          if (parsed.email) {
+            setAdminProfileForm((prev) => ({
+              ...prev,
+              email: parsed.email,
+              fullName: parsed.full_name || prev.fullName,
+              roleTitle:
+                parsed.role === "super_admin"
+                  ? "Super-Administrateur"
+                  : parsed.role === "editor"
+                  ? "Éditeur de Contenu"
+                  : "Administrateur",
+            }));
+          }
+        } catch {}
+      }
+    }
+  }, []);
+
   const saveAdminCredentialsToStorage = (emailVal?: string, passwordVal?: string) => {
     if (typeof window !== "undefined") {
       let currentEmail = adminProfileForm.email || "contact@digiset-gabon.com";

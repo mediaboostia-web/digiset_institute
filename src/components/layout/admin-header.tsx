@@ -109,38 +109,74 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
     }
   };
 
+  const [userRole, setUserRole] = useState<"super_admin" | "editor" | "admin">("super_admin");
+
   useEffect(() => {
     async function loadUserData() {
+      let activeEmail = "";
+      let activeFullName = "";
+      let activeRole: "super_admin" | "editor" | "admin" = "super_admin";
+
+      // 1. Essai avec Supabase Auth
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       if (supabaseUrl) {
-        const supabase = createClient();
-        const { data } = await supabase.auth.getUser();
-        if (data.user) {
-          const email = data.user.email || "";
-          setUserEmail(email);
-          const fullName = (data.user.user_metadata?.full_name as string) || "";
-          setUserName(formatDisplayName(email, fullName));
-          return;
-        }
+        try {
+          const supabase = createClient();
+          const { data } = await supabase.auth.getUser();
+          if (data.user) {
+            activeEmail = data.user.email || "";
+            activeFullName = (data.user.user_metadata?.full_name as string) || "";
+          }
+        } catch {}
       }
 
-      // Mode local / secours
-      if (typeof window !== "undefined") {
+      // 2. Repli / lecture session locale si pas d'email Supabase Auth direct
+      if (!activeEmail && typeof window !== "undefined") {
         const stored = localStorage.getItem("digiset_admin_credentials_v2");
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
-            if (parsed.email) {
-              setUserEmail(parsed.email);
-              setUserName(formatDisplayName(parsed.email, "Dr ABAGA ABESSOLO"));
-              return;
-            }
+            if (parsed.email) activeEmail = parsed.email.toLowerCase().trim();
           } catch {}
         }
       }
 
-      setUserEmail("contact@digiset-gabon.com");
-      setUserName("Dr ABAGA ABESSOLO");
+      if (!activeEmail) {
+        activeEmail = "contact@digiset-gabon.com";
+      }
+
+      // 3. Matcher l'email actif avec les rôles et noms de la base de données
+      try {
+        const res = await fetch("/api/admin/users");
+        const json = await res.json();
+        if (json.ok && Array.isArray(json.data)) {
+          const found = json.data.find(
+            (u: { email: string }) => u.email.toLowerCase().trim() === activeEmail.toLowerCase().trim()
+          );
+
+          if (found) {
+            activeFullName = found.full_name || activeFullName;
+            activeRole = found.role || activeRole;
+          }
+        }
+      } catch (err) {
+        console.error("Erreur résolution rôle utilisateur:", err);
+      }
+
+      // Déduire un nom lisible si toujours vide
+      const displayName = formatDisplayName(activeEmail, activeFullName);
+
+      setUserEmail(activeEmail);
+      setUserName(displayName);
+      setUserRole(activeRole);
+
+      // Enregistrer la session active globale pour toute l'application
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "digiset_admin_active_session",
+          JSON.stringify({ email: activeEmail, full_name: displayName, role: activeRole })
+        );
+      }
     }
 
     loadUserData();
@@ -307,7 +343,13 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
             </div>
             <div className="hidden text-left md:block">
               <p className="text-xs font-bold text-gray-900 leading-none">{userName}</p>
-              <p className="text-[10px] font-medium text-gray-500 mt-0.5 leading-none">Super-Administrateur</p>
+              <p className="text-[10px] font-medium text-brand-blue mt-0.5 leading-none">
+                {userRole === "super_admin"
+                  ? "Super-Administrateur"
+                  : userRole === "editor"
+                  ? "Éditeur de Contenu"
+                  : "Administrateur"}
+              </p>
             </div>
           </DropdownMenuTrigger>
 
@@ -316,7 +358,7 @@ export function AdminHeader({ isCollapsed = false, onToggleSidebar, onOpenMobile
               <div className="flex flex-col space-y-1">
                 <p className="text-xs font-bold leading-none text-gray-900">{userName}</p>
                 <p className="text-[11px] leading-none text-gray-500 truncate">
-                  {userEmail || "direction@digiset-gabon.com"}
+                  {userEmail || "contact@digiset-gabon.com"}
                 </p>
               </div>
             </DropdownMenuLabel>
