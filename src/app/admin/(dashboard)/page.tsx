@@ -29,11 +29,36 @@ import { Badge } from "@/components/ui/badge";
 
 export default function AdminDashboardPage() {
   const [submissions, setSubmissions] = useState<AnySubmission[]>([]);
-  const [newsList] = useState<NewsItem[]>(INITIAL_NEWS);
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function loadData() {
+      // 1. Charger les actualités depuis le cache local v2 puis l'API
+      if (typeof window !== "undefined") {
+        const cachedNews = localStorage.getItem("digiset_news_local_cache_v2");
+        if (cachedNews) {
+          try {
+            const parsed = JSON.parse(cachedNews);
+            if (Array.isArray(parsed)) {
+              setNewsList(parsed);
+            }
+          } catch {}
+        }
+      }
+
+      try {
+        const newsRes = await fetch("/api/news?status=all");
+        const newsJson = await newsRes.json();
+        if (newsJson.ok && Array.isArray(newsJson.data)) {
+          setNewsList(newsJson.data);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("digiset_news_local_cache_v2", JSON.stringify(newsJson.data));
+          }
+        }
+      } catch {}
+
+      // 2. Charger les soumissions
       try {
         const res = await fetch("/api/admin/submissions");
         const json = await res.json();
