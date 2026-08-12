@@ -6,20 +6,13 @@ import Image from "next/image";
 import {
   LayoutDashboard,
   Inbox,
-  GraduationCap,
   Newspaper,
   Image as ImageIcon,
-  Quote,
-  Building2,
   Users,
-  FolderDown,
-  FileText,
   UserCheck,
   Settings,
   PlusCircle,
   X,
-  PanelLeftClose,
-  PanelLeftOpen,
   LucideIcon,
 } from "lucide-react";
 
@@ -38,7 +31,6 @@ interface NavItem {
   label: string;
   icon: LucideIcon;
   badge?: number;
-  v2Badge?: string;
 }
 
 interface NavGroup {
@@ -57,7 +49,7 @@ export function AdminSidebar({
 
   const NAV_GROUPS: NavGroup[] = [
     {
-      title: "Fonctionnalités V1 (Actives)",
+      title: "Navigation Principale",
       items: [
         {
           href: "/admin",
@@ -97,41 +89,6 @@ export function AdminSidebar({
         },
       ],
     },
-    {
-      title: "Extensions & Modules V2",
-      items: [
-        {
-          href: "/admin/programmes",
-          label: "Offres & Cursus",
-          icon: GraduationCap,
-          v2Badge: "V2",
-        },
-        {
-          href: "/admin/temoignages",
-          label: "Témoignages & Avis",
-          icon: Quote,
-          v2Badge: "V2",
-        },
-        {
-          href: "/admin/partenaires",
-          label: "Partenaires Officiels",
-          icon: Building2,
-          v2Badge: "V2",
-        },
-        {
-          href: "/admin/pages",
-          label: "Pages libres & SEO",
-          icon: FileText,
-          v2Badge: "V2",
-        },
-        {
-          href: "/admin/documents",
-          label: "Documents PDF",
-          icon: FolderDown,
-          v2Badge: "V2",
-        },
-      ],
-    },
   ];
 
   const handleNavClick = () => {
@@ -150,7 +107,7 @@ export function AdminSidebar({
         />
       )}
 
-      {/* Sidebar Container (Desktop & Mobile Drawer) — SANS DEBORDEMENT LATÉRAL */}
+      {/* Sidebar Container (Desktop & Mobile Drawer) — 100% RESPONSIVE ET FLUIDE */}
       <aside
         className={cn(
           "sticky top-0 h-screen shrink-0 border-r border-white/10 bg-brand-blue-dark text-white flex flex-col justify-between overflow-y-auto overflow-x-hidden transition-all duration-300 z-50 select-none no-scrollbar",
@@ -162,7 +119,7 @@ export function AdminSidebar({
         )}
       >
         <div>
-          {/* Logo & Retract Icon Toggle */}
+          {/* Logo & Close Button Header */}
           <div className="flex items-center justify-between border-b border-white/10 px-3.5 py-4">
             <Link href="/admin" onClick={handleNavClick} className="flex items-center gap-3 min-w-0">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white p-1 shadow-xs border border-white/20">
@@ -210,7 +167,7 @@ export function AdminSidebar({
             </Link>
           </div>
 
-          {/* Navigation Réordonnée : V1 en Haut, V2 en Bas */}
+          {/* Navigation Principale V1 */}
           <nav className={cn("flex flex-col gap-4 py-3", isCollapsed && !isMobileOpen ? "px-2" : "px-3")}>
             {NAV_GROUPS.map((group) => (
               <div key={group.title}>
@@ -267,12 +224,6 @@ export function AdminSidebar({
                             {item.badge}
                           </span>
                         ) : null}
-
-                        {item.v2Badge && (!isCollapsed || isMobileOpen) && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white/50 group-hover:bg-brand-orange/30 group-hover:text-white transition-colors">
-                            {item.v2Badge}
-                          </span>
-                        )}
                       </Link>
                     );
                   })}
