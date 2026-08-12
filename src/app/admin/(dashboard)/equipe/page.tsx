@@ -2,19 +2,25 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  UserPlus,
+  Users,
+  PlusCircle,
+  Search,
   Edit3,
   Trash2,
-  Mail,
   Upload,
   X,
-  Loader2,
+  Mail,
+  Linkedin,
+  Facebook,
+  Shield,
+  Building,
+  UserCheck,
+  FolderImage,
 } from "lucide-react";
-import { INITIAL_TEAM, TeamMember } from "@/lib/admin-data";
+import { TeamMember, INITIAL_TEAM } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -31,62 +37,36 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
+import { MediaPickerModal } from "@/components/admin/media-picker-modal";
 
-// Composants Icônes Réseaux Sociaux SVGs
-function LinkedInIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
-  return (
-    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.7a1.63 1.63 0 1 0 0 3.26 1.63 1.63 0 0 0 0-3.26Z" />
-    </svg>
-  );
-}
-
-function FacebookIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
-  return (
-    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H7.5v-3H10V9.69c0-2.47 1.47-3.83 3.72-3.83 1.08 0 2.21.19 2.21.19v2.43h-1.25c-1.23 0-1.61.76-1.61 1.54V12h2.73l-.44 3h-2.29v6.8c4.56-.93 8-4.96 8-9.8Z" />
-    </svg>
-  );
-}
+const POLE_OPTIONS = [
+  "Direction Générale",
+  "Direction Académique",
+  "Conseil Scientifique",
+  "Pôles de Formation",
+  "Corps Professoral",
+  "Plateaux Techniques & Labos",
+  "Secrétariat & Administration",
+];
 
 export default function AdminTeamPage() {
   const [teamList, setTeamList] = useState<TeamMember[]>(INITIAL_TEAM);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [poleFilter, setPoleFilter] = useState("all");
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+
+  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [formData, setFormData] = useState<{
-    full_name: string;
-    role_title: string;
-    pole: string;
-    photo_url: string;
-    bio: string;
-    email: string;
-    facebook_url: string;
-    linkedin_url: string;
-    sort_order: number;
-  }>({
-    full_name: "",
-    role_title: "",
-    pole: "Direction Générale",
-    photo_url: "",
-    bio: "",
-    email: "",
-    facebook_url: "",
-    linkedin_url: "",
-    sort_order: teamList.length + 1,
-  });
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   const fetchTeam = async () => {
     setIsLoading(true);
     try {
       const res = await fetch("/api/team");
       const json = await res.json();
-      if (json.ok && Array.isArray(json.data)) {
+      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
         setTeamList(json.data);
       }
     } catch (err) {
@@ -100,13 +80,26 @@ export default function AdminTeamPage() {
     fetchTeam();
   }, []);
 
+  // Form State
+  const [formData, setFormData] = useState({
+    full_name: "",
+    role_title: "",
+    pole: "Direction Générale",
+    photo_url: "/brand/fondateur.png",
+    bio: "",
+    email: "",
+    facebook_url: "",
+    linkedin_url: "",
+    sort_order: 1,
+  });
+
   const openCreateModal = () => {
     setEditingMember(null);
     setFormData({
       full_name: "",
       role_title: "",
       pole: "Direction Générale",
-      photo_url: "",
+      photo_url: "/brand/fondateur.png",
       bio: "",
       email: "",
       facebook_url: "",
@@ -122,61 +115,49 @@ export default function AdminTeamPage() {
       full_name: member.full_name,
       role_title: member.role_title,
       pole: member.pole || "Direction Générale",
-      photo_url: member.photo_url || "",
+      photo_url: member.photo_url || "/brand/fondateur.png",
       bio: member.bio || "",
       email: member.email || "",
       facebook_url: member.facebook_url || "",
       linkedin_url: member.linkedin_url || "",
-      sort_order: member.sort_order,
+      sort_order: member.sort_order || 1,
     });
     setIsModalOpen(true);
-  };
-
-  const handlePhotoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Url = reader.result as string;
-        setFormData((prev) => ({ ...prev, photo_url: base64Url }));
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const handleSaveMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.full_name || !formData.role_title) return;
 
-    setIsSubmitting(true);
+    const payload = {
+      ...formData,
+      photo_url: formData.photo_url || "/brand/fondateur.png",
+    };
 
     try {
       if (editingMember) {
         await fetch("/api/team", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: editingMember.id,
-            ...formData,
-          }),
+          body: JSON.stringify({ id: editingMember.id, ...payload }),
         });
       } else {
         await fetch("/api/team", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         });
       }
       await fetchTeam();
-      setIsModalOpen(false);
     } catch (err) {
       console.error("Erreur enregistrement membre:", err);
-    } finally {
-      setIsSubmitting(false);
     }
+
+    setIsModalOpen(false);
   };
 
   const handleDelete = async (id: string) => {
+    setTeamList((prev) => prev.filter((m) => m.id !== id));
     try {
       await fetch(`/api/team?id=${id}`, { method: "DELETE" });
       await fetchTeam();
@@ -185,7 +166,18 @@ export default function AdminTeamPage() {
     }
   };
 
-  const sortedTeam = [...teamList].sort((a, b) => a.sort_order - b.sort_order);
+  const filteredTeam = teamList.filter((m) => {
+    if (poleFilter !== "all" && m.pole !== poleFilter) return false;
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      return (
+        m.full_name.toLowerCase().includes(q) ||
+        m.role_title.toLowerCase().includes(q) ||
+        (m.bio && m.bio.toLowerCase().includes(q))
+      );
+    }
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -196,121 +188,125 @@ export default function AdminTeamPage() {
             Organigramme & Équipe Dirigeante
           </h1>
           <p className="text-xs text-gray-500">
-            Gérez les membres de la direction, du conseil d'administration et du corps professoral.
+            Gérez les fiches des membres de la Direction Générale, du Conseil Scientifique et des Pôles.
           </p>
         </div>
         <Button
           onClick={openCreateModal}
-          className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs shadow-sm"
+          className="gap-2 bg-brand-orange text-white hover:bg-brand-orange-dark font-bold text-xs shadow-sm cursor-pointer"
         >
-          <UserPlus className="h-4 w-4" /> Ajouter un membre
+          <PlusCircle className="h-4 w-4" /> Ajouter un membre
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="py-16 text-center space-y-3">
-          <Loader2 className="h-8 w-8 animate-spin text-brand-blue mx-auto" />
-          <p className="text-xs font-semibold text-gray-500">Chargement de l'organigramme...</p>
+      {/* Barre de Recherche et Filtres par Pôle */}
+      <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-xs md:flex-row md:items-center md:justify-between">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Input
+            placeholder="Rechercher par nom, rôle ou spécialité..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 text-xs"
+          />
         </div>
-      ) : sortedTeam.length === 0 ? (
-        <div className="py-12 text-center border rounded-xl bg-white">
-          <p className="text-sm font-semibold text-gray-600">Aucun membre dans l'organigramme.</p>
+
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold text-gray-500">Pôle :</span>
+          <Select value={poleFilter} onValueChange={(val) => setPoleFilter(val || "all")}>
+            <SelectTrigger className="w-[180px] text-xs h-9">
+              <SelectValue placeholder="Tous les pôles" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les pôles ({teamList.length})</SelectItem>
+              {POLE_OPTIONS.map((p) => (
+                <SelectItem key={p} value={p}>
+                  {p}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Grille des Membres sous forme de cartes professionnelles */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 animate-pulse">
+              <div className="h-16 w-16 rounded-full bg-gray-200 mx-auto" />
+              <div className="h-4 w-1/2 bg-gray-200 rounded mx-auto" />
+              <div className="h-3 w-1/3 bg-gray-200 rounded mx-auto" />
+            </div>
+          ))}
+        </div>
+      ) : filteredTeam.length === 0 ? (
+        <div className="py-12 text-center border rounded-xl bg-gray-50">
+          <Users className="mx-auto h-10 w-10 text-gray-300" />
+          <p className="mt-2 text-sm font-medium text-gray-600">Aucun membre trouvé.</p>
         </div>
       ) : (
-        /* Cartes des Membres de l'Équipe */
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {sortedTeam.map((member) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredTeam.map((member) => (
             <div
               key={member.id}
-              className="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-xs transition-shadow hover:shadow-md"
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs hover:border-brand-blue hover:shadow-md transition-all duration-200 flex flex-col justify-between"
             >
-              <div>
+              <div className="space-y-4">
                 <div className="flex items-start justify-between">
-                  <Avatar className="h-16 w-16 border-2 border-brand-blue/20">
-                    <AvatarImage src={member.photo_url} alt={member.full_name} />
-                    <AvatarFallback className="bg-brand-blue-dark text-white font-bold text-base">
-                      {member.full_name.substring(0, 2).toUpperCase()}
+                  <span className="rounded-full bg-brand-blue/10 px-2.5 py-1 text-[10px] font-bold text-brand-blue uppercase tracking-wider">
+                    {member.pole}
+                  </span>
+                  <span className="text-[10px] font-semibold text-gray-400">
+                    Ordre: #{member.sort_order}
+                  </span>
+                </div>
+
+                <div className="text-center space-y-2">
+                  <Avatar className="h-20 w-20 mx-auto border-2 border-brand-orange/30 shadow-xs">
+                    <AvatarImage src={member.photo_url || "/brand/fondateur.png"} alt={member.full_name} />
+                    <AvatarFallback className="bg-brand-blue text-white font-bold">
+                      {member.full_name.substring(0, 2)}
                     </AvatarFallback>
                   </Avatar>
 
-                  <Badge variant="outline" className="text-[10px] font-bold text-gray-600 bg-gray-50">
-                    Ordre #{member.sort_order}
-                  </Badge>
-                </div>
-
-                <div className="mt-4">
-                  <h3 className="font-heading text-base font-bold text-gray-900">
-                    {member.full_name}
-                  </h3>
-                  <p className="text-xs font-semibold text-brand-blue mt-0.5">
-                    {member.role_title}
-                  </p>
-                  <Badge className="mt-2 bg-gray-100 text-gray-700 hover:bg-gray-100 font-medium text-[10px]">
-                    {member.pole || "Direction"}
-                  </Badge>
-                </div>
-
-                {member.bio && (
-                  <p className="mt-3 text-xs text-gray-600 line-clamp-3 leading-relaxed">
-                    {member.bio}
-                  </p>
-                )}
-
-                {/* Coordonnées & Réseaux Sociaux */}
-                <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 text-xs">
-                  {member.email && (
-                    <div className="flex items-center gap-1.5 text-gray-500">
-                      <Mail className="h-3.5 w-3.5 text-gray-400 shrink-0" />
-                      <a href={`mailto:${member.email}`} className="hover:text-brand-blue font-medium truncate">
-                        {member.email}
-                      </a>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2 pt-1">
-                    {member.linkedin_url && (
-                      <a
-                        href={member.linkedin_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
-                        title="Profil LinkedIn"
-                      >
-                        <LinkedInIcon className="h-3 w-3" /> LinkedIn
-                      </a>
-                    )}
-
-                    {member.facebook_url && (
-                      <a
-                        href={member.facebook_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-md bg-sky-50 px-2 py-1 text-[11px] font-bold text-sky-700 hover:bg-sky-100 transition-colors"
-                        title="Page Facebook"
-                      >
-                        <FacebookIcon className="h-3 w-3" /> Facebook
-                      </a>
-                    )}
+                  <div>
+                    <h3 className="font-bold text-sm text-gray-900">{member.full_name}</h3>
+                    <p className="text-xs font-semibold text-brand-orange">{member.role_title}</p>
                   </div>
+
+                  {member.bio && (
+                    <p className="text-[11px] text-gray-600 line-clamp-2 italic px-2">
+                      &quot;{member.bio}&quot;
+                    </p>
+                  )}
                 </div>
+
+                {member.email && (
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] text-gray-500">
+                    <Mail className="h-3.5 w-3.5 text-brand-blue" />
+                    <span>{member.email}</span>
+                  </div>
+                )}
               </div>
 
-              <div className="mt-6 flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+              {/* Boutons d'Action */}
+              <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-end gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 gap-1.5 text-xs font-bold text-gray-700"
                   onClick={() => openEditModal(member)}
+                  className="text-xs gap-1 font-semibold hover:text-brand-blue cursor-pointer"
                 >
                   <Edit3 className="h-3.5 w-3.5" /> Modifier
                 </Button>
                 <Button
                   size="sm"
-                  variant="ghost"
-                  className="h-8 text-xs text-red-500 hover:bg-red-50 hover:text-red-700"
+                  variant="outline"
                   onClick={() => setDeleteTarget({ id: member.id, name: member.full_name })}
+                  className="text-xs gap-1 font-semibold text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 cursor-pointer"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3.5 w-3.5" /> Supprimer
                 </Button>
               </div>
             </div>
@@ -318,228 +314,183 @@ export default function AdminTeamPage() {
         </div>
       )}
 
-      {/* Modal d'édition / création de membre réactif */}
+      {/* Modal d'Édition / Création de membre CONNECTÉ À LA MÉDIATHÈQUE */}
       {isModalOpen && (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-lg w-[92vw] max-h-[88vh] overflow-y-auto overflow-x-hidden p-6">
-            <DialogHeader className="border-b border-gray-100 pb-4">
-              <DialogTitle className="font-heading text-lg font-bold text-gray-900">
-                {editingMember ? "Modifier le profil" : "Ajouter un membre à l'organigramme"}
+          <DialogContent className="max-w-xl w-[94vw] max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-2xl border-2 border-slate-200 shadow-2xl bg-white">
+            <DialogHeader className="p-5 bg-slate-50 border-b border-slate-200 shrink-0">
+              <DialogTitle className="font-heading text-lg font-bold text-slate-900 flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-brand-orange" />
+                {editingMember ? "Modifier le membre" : "Ajouter un membre à l'organigramme"}
               </DialogTitle>
-              <DialogDescription className="text-xs text-gray-500">
-                Renseignez les informations du membre, téléversez sa photo et ajoutez ses liens sociaux.
+              <DialogDescription className="text-xs text-slate-600 font-medium">
+                Renseignez les informations du membre et choisissez sa photo depuis la Médiathèque.
               </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleSaveMember} className="space-y-4 py-2 text-xs">
-              <div className="space-y-1.5">
-                <label className="font-bold text-gray-700">Nom complet & Titre académique *</label>
-                <Input
-                  required
-                  placeholder="ex. Dr. ABAGA ABESSOLO Michel Audrey"
-                  value={formData.full_name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, full_name: e.target.value }))}
-                  className="text-xs"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="font-bold text-gray-700">Fonction / Rôle *</label>
-                <Input
-                  required
-                  placeholder="ex. Fondateur & Directeur Général"
-                  value={formData.role_title}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, role_title: e.target.value }))}
-                  className="text-xs"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <form onSubmit={handleSaveMember} className="flex flex-col flex-1 overflow-hidden min-h-0">
+              <div className="p-5 overflow-y-auto space-y-4 flex-1 text-xs max-h-[calc(90vh-140px)]">
+                
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700">Pôle d'activité</label>
-                  <Select
-                    value={formData.pole}
-                    onValueChange={(val) => setFormData((prev) => ({ ...prev, pole: val || "Direction Générale" }))}
-                  >
-                    <SelectTrigger className="text-xs h-9">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Direction Générale">Direction Générale</SelectItem>
-                      <SelectItem value="Direction Académique">Direction Académique</SelectItem>
-                      <SelectItem value="Corps Professoral">Corps Professoral</SelectItem>
-                      <SelectItem value="Administration & Partenariats">Administration</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700">Ordre d'affichage</label>
+                  <label className="font-bold text-slate-700">Nom complet & Titre académique *</label>
                   <Input
-                    type="number"
-                    value={formData.sort_order}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, sort_order: parseInt(e.target.value) || 1 }))
-                    }
-                    className="text-xs"
+                    required
+                    placeholder="ex. Dr. ABAGA ABESSOLO Michel Audrey"
+                    value={formData.full_name}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, full_name: e.target.value }))}
+                    className="text-xs font-bold text-slate-900 bg-white"
                   />
                 </div>
-              </div>
 
-              {/* Téléversement de Photo */}
-              <div className="space-y-2">
-                <label className="font-bold text-gray-700">Photo de profil</label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoFileUpload}
-                  className="hidden"
-                />
+                <div className="space-y-1.5">
+                  <label className="font-bold text-slate-700">Fonction / Rôle *</label>
+                  <Input
+                    required
+                    placeholder="ex. Fondateur & Directeur Général"
+                    value={formData.role_title}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, role_title: e.target.value }))}
+                    className="text-xs bg-white"
+                  />
+                </div>
 
-                {formData.photo_url ? (
-                  <div className="flex items-center gap-3 rounded-xl border border-gray-200 p-3 bg-gray-50">
-                    <Avatar className="h-12 w-12 border">
-                      <AvatarImage src={formData.photo_url} />
-                      <AvatarFallback>DS</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-gray-900 truncate">Photo sélectionnée</p>
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Pôle d&apos;activité</label>
+                    <Select
+                      value={formData.pole}
+                      onValueChange={(val) => setFormData((prev) => ({ ...prev, pole: val || "Direction Générale" }))}
+                    >
+                      <SelectTrigger className="text-xs h-9 bg-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {POLE_OPTIONS.map((p) => (
+                          <SelectItem key={p} value={p}>
+                            {p}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Ordre d&apos;affichage</label>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={formData.sort_order}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, sort_order: parseInt(e.target.value) || 1 }))
+                      }
+                      className="text-xs bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Photo de profil avec la Médiathèque */}
+                <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <label className="font-bold text-slate-900 flex items-center justify-between text-[11px] uppercase tracking-wider text-brand-blue">
+                    <span>Photo de profil</span>
                     <Button
                       type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setFormData((prev) => ({ ...prev, photo_url: "" }))}
-                      className="text-xs text-red-600 border-red-200"
+                      onClick={() => setIsMediaPickerOpen(true)}
+                      className="bg-brand-blue hover:bg-brand-blue-dark text-white text-[11px] font-bold px-3 py-1 rounded-lg gap-1.5 cursor-pointer"
                     >
-                      <X className="h-3.5 w-3.5 mr-1" /> Retirer
+                      <FolderImage className="h-3.5 w-3.5 text-brand-orange" />
+                      <span>Ouvrir la Médiathèque</span>
                     </Button>
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-4 text-center cursor-pointer hover:bg-gray-100 transition-colors"
-                  >
-                    <Upload className="h-5 w-5 text-brand-blue" />
-                    <span className="text-xs font-bold text-gray-900">Téléverser une photo depuis votre appareil</span>
-                  </div>
-                )}
+                  </label>
 
-                {/* Choix parmi les photos de l'institut */}
-                <div className="pt-2 space-y-1">
-                  <span className="text-[11px] text-gray-500 font-semibold">Ou choisir une photo officielle :</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      { label: "Fondateur", url: "/brand/fondateur.png" },
-                      { label: "Bâtiment / Entrée", url: "/images/img/Image_3.jpg" },
-                      { label: "Étudiants / Campus", url: "/images/img/Image_4.jpg" },
-                      { label: "Laboratoires TP", url: "/images/img/Img_2.jpg" },
-                      { label: "Conférences", url: "/images/img/Image6.jpg" },
-                      { label: "Informatique", url: "/images/img/Image7.jpg" },
-                    ].map((stock) => (
-                      <button
-                        key={stock.url}
+                  {formData.photo_url ? (
+                    <div className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 bg-white shadow-2xs">
+                      <Avatar className="h-14 w-14 border shrink-0">
+                        <AvatarImage src={formData.photo_url} />
+                        <AvatarFallback>DS</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-900">Photo sélectionnée</p>
+                        <button
+                          type="button"
+                          onClick={() => setIsMediaPickerOpen(true)}
+                          className="text-[11px] font-bold text-brand-orange hover:underline mt-0.5 block"
+                        >
+                          Changer depuis la Médiathèque →
+                        </button>
+                      </div>
+                      <Button
                         type="button"
-                        onClick={() => setFormData((prev) => ({ ...prev, photo_url: stock.url }))}
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded border transition-all cursor-pointer ${
-                          formData.photo_url === stock.url
-                            ? "bg-brand-blue text-white border-brand-blue"
-                            : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
-                        }`}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setFormData((prev) => ({ ...prev, photo_url: "" }))}
+                        className="text-xs text-red-600 border-red-200 hover:bg-red-50 cursor-pointer"
                       >
-                        + {stock.label}
-                      </button>
-                    ))}
-                  </div>
+                        <X className="h-3.5 w-3.5 mr-1" /> Retirer
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => setIsMediaPickerOpen(true)}
+                      className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white p-5 text-center cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    >
+                      <FolderImage className="h-7 w-7 text-brand-orange mb-1" />
+                      <span className="text-xs font-bold text-slate-900">Ouvrir la Médiathèque pour choisir ou importer une photo</span>
+                    </div>
+                  )}
                 </div>
 
-                <Input
-                  placeholder="Ou URL externe : https://..."
-                  value={formData.photo_url}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, photo_url: e.target.value }))}
-                  className="text-xs mt-1"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="font-bold text-gray-700">Adresse email professionnelle</label>
-                <Input
-                  type="email"
-                  placeholder="m.abaga@digiset-gabon.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                  className="text-xs"
-                />
-              </div>
-
-              {/* Liens Réseaux Sociaux : LinkedIn & Facebook */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 flex items-center gap-1">
-                    <LinkedInIcon className="h-3.5 w-3.5 text-blue-600" /> Profil LinkedIn
-                  </label>
+                  <label className="font-bold text-slate-700">Adresse email professionnelle</label>
                   <Input
-                    placeholder="https://linkedin.com/in/..."
-                    value={formData.linkedin_url}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, linkedin_url: e.target.value }))}
-                    className="text-xs"
+                    type="email"
+                    placeholder="direction@digiset-gabon.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    className="text-xs bg-white"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 flex items-center gap-1">
-                    <FacebookIcon className="h-3.5 w-3.5 text-sky-600" /> Page Facebook
-                  </label>
-                  <Input
-                    placeholder="https://facebook.com/..."
-                    value={formData.facebook_url}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, facebook_url: e.target.value }))}
-                    className="text-xs"
+                  <label className="font-bold text-slate-700">Biographie courte / Présentation</label>
+                  <Textarea
+                    rows={3}
+                    placeholder="Expert en cybersécurité, enseignant-chercheur..."
+                    value={formData.bio}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, bio: e.target.value }))}
+                    className="text-xs bg-white"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="font-bold text-gray-700">Biographie courte / Présentation</label>
-                <Textarea
-                  rows={3}
-                  placeholder="Parcours académique, spécialités et responsabilités..."
-                  value={formData.bio}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, bio: e.target.value }))}
-                  className="text-xs resize-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+              {/* FOOTER FIXE */}
+              <div className="flex items-center justify-end gap-3 p-4 px-6 border-t border-slate-200 bg-slate-100 shrink-0 z-50">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsModalOpen(false)}
-                  className="text-xs"
+                  className="text-xs font-bold bg-white hover:bg-slate-200 cursor-pointer"
                 >
                   Annuler
                 </Button>
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-bold"
+                  className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-extrabold px-6 py-2.5 rounded-xl shadow-md cursor-pointer"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> Enregistrement...
-                    </>
-                  ) : editingMember ? (
-                    "Enregistrer les modifications"
-                  ) : (
-                    "Ajouter le membre"
-                  )}
+                  {editingMember ? "Enregistrer les modifications" : "Ajouter le membre"}
                 </Button>
               </div>
             </form>
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de Sélection depuis la Médiathèque */}
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        currentSelectedUrl={formData.photo_url}
+        onSelectMedia={(url) => setFormData((prev) => ({ ...prev, photo_url: url }))}
+        title="Sélectionner ou importer la photo du membre"
+      />
 
       {/* Modal de Confirmation de Suppression */}
       <ConfirmDeleteDialog
@@ -551,8 +502,8 @@ export default function AdminTeamPage() {
           }
         }}
         itemName={deleteTarget?.name}
-        title="Supprimer le membre de l'équipe"
-        description="Ce membre sera définitivement retiré de l'organigramme de l'institut."
+        title="Supprimer le membre"
+        description="Le membre sera définitivement retiré de l'organigramme."
       />
     </div>
   );

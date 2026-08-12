@@ -34,10 +34,8 @@ export function Header() {
       if (currentScrollY <= 20) {
         setIsVisible(true);
       } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        // Scroll vers le bas -> masquer la navbar
         setIsVisible(false);
       } else if (currentScrollY < lastScrollY) {
-        // Scroll vers le haut -> afficher la navbar
         setIsVisible(true);
       }
       
@@ -93,37 +91,25 @@ export function Header() {
           </div>
         </Link>
 
-        {/* Navigation Desktop — Fond Blanc Strict */}
+        {/* Navigation Desktop */}
         <nav className="hidden lg:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
-          
-          {/* Accueil */}
-          <Link
-            href="/"
-            className="py-2 text-slate-800 hover:text-brand-orange transition-colors font-extrabold"
-          >
+          <Link href="/" className="py-2 text-slate-800 hover:text-brand-orange transition-colors font-extrabold">
             Accueil
           </Link>
 
-          {/* Mega Dropdown : Programmes */}
           <div
             className="relative py-2"
             onMouseEnter={() => setActiveDropdown("programmes")}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <Link
-              href="/programmes"
-              className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors"
-            >
+            <Link href="/programmes" className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors">
               <span>Programmes</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             {activeDropdown === "programmes" && (
               <div className="absolute top-full left-0 w-80 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <Link
-                  href="/programmes/classe-preparatoire"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/programmes/classe-preparatoire" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <GraduationCap className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Classe Préparatoire MP2I</div>
@@ -131,10 +117,7 @@ export function Header() {
                   </div>
                 </Link>
 
-                <Link
-                  href="/programmes/licence-professionnelle"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/programmes/licence-professionnelle" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <Award className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Licences Professionnelles</div>
@@ -142,10 +125,7 @@ export function Header() {
                   </div>
                 </Link>
 
-                <Link
-                  href="/programmes/formation-continue"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/programmes/formation-continue" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <Briefcase className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Formations Inter & Intra-Entreprises</div>
@@ -153,10 +133,7 @@ export function Header() {
                   </div>
                 </Link>
 
-                <Link
-                  href="/programmes/certifications"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/programmes/certifications" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Certifications Pro</div>
@@ -164,10 +141,7 @@ export function Header() {
                   </div>
                 </Link>
 
-                <Link
-                  href="/programmes/digiset-online"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/programmes/digiset-online" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <Monitor className="h-5 w-5 text-sky-600 shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">DigiSET Online</div>
@@ -178,26 +152,19 @@ export function Header() {
             )}
           </div>
 
-          {/* Mega Dropdown : Services */}
           <div
             className="relative py-2"
             onMouseEnter={() => setActiveDropdown("services")}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <Link
-              href="/services/consulting-it"
-              className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors"
-            >
+            <Link href="/services/consulting-it" className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors">
               <span>Services</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             {activeDropdown === "services" && (
               <div className="absolute top-full left-0 w-80 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <Link
-                  href="/services/consulting-it"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/services/consulting-it" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <Briefcase className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Consulting IT & Transformation</div>
@@ -205,10 +172,7 @@ export function Header() {
                   </div>
                 </Link>
 
-                <Link
-                  href="/programmes/formation-continue"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/programmes/formation-continue" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <Building2 className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Formations Inter et Intra-Entreprises</div>
@@ -216,10 +180,7 @@ export function Header() {
                   </div>
                 </Link>
 
-                <Link
-                  href="/services/location-laboratoires"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors opacity-80"
-                >
+                <Link href="/services/location-laboratoires" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors opacity-80">
                   <FlaskConical className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-800">Location de Laboratoires TP</div>
@@ -230,26 +191,19 @@ export function Header() {
             )}
           </div>
 
-          {/* Mega Dropdown : Stratégie et Institution */}
           <div
             className="relative py-2"
             onMouseEnter={() => setActiveDropdown("institution")}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <Link
-              href="/institution"
-              className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors"
-            >
+            <Link href="/institution" className="flex items-center gap-1 py-2 text-slate-800 hover:text-brand-orange transition-colors">
               <span>Stratégie & Institution</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             {activeDropdown === "institution" && (
               <div className="absolute top-full left-0 w-72 rounded-2xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <Link
-                  href="/institution"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/institution" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <Building2 className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Institution & Organigramme</div>
@@ -257,10 +211,7 @@ export function Header() {
                   </div>
                 </Link>
 
-                <Link
-                  href="/institution#strategie"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <Link href="/institution#strategie" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                   <ShieldCheck className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Stratégie & Partenaires</div>
@@ -271,25 +222,17 @@ export function Header() {
             )}
           </div>
 
-          {/* Actualités */}
-          <Link
-            href="/actualites"
-            className="py-2 text-slate-800 hover:text-brand-orange transition-colors"
-          >
+          <Link href="/actualites" className="py-2 text-slate-800 hover:text-brand-orange transition-colors">
             Actualités
           </Link>
 
-          {/* Contact */}
-          <Link
-            href="/contact"
-            className="py-2 text-slate-800 hover:text-brand-orange transition-colors"
-          >
+          <Link href="/contact" className="py-2 text-slate-800 hover:text-brand-orange transition-colors">
             Contact
           </Link>
         </nav>
 
-        {/* BARRE DE RECHERCHE INTERACTIVE HAUTEMENT VISIBLE SUR MOBILE */}
-        <div className="lg:hidden flex items-center gap-2 flex-1 justify-end max-w-[200px] sm:max-w-xs">
+        {/* BARRE DE RECHERCHE INTERACTIVE VISIBLE SUR MOBILE */}
+        <div className="lg:hidden flex items-center gap-2 flex-1 justify-end max-w-[190px] sm:max-w-xs">
           <button
             onClick={() => setSearchOpen(true)}
             type="button"
@@ -318,35 +261,43 @@ export function Header() {
 
       </div>
 
-      {/* Modal de Recherche Mobile Ultra-Interactive & 100% Fonctionnelle */}
+      {/* OVERLAY PLEIN ÉCRAN FLUIDE SANS DÉBORDEMENT SUR MOBILE */}
       {searchOpen && (
-        <div className="lg:hidden fixed inset-0 z-[100] flex flex-col bg-slate-900/95 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="p-4 bg-slate-900 border-b border-white/15 flex items-center justify-between gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-orange" />
+        <div className="lg:hidden fixed inset-0 z-[100] w-screen h-[100dvh] flex flex-col bg-slate-950 text-white animate-in fade-in duration-200">
+          <div className="p-3.5 bg-slate-900 border-b border-white/15 flex items-center justify-between gap-2 shrink-0">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-orange" />
               <input
                 type="text"
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Rechercher une formation, un article (ex: IA, Cybersécurité...)..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/10 text-white text-xs placeholder:text-slate-400 border border-white/20 focus:outline-hidden focus:border-brand-orange focus:ring-1 focus:ring-brand-orange font-medium"
+                placeholder="Rechercher (ex: IA, Cybersécurité...)..."
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/10 text-white text-xs placeholder:text-slate-400 border border-white/20 focus:outline-none focus:border-brand-orange font-medium"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
             <button
               onClick={() => {
                 setSearchOpen(false);
                 setSearchQuery("");
               }}
-              className="p-2.5 rounded-xl bg-white/10 text-white hover:bg-white/20 shrink-0 text-xs font-bold cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-white/15 text-white hover:bg-white/25 shrink-0 text-xs font-bold flex items-center gap-1 cursor-pointer"
             >
-              <X className="h-4 w-4" />
+              <span>Fermer</span>
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              {searchQuery ? `Résultats trouvés (${filteredSearch.length})` : "Formations & Services Populaires"}
+            <div className="text-[10px] font-bold uppercase tracking-wider text-brand-orange">
+              {searchQuery ? `Résultats (${filteredSearch.length})` : "Formations & Services Populaires"}
             </div>
 
             {filteredSearch.length > 0 ? (
@@ -359,11 +310,11 @@ export function Header() {
                       setSearchOpen(false);
                       setSearchQuery("");
                     }}
-                    className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-orange/50 transition-all space-y-1 cursor-pointer"
+                    className="block p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-orange/50 transition-all space-y-1 cursor-pointer"
                   >
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-extrabold text-white">{item.title}</span>
-                      <span className="text-[10px] font-bold text-brand-orange bg-brand-orange/10 px-2 py-0.5 rounded-full border border-brand-orange/20">
+                      <span className="text-[9px] font-bold text-brand-orange bg-brand-orange/10 px-2 py-0.5 rounded-full border border-brand-orange/20">
                         {item.category}
                       </span>
                     </div>
@@ -379,16 +330,16 @@ export function Header() {
             )}
           </div>
 
-          <div className="p-4 bg-slate-950 border-t border-white/10">
+          <div className="p-3 bg-slate-950 border-t border-white/10 shrink-0">
             <Link
               href="/inscription/candidature"
               onClick={() => {
                 setSearchOpen(false);
                 setSearchQuery("");
               }}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-brand-orange py-3 text-xs font-bold text-white shadow-md hover:bg-brand-orange-dark transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-brand-orange py-2.5 text-xs font-bold text-white shadow-md hover:bg-brand-orange-dark transition-colors"
             >
-              <span>Accéder au formulaire de candidature</span>
+              <span>Accéder à l&apos;inscription en ligne</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

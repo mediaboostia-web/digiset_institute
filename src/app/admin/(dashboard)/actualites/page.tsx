@@ -22,6 +22,7 @@ import {
   Sparkles,
   MousePointerClick,
   Save,
+  FolderImage,
 } from "lucide-react";
 import { NewsItem, ContentStatus } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
+import { MediaPickerModal } from "@/components/admin/media-picker-modal";
 
 const CATEGORY_OPTIONS = [
   "Institutionnel",
@@ -62,11 +64,10 @@ export default function AdminNewsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Modal d'édition/création
+  // Modal d'édition/création & Médiathèque
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState<NewsItem | null>(null);
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   const fetchArticles = async () => {
     setIsLoading(true);
@@ -180,19 +181,6 @@ export default function AdminNewsPage() {
     insertTextToBody(`[${text}](${url})`);
   };
 
-  // Téléversement d'image avec conversion en Data URL permanente (Base64)
-  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Url = reader.result as string;
-        setFormData((prev) => ({ ...prev, cover_image_url: base64Url }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleSaveArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.body) return;
@@ -274,7 +262,6 @@ export default function AdminNewsPage() {
     }
   };
 
-  // Format d'affichage lisible des URLs d'images (pour éviter d'afficher le texte Base64 brut)
   const getReadableImageDisplay = (url: string) => {
     if (!url) return "";
     if (url.startsWith("data:image")) {
@@ -440,7 +427,7 @@ export default function AdminNewsPage() {
         )}
       </div>
 
-      {/* Modal d'Édition / Création Révisé — BOUTONS DE SAUVEGARDE PERMANENTEMENT VISIBLES */}
+      {/* Modal d'Édition / Création — CONNECTÉ À LA MÉDIATHÈQUE */}
       {isModalOpen && (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="max-w-4xl w-[96vw] max-h-[90vh] flex flex-col p-0 overflow-hidden border-2 border-slate-200 shadow-2xl rounded-2xl bg-white">
@@ -452,14 +439,14 @@ export default function AdminNewsPage() {
                 {editingArticle ? "Modifier l'article d'actualité" : "Rédiger une nouvelle actualité"}
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-600 font-medium">
-                Renseignez tous les détails de l'article, choisissez l'image de couverture et enregistrez vos modifications.
+                Renseignez tous les détails de l'article, choisissez l'image depuis la Médiathèque et enregistrez.
               </DialogDescription>
             </DialogHeader>
 
-            {/* Formulaire complet avec zone de défilement centrale */}
+            {/* Formulaire complet */}
             <form onSubmit={handleSaveArticle} className="flex flex-col flex-1 overflow-hidden min-h-0">
               
-              {/* Corps du formulaire défilant (Hauteur limitée pour laisser le footer 100% visible) */}
+              {/* Corps du formulaire défilant */}
               <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-xs max-h-[calc(90vh-140px)]">
                 
                 {/* Section 1 : Titre, Slug & Catégorie */}
@@ -520,19 +507,21 @@ export default function AdminNewsPage() {
                   </div>
                 </div>
 
-                {/* Section 2 : Photo de Couverture */}
+                {/* Section 2 : Photo de Couverture via la Médiathèque */}
                 <div className="space-y-3 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
-                  <label className="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-brand-blue flex items-center gap-1.5">
-                    <ImageIcon className="h-3.5 w-3.5 text-brand-orange" /> 2. Photo de couverture de l'article
+                  <label className="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-brand-blue flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <ImageIcon className="h-3.5 w-3.5 text-brand-orange" /> 2. Photo de couverture de l'article
+                    </span>
+                    <Button
+                      type="button"
+                      onClick={() => setIsMediaPickerOpen(true)}
+                      className="bg-brand-blue hover:bg-brand-blue-dark text-white text-[11px] font-bold px-3 py-1 rounded-lg gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <FolderImage className="h-3.5 w-3.5 text-brand-orange" />
+                      <span>Ouvrir la Médiathèque</span>
+                    </Button>
                   </label>
-                  
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageFileUpload}
-                    className="hidden"
-                  />
 
                   {formData.cover_image_url ? (
                     <div className="relative flex items-center gap-4 rounded-xl border border-slate-200 p-3 bg-white shadow-2xs">
@@ -546,6 +535,13 @@ export default function AdminNewsPage() {
                         <p className="text-[11px] text-slate-500 truncate mt-0.5 font-mono">
                           {getReadableImageDisplay(formData.cover_image_url)}
                         </p>
+                        <button
+                          type="button"
+                          onClick={() => setIsMediaPickerOpen(true)}
+                          className="text-[11px] font-bold text-brand-orange hover:underline mt-1 block"
+                        >
+                          Changer de photo via la Médiathèque →
+                        </button>
                       </div>
                       <Button
                         type="button"
@@ -559,51 +555,14 @@ export default function AdminNewsPage() {
                     </div>
                   ) : (
                     <div
-                      onClick={() => fileInputRef.current?.click()}
+                      onClick={() => setIsMediaPickerOpen(true)}
                       className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 text-center cursor-pointer hover:bg-slate-100/80 transition-colors"
                     >
-                      <Upload className="h-8 w-8 text-brand-blue mb-2" />
-                      <p className="text-xs font-bold text-slate-900">Cliquez pour téléverser une image depuis votre ordinateur</p>
-                      <p className="text-[11px] text-slate-500 mt-1">PNG, JPG, WEBP jusqu'à 5 MB</p>
+                      <FolderImage className="h-8 w-8 text-brand-orange mb-2" />
+                      <p className="text-xs font-bold text-slate-900">Cliquez pour ouvrir la Médiathèque et choisir ou importer une photo</p>
+                      <p className="text-[11px] text-slate-500 mt-1">Accédez à la banque d'images de l'institut ou téléversez un nouveau fichier</p>
                     </div>
                   )}
-                  
-                  <div className="pt-2 space-y-1.5">
-                    <span className="text-[11px] text-slate-600 font-bold">Ou choisissez parmi les photos officielles DigiSET :</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {[
-                        { label: "Campus & Fondateur", url: "/brand/fondateur.png" },
-                        { label: "Entrée Akanda", url: "/images/img/Image_3.jpg" },
-                        { label: "Partenariats & Etudiants", url: "/images/img/Image_4.jpg" },
-                        { label: "Laboratoires TP", url: "/images/img/Img_2.jpg" },
-                        { label: "Conférences & Amphi", url: "/images/img/Image6.jpg" },
-                        { label: "Informatique & Data", url: "/images/img/Image7.jpg" },
-                      ].map((stock) => (
-                        <button
-                          key={stock.url}
-                          type="button"
-                          onClick={() => setFormData((prev) => ({ ...prev, cover_image_url: stock.url }))}
-                          className={`text-[10px] font-bold px-2.5 py-1 rounded-md border transition-all cursor-pointer ${
-                            formData.cover_image_url === stock.url
-                              ? "bg-brand-blue text-white border-brand-blue shadow-xs"
-                              : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
-                          }`}
-                        >
-                          + {stock.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-1">
-                    <span className="text-[11px] text-slate-600 font-bold">Ou collez une URL d'image externe :</span>
-                    <Input
-                      placeholder="https://..."
-                      value={formData.cover_image_url.startsWith("data:") ? "" : formData.cover_image_url}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, cover_image_url: e.target.value }))}
-                      className="text-xs mt-1 bg-white"
-                    />
-                  </div>
                 </div>
 
                 {/* Section 3 : Chapeau / Extrait court */}
@@ -663,38 +622,6 @@ export default function AdminNewsPage() {
                     </button>
                   </div>
 
-                  {/* Formats de mise en page */}
-                  <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200/60">
-                    <button
-                      type="button"
-                      onClick={() => insertTextToBody("## Titre de Section Important")}
-                      className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
-                    >
-                      <Heading2 className="h-3 w-3 text-brand-blue" /> Titre H2
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertTextToBody("### Sous-titre de détail")}
-                      className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
-                    >
-                      <Heading3 className="h-3 w-3 text-brand-blue" /> Titre H3
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertTextToBody("**mot important en gras**")}
-                      className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
-                    >
-                      <Bold className="h-3 w-3" /> Gras
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertTextToBody("- Point clé 1\n- Point clé 2")}
-                      className="px-2 py-1 rounded bg-white border border-slate-300 text-[11px] font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
-                    >
-                      <List className="h-3 w-3" /> Puces
-                    </button>
-                  </div>
-
                   <Textarea
                     rows={8}
                     required
@@ -742,7 +669,7 @@ export default function AdminNewsPage() {
 
               </div>
 
-              {/* FOOTER FIXE TOUJOURS ACCESSIBLE AVEC BOUTON D'ENREGISTREMENT LUMINEUX */}
+              {/* FOOTER FIXE */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 px-6 border-t-2 border-slate-200 bg-slate-100 shrink-0 z-50">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <span className="font-bold text-slate-700 text-xs">Statut de l'article :</span>
@@ -771,8 +698,6 @@ export default function AdminNewsPage() {
                   >
                     Annuler
                   </Button>
-                  
-                  {/* BOUTON D'ENREGISTREMENT ET DE PUBLICATION HAUTEMENT VISIBLE */}
                   <Button
                     type="submit"
                     className="bg-brand-orange hover:bg-brand-orange-dark text-white text-xs font-extrabold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer flex items-center gap-2"
@@ -787,6 +712,15 @@ export default function AdminNewsPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de Sélection depuis la Médiathèque */}
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        currentSelectedUrl={formData.cover_image_url}
+        onSelectMedia={(url) => setFormData((prev) => ({ ...prev, cover_image_url: url }))}
+        title="Sélectionner ou importer l'image de couverture"
+      />
 
       {/* Modal de Confirmation de Suppression */}
       <ConfirmDeleteDialog

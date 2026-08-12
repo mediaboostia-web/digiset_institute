@@ -5,9 +5,6 @@ import path from "path";
 const TMP_FILE_PATH = path.join(process.cwd(), ".next", "digiset_news_cache.json");
 const ALT_TMP_PATH = "/tmp/digiset_news_cache.json";
 
-/**
- * Charge la mémoire d'articles depuis le disque (si disponible) ou depuis INITIAL_NEWS
- */
 function loadStore(): NewsItem[] {
   try {
     if (fs.existsSync(TMP_FILE_PATH)) {
@@ -32,9 +29,6 @@ function loadStore(): NewsItem[] {
   return [...INITIAL_NEWS];
 }
 
-/**
- * Sauvegarde la mémoire d'articles sur disque pour persistance Vercel/SSR
- */
 function saveStore(items: NewsItem[]) {
   try {
     const json = JSON.stringify(items, null, 2);
@@ -74,8 +68,19 @@ export function getGlobalNews(status: "published" | "all" = "published"): NewsIt
 }
 
 /**
- * Recherche d'article par slug avec tolérance élevée (accents, voyelles tronquées).
- * Évite rigoureusement la redirection vers de mauvais articles.
+ * Normalise un texte en retirant accents, consonnes/voyelles altérées pour correspondance tolérante.
+ */
+function normalizeStem(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * Recherche d'article par slug avec résolvance maximale (accents, slugs tronqués "cyberscurit").
+ * Empêche rigoureusement toute erreur 404 sur les articles valides.
  */
 export function getNewsBySlug(slug: string): NewsItem | null {
   if (!slug) return null;
@@ -83,6 +88,7 @@ export function getNewsBySlug(slug: string): NewsItem | null {
   newsStoreMemory = loadStore();
   const targetSlug = slug.toLowerCase().trim();
   const targetNormalized = slugify(slug);
+  const targetStem = normalizeStem(slug);
 
   // 1. Recherche exacte par slug direct ou slug normalisé
   let match = newsStoreMemory.find(
@@ -96,18 +102,22 @@ export function getNewsBySlug(slug: string): NewsItem | null {
   );
   if (match) return match;
 
-  // 3. Recherche tolérante aux accents tronqués (ex: "lintelligence-artificielle-et-la-cyberscurit-les-mtiers-en-or-de-2026")
-  const cleanTarget = targetNormalized.replace(/[^a-z0-9]/g, "");
+  // 3. Recherche tolérante aux accents tronqués (ex: "cyberscurit" <-> "cybersecurite")
   match = newsStoreMemory.find((item) => {
-    const itemSlugClean = slugify(item.slug).replace(/[^a-z0-9]/g, "");
-    const itemTitleClean = slugify(item.title).replace(/[^a-z0-9]/g, "");
+    const itemSlugStem = normalizeStem(item.slug);
+    const itemTitleStem = normalizeStem(item.title);
 
-    return (
-      itemSlugClean === cleanTarget ||
-      itemTitleClean === cleanTarget ||
-      (cleanTarget.length > 15 && (itemSlugClean.includes(cleanTarget) || cleanTarget.includes(itemSlugClean))) ||
-      (cleanTarget.length > 15 && (itemTitleClean.includes(cleanTarget) || cleanTarget.includes(itemTitleClean)))
-    );
+    if (itemSlugStem === targetStem || itemTitleStem === targetStem) return true;
+
+    // Correspondance partielle si > 10 caractères
+    if (targetStem.length > 10) {
+      const targetPrefix = targetStem.substring(0, 15);
+      if (itemSlugStem.startsWith(targetPrefix) || itemTitleStem.startsWith(targetPrefix)) {
+        return true;
+      }
+    }
+
+    return false;
   });
   if (match) return match;
 
@@ -118,7 +128,6 @@ export function addNewsItem(item: NewsItem): NewsItem {
   newsStoreMemory = loadStore();
   const baseSlug = item.slug ? slugify(item.slug) : slugify(item.title);
   
-  // Garantir un slug unique pour éviter toute collision avec un autre article
   let finalSlug = baseSlug;
   let counter = 1;
   while (newsStoreMemory.some((n) => n.slug === finalSlug && n.id !== item.id)) {
@@ -133,7 +142,6 @@ export function addNewsItem(item: NewsItem): NewsItem {
     created_at: item.created_at || new Date().toISOString(),
   };
 
-  // Remplacer s'il existe déjà par ID ou insérer en tête de liste
   newsStoreMemory = [newItem, ...newsStoreMemory.filter((n) => n.id !== newItem.id)];
   saveStore(newsStoreMemory);
   return newItem;
