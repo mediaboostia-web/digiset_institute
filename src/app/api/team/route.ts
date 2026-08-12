@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getGlobalTeam, addTeamMember, updateTeamMember, deleteTeamMember } from "@/lib/team-store";
 import { TeamMember } from "@/lib/admin-data";
@@ -6,11 +7,11 @@ import { TeamMember } from "@/lib/admin-data";
 export async function GET() {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && serviceRoleKey) {
-      const admin = createAdminClient();
-      const { data, error } = await admin
+    if (supabaseUrl) {
+      // 1. Passer par le client SSR officiel avec transmission du Cookie JWT (RLS natif)
+      const supabase = await createClient();
+      const { data, error } = await supabase
         .from("team_members")
         .select("*")
         .order("sort_order", { ascending: true });
@@ -49,13 +50,16 @@ export async function POST(request: NextRequest) {
     const saved = addTeamMember(newMember);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && serviceRoleKey) {
-      const admin = createAdminClient();
-      const { error: dbError } = await admin.from("team_members").upsert([saved]);
-      if (dbError) {
-        console.warn("Supabase team insert notice:", dbError.message);
+    if (supabaseUrl) {
+      // Tenter d'abord l'écriture légale avec jeton de session RLS (SSR client)
+      const supabase = await createClient();
+      const { error: rlsError } = await supabase.from("team_members").upsert([saved]);
+
+      // Si RLS requiert les droits d'administration d'arrière-plan, utiliser le client Admin
+      if (rlsError && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        const admin = createAdminClient();
+        await admin.from("team_members").upsert([saved]);
       }
     }
 
@@ -74,13 +78,14 @@ export async function PATCH(request: NextRequest) {
     const updated = updateTeamMember(id, updates);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && serviceRoleKey) {
-      const admin = createAdminClient();
-      const { error: dbError } = await admin.from("team_members").update(updates).eq("id", id);
-      if (dbError) {
-        console.warn("Supabase team update notice:", dbError.message);
+    if (supabaseUrl) {
+      const supabase = await createClient();
+      const { error: rlsError } = await supabase.from("team_members").update(updates).eq("id", id);
+
+      if (rlsError && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        const admin = createAdminClient();
+        await admin.from("team_members").update(updates).eq("id", id);
       }
     }
 
@@ -103,13 +108,14 @@ export async function DELETE(request: NextRequest) {
     const deleted = deleteTeamMember(id);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (supabaseUrl && serviceRoleKey) {
-      const admin = createAdminClient();
-      const { error: dbError } = await admin.from("team_members").delete().eq("id", id);
-      if (dbError) {
-        console.warn("Supabase team delete notice:", dbError.message);
+    if (supabaseUrl) {
+      const supabase = await createClient();
+      const { error: rlsError } = await supabase.from("team_members").delete().eq("id", id);
+
+      if (rlsError && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        const admin = createAdminClient();
+        await admin.from("team_members").delete().eq("id", id);
       }
     }
 
