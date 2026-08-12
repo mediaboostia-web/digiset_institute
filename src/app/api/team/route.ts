@@ -5,6 +5,10 @@ import { getGlobalTeam, addTeamMember, updateTeamMember, deleteTeamMember } from
 import { TeamMember } from "@/lib/admin-data";
 
 export async function GET() {
+  const cacheHeaders = {
+    "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120",
+  };
+
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -17,16 +21,16 @@ export async function GET() {
         .order("sort_order", { ascending: true });
 
       if (!error && Array.isArray(data) && data.length > 0) {
-        return NextResponse.json({ ok: true, data });
+        return NextResponse.json({ ok: true, data }, { headers: cacheHeaders });
       }
     }
 
     const team = getGlobalTeam();
-    return NextResponse.json({ ok: true, data: team });
+    return NextResponse.json({ ok: true, data: team }, { headers: cacheHeaders });
   } catch (error) {
     console.error("[api/team GET]", error);
     const team = getGlobalTeam();
-    return NextResponse.json({ ok: true, data: team });
+    return NextResponse.json({ ok: true, data: team }, { headers: cacheHeaders });
   }
 }
 

@@ -4,6 +4,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getGlobalMedia, addMediaItem, updateMediaItem, deleteMediaItem, MediaItem } from "@/lib/media-store";
 
 export async function GET() {
+  const cacheHeaders = {
+    "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120",
+  };
+
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -22,16 +26,16 @@ export async function GET() {
           category: d.category || "General",
           created_at: d.uploaded_at || d.created_at || new Date().toISOString(),
         }));
-        return NextResponse.json({ ok: true, data: formatted });
+        return NextResponse.json({ ok: true, data: formatted }, { headers: cacheHeaders });
       }
     }
 
     const media = getGlobalMedia();
-    return NextResponse.json({ ok: true, data: media });
+    return NextResponse.json({ ok: true, data: media }, { headers: cacheHeaders });
   } catch (error) {
     console.error("[api/media GET]", error);
     const media = getGlobalMedia();
-    return NextResponse.json({ ok: true, data: media });
+    return NextResponse.json({ ok: true, data: media }, { headers: cacheHeaders });
   }
 }
 

@@ -44,6 +44,10 @@ function decodeArticleBody(rawBody: string): {
  * ?slug=... -> single article query
  */
 export async function GET(request: NextRequest) {
+  const cacheHeaders = {
+    "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120",
+  };
+
   try {
     const { searchParams } = new URL(request.url);
     const statusParam = searchParams.get("status") || "published";
@@ -52,7 +56,7 @@ export async function GET(request: NextRequest) {
     if (slugParam) {
       const singleItem = getNewsBySlug(slugParam);
       if (singleItem) {
-        return NextResponse.json({ ok: true, data: [singleItem] });
+        return NextResponse.json({ ok: true, data: [singleItem] }, { headers: cacheHeaders });
       }
     }
 

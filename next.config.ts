@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.1.23", "localhost", "127.0.0.1"],
   compress: true,
   reactStrictMode: true,
+  poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -24,6 +25,28 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-tabs",
       "date-fns",
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: "/brand/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 };
 
