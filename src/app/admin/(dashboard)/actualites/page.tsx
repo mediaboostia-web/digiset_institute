@@ -74,13 +74,41 @@ export default function AdminNewsPage() {
   const [customLinkText, setCustomLinkText] = useState("Postuler maintenant");
   const [customLinkUrl, setCustomLinkUrl] = useState("/inscription/candidature");
 
+  const LOCAL_STORAGE_NEWS_KEY = "digiset_news_local_cache_v2";
+
+  const saveNewsToLocalStorage = (list: NewsItem[]) => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_NEWS_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.error("Erreur sauvegarde local storage news:", e);
+      }
+    }
+  };
+
   const fetchArticles = async () => {
     setIsLoading(true);
+
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(LOCAL_STORAGE_NEWS_KEY);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setNewsList(parsed);
+          }
+        } catch {
+          // Ignorer
+        }
+      }
+    }
+
     try {
       const res = await fetch("/api/news?status=all");
       const json = await res.json();
-      if (json.ok && Array.isArray(json.data)) {
+      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
         setNewsList(json.data);
+        saveNewsToLocalStorage(json.data);
       }
     } catch (err) {
       console.error("Erreur chargement actualités:", err);
@@ -199,9 +227,10 @@ export default function AdminNewsPage() {
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
 
-    const payload = {
+    const newOrUpdatedItem: NewsItem = {
+      id: editingArticle ? editingArticle.id : `news-${Date.now()}`,
       title: formData.title,
-      slug: formData.slug,
+      slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, "-"),
       category: finalCategory,
       excerpt: formData.excerpt,
       body: formData.body,
@@ -210,28 +239,39 @@ export default function AdminNewsPage() {
       tags: tagsArray,
       cta_text: formData.cta_text,
       cta_url: formData.cta_url,
+      published_at: editingArticle ? editingArticle.published_at : new Date().toISOString(),
+      created_at: editingArticle ? editingArticle.created_at : new Date().toISOString(),
     };
+
+    let updatedNewsList: NewsItem[];
+    if (editingArticle) {
+      updatedNewsList = newsList.map((n) => (n.id === editingArticle.id ? newOrUpdatedItem : n));
+    } else {
+      updatedNewsList = [newOrUpdatedItem, ...newsList];
+    }
+
+    setNewsList(updatedNewsList);
+    saveNewsToLocalStorage(updatedNewsList);
+    setIsModalOpen(false);
 
     try {
       if (editingArticle) {
         await fetch("/api/news", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingArticle.id, ...payload }),
+          body: JSON.stringify(newOrUpdatedItem),
         });
       } else {
         await fetch("/api/news", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(newOrUpdatedItem),
         });
       }
       await fetchArticles();
     } catch (err) {
       console.error("Erreur enregistrement article:", err);
     }
-
-    setIsModalOpen(false);
   };
 
   const toggleStatus = async (id: string) => {
@@ -240,9 +280,11 @@ export default function AdminNewsPage() {
 
     const nextStatus = target.status === "published" ? "draft" : "published";
 
-    setNewsList((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: nextStatus } : item))
+    const updatedList = newsList.map((item) =>
+      item.id === id ? { ...item, status: nextStatus as ContentStatus } : item
     );
+    setNewsList(updatedList);
+    saveNewsToLocalStorage(updatedList);
 
     try {
       await fetch("/api/news", {
@@ -257,7 +299,10 @@ export default function AdminNewsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    setNewsList((prev) => prev.filter((item) => item.id !== id));
+    const updatedList = newsList.filter((item) => item.id !== id);
+    setNewsList(updatedList);
+    saveNewsToLocalStorage(updatedList);
+
     try {
       await fetch(`/api/news?id=${id}`, { method: "DELETE" });
       await fetchArticles();

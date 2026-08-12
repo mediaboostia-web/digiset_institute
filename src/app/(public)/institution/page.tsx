@@ -101,17 +101,37 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
   );
 }
 
+const LOCAL_STORAGE_KEY = "digiset_team_local_cache_v2";
+
 export default function InstitutionPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadTeam() {
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setTeamMembers(parsed);
+              setIsLoading(false);
+            }
+          } catch {
+            // Ignorer
+          }
+        }
+      }
+
       try {
         const res = await fetch("/api/team");
         const json = await res.json();
-        if (json.ok && Array.isArray(json.data)) {
+        if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
           setTeamMembers(json.data);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));
+          }
         }
       } catch (err) {
         console.error("Erreur chargement organigramme public:", err);

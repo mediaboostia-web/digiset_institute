@@ -45,6 +45,8 @@ const POLE_OPTIONS = [
   "Secrétariat & Administration",
 ];
 
+const LOCAL_STORAGE_KEY = "digiset_team_local_cache_v2";
+
 export default function AdminTeamPage() {
   const [teamList, setTeamList] = useState<TeamMember[]>(INITIAL_TEAM);
   const [isLoading, setIsLoading] = useState(true);
@@ -57,13 +59,41 @@ export default function AdminTeamPage() {
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
+  const saveToLocalStorage = (list: TeamMember[]) => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.error("Erreur sauvegarde local storage:", e);
+      }
+    }
+  };
+
   const fetchTeam = async () => {
     setIsLoading(true);
+
+    // 1. Restauration instantanée depuis le cache navigateur local
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setTeamList(parsed);
+          }
+        } catch {
+          // Ignorer
+        }
+      }
+    }
+
+    // 2. Synchronisation serveur
     try {
       const res = await fetch("/api/team");
       const json = await res.json();
       if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
         setTeamList(json.data);
+        saveToLocalStorage(json.data);
       }
     } catch (err) {
       console.error("Erreur chargement équipe:", err);
@@ -125,17 +155,38 @@ export default function AdminTeamPage() {
     e.preventDefault();
     if (!formData.full_name || !formData.role_title) return;
 
-    const payload = {
-      ...formData,
+    const payload: TeamMember = {
+      id: editingMember ? editingMember.id : `team-${Date.now()}`,
+      full_name: formData.full_name,
+      role_title: formData.role_title,
+      pole: formData.pole || "Direction Générale",
       photo_url: formData.photo_url || "/brand/fondateur.png",
+      bio: formData.bio || "",
+      email: formData.email || "",
+      facebook_url: formData.facebook_url || "",
+      linkedin_url: formData.linkedin_url || "",
+      sort_order: formData.sort_order || 1,
+      created_at: editingMember ? editingMember.created_at : new Date().toISOString(),
     };
+
+    let updatedList: TeamMember[];
+    if (editingMember) {
+      updatedList = teamList.map((m) => (m.id === editingMember.id ? payload : m));
+    } else {
+      updatedList = [...teamList, payload];
+    }
+
+    // Mise à jour réactive immédiate dans le navigateur (zéro délai de rafraîchissement)
+    setTeamList(updatedList);
+    saveToLocalStorage(updatedList);
+    setIsModalOpen(false);
 
     try {
       if (editingMember) {
         await fetch("/api/team", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingMember.id, ...payload }),
+          body: JSON.stringify(payload),
         });
       } else {
         await fetch("/api/team", {
@@ -146,14 +197,15 @@ export default function AdminTeamPage() {
       }
       await fetchTeam();
     } catch (err) {
-      console.error("Erreur enregistrement membre:", err);
+      console.error("Erreur enregistrement membre serveur:", err);
     }
-
-    setIsModalOpen(false);
   };
 
   const handleDelete = async (id: string) => {
-    setTeamList((prev) => prev.filter((m) => m.id !== id));
+    const updatedList = teamList.filter((m) => m.id !== id);
+    setTeamList(updatedList);
+    saveToLocalStorage(updatedList);
+
     try {
       await fetch(`/api/team?id=${id}`, { method: "DELETE" });
       await fetchTeam();
@@ -226,7 +278,7 @@ export default function AdminTeamPage() {
       </div>
 
       {/* Grille des Membres sous forme de cartes professionnelles */}
-      {isLoading ? (
+      {isLoading && teamList.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((n) => (
             <div key={n} className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 animate-pulse">

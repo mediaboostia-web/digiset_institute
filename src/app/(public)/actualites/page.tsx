@@ -24,13 +24,36 @@ export default function ActualitesPage() {
   const [articles, setArticles] = useState<NewsItem[]>(INITIAL_NEWS);
   const [isLoading, setIsLoading] = useState(true);
 
+  const LOCAL_STORAGE_NEWS_KEY = "digiset_news_local_cache_v2";
+
   useEffect(() => {
     async function loadPublishedNews() {
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem(LOCAL_STORAGE_NEWS_KEY);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              const publishedOnly = parsed.filter((a: NewsItem) => a.status === "published");
+              if (publishedOnly.length > 0) {
+                setArticles(publishedOnly);
+                setIsLoading(false);
+              }
+            }
+          } catch {
+            // Ignorer
+          }
+        }
+      }
+
       try {
         const res = await fetch("/api/news?status=published");
         const json = await res.json();
         if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
           setArticles(json.data);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(LOCAL_STORAGE_NEWS_KEY, JSON.stringify(json.data));
+          }
         }
       } catch (err) {
         console.error("Erreur chargement actualités publiques:", err);
