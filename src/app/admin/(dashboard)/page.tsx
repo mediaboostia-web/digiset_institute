@@ -418,7 +418,7 @@ export default function AdminDashboardPage() {
             </p>
             <div className="mt-4 pt-4 border-t border-white/15 flex items-center justify-between text-xs">
               <span className="text-white/70">Démarrage des cours :</span>
-              <span className="font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-lg border border-white/20">Septembre 2026</span>
+              <span className="font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-lg border border-white/20">Octobre 2026</span>
             </div>
           </div>
         </div>

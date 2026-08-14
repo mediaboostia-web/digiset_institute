@@ -16,7 +16,7 @@ export interface SiteSettings {
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   isAnnouncementEnabled: true,
-  announcementText: "🎓 Inscriptions Ouvertes — Rentrée Académique de Septembre 2026 à DigiSET Akanda !",
+  announcementText: "🎓 Inscriptions Ouvertes — Rentrée Académique d'Octobre 2026 à DigiSET Akanda !",
   announcementCtaText: "S'inscrire maintenant",
   announcementCtaHref: "/inscription/candidature",
   notificationEmail: "contact@digiset-gabon.com",

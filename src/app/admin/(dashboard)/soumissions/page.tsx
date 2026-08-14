@@ -27,6 +27,7 @@ import {
   INITIAL_SUBMISSIONS,
   AnySubmission,
   SubmissionStatus,
+  AttachmentField,
 } from "@/lib/admin-data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,35 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
+
+const ATTACHMENT_FIELD_ORDER: AttachmentField[] = ["bulletin", "diplome", "cv", "photo"];
+
+const ATTACHMENT_LABELS: Record<AttachmentField, string> = {
+  bulletin: "Bulletin / Relevé de notes",
+  diplome: "Diplôme obtenu",
+  cv: "CV",
+  photo: "Photo d'identité",
+};
+
+function formatAttachmentSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} o`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
+}
+
+async function downloadAttachment(path: string) {
+  try {
+    const res = await fetch(`/api/admin/submissions/attachment-url?path=${encodeURIComponent(path)}`);
+    const json = await res.json();
+    if (json.ok && json.url) {
+      window.open(json.url, "_blank", "noopener");
+    } else {
+      alert("Impossible de générer le lien de téléchargement.");
+    }
+  } catch {
+    alert("Erreur réseau lors de la génération du lien de téléchargement.");
+  }
+}
 
 export default function AdminSubmissionsPage() {
   const [submissions, setSubmissions] = useState<AnySubmission[]>([]);
@@ -717,24 +747,40 @@ export default function AdminSubmissionsPage() {
                     </div>
                   </div>
 
-                  {/* Pièces jointes PDF */}
+                  {/* Pièces jointes, groupées par catégorie */}
                   {selectedSubmission.attachments && selectedSubmission.attachments.length > 0 && (
-                    <div className="pt-2">
-                      <span className="text-gray-500 block font-semibold mb-2">Pièces jointes fournies ({selectedSubmission.attachments.length}) :</span>
-                      <div className="space-y-2">
-                        {selectedSubmission.attachments.map((att, idx) => (
-                          <div key={idx} className="flex items-center justify-between rounded-md bg-gray-50 p-2.5 border border-gray-200">
-                            <div className="flex items-center gap-2">
-                              <FileText className="h-4 w-4 text-brand-blue" />
-                              <span className="font-bold text-gray-900">{att.name}</span>
-                              <span className="text-[10px] text-gray-400">({att.size})</span>
+                    <div className="pt-2 space-y-3">
+                      <span className="text-gray-500 block font-semibold">Pièces jointes fournies ({selectedSubmission.attachments.length}) :</span>
+                      {ATTACHMENT_FIELD_ORDER.map((field) => {
+                        const files = selectedSubmission.attachments.filter((att) => att.field === field);
+                        if (files.length === 0) return null;
+                        return (
+                          <div key={field} className="space-y-1.5">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                              {ATTACHMENT_LABELS[field]}
+                            </span>
+                            <div className="space-y-2">
+                              {files.map((att) => (
+                                <div key={att.path} className="flex items-center justify-between gap-2 rounded-md bg-gray-50 p-2.5 border border-gray-200">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <FileText className="h-4 w-4 text-brand-blue shrink-0" />
+                                    <span className="font-bold text-gray-900 truncate">{att.name}</span>
+                                    <span className="text-[10px] text-gray-400 shrink-0">({formatAttachmentSize(att.size)})</span>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-7 gap-1 text-xs text-brand-blue shrink-0"
+                                    onClick={() => downloadAttachment(att.path)}
+                                  >
+                                    <Download className="h-3.5 w-3.5" /> Télécharger
+                                  </Button>
+                                </div>
+                              ))}
                             </div>
-                            <Button size="sm" variant="ghost" className="h-7 gap-1 text-xs text-brand-blue">
-                              <Download className="h-3.5 w-3.5" /> Télécharger
-                            </Button>
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

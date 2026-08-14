@@ -58,30 +58,34 @@ export async function POST(request: NextRequest) {
   try {
     if (formData) {
     for (const field of ATTACHMENT_FIELDS) {
-      const file = formData.get(field);
-      if (!(file instanceof File) || file.size === 0) continue;
+      const files = formData.getAll(field);
 
-      if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
-        return NextResponse.json(
-          { ok: false, errors: { [field]: "Fichier trop volumineux (5 Mo maximum)." } },
-          { status: 400 },
-        );
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
+        if (!(file instanceof File) || file.size === 0) continue;
+
+        if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
+          return NextResponse.json(
+            { ok: false, errors: { [field]: "Fichier trop volumineux (5 Mo maximum)." } },
+            { status: 400 },
+          );
+        }
+        if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
+          return NextResponse.json(
+            { ok: false, errors: { [field]: "Format de fichier non autorisé (PDF, JPG ou PNG uniquement)." } },
+            { status: 400 },
+          );
+        }
+
+        const path = `${submissionFolder}/${field}-${index}-${file.name}`;
+        const { error: uploadError } = await admin.storage
+          .from("candidate-documents")
+          .upload(path, file, { contentType: file.type, upsert: false });
+
+        if (uploadError) throw uploadError;
+
+        attachments.push({ field, name: file.name, path, size: file.size });
       }
-      if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
-        return NextResponse.json(
-          { ok: false, errors: { [field]: "Format de fichier non autorisé (PDF, JPG ou PNG uniquement)." } },
-          { status: 400 },
-        );
-      }
-
-      const path = `${submissionFolder}/${field}-${file.name}`;
-      const { error: uploadError } = await admin.storage
-        .from("candidate-documents")
-        .upload(path, file, { contentType: file.type, upsert: false });
-
-      if (uploadError) throw uploadError;
-
-      attachments.push({ field, name: file.name, path, size: file.size });
     }
     }
 
@@ -104,6 +108,7 @@ export async function POST(request: NextRequest) {
       email: data.email,
       last_diploma: data.lastDiploma,
       desired_program_id: programIdToSave,
+      desired_program_label: programName,
       attachments,
     });
 

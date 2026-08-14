@@ -41,7 +41,7 @@ export async function GET() {
           phone: row.phone,
           email: row.email,
           last_diploma: row.last_diploma || "Non renseigné",
-          program_title: row.desired_program_id || "Licence / Prépa",
+          program_title: row.desired_program_label || "Licence / Prépa",
           attachments: row.attachments || [],
           status: row.status || "nouveau",
           created_at: row.created_at,

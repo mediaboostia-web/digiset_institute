@@ -8,7 +8,7 @@ export default function InscriptionHubPage() {
       <HeroSection
         badge="Scolarité & Admission 2026-2027"
         title="Rejoignez DigiSET Institute"
-        subtitle="Découvrez la procédure de candidature, les critères d'admissibilité et préparez votre dossier pour la rentrée de Septembre 2026."
+        subtitle="Découvrez la procédure de candidature, les critères d'admissibilité et préparez votre dossier pour la rentrée d'Octobre 2026."
         breadcrumbs={[{ label: "Inscription" }]}
         primaryCtaText="Remplir le formulaire en ligne"
         primaryCtaHref="/inscription/candidature"

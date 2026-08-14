@@ -198,7 +198,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-          <p>© {new Date().getFullYear()} DigiSET Institute. Tous droits réservés. Lancement officiel Septembre 2026.</p>
+          <p>© {new Date().getFullYear()} DigiSET Institute. Tous droits réservés. Lancement officiel Octobre 2026.</p>
           <div className="flex items-center gap-6">
             <Link href="/mentions-legales" className="hover:text-white transition-colors">
               Mentions Légales

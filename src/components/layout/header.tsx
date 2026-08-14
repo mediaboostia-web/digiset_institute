@@ -17,7 +17,7 @@ const SEARCH_CATALOG = [
   { title: "Location de Laboratoires TP", category: "Services", url: "/services/location-laboratoires", desc: "Mise à disposition des labos TP pour lycées et prépas" },
   { title: "Institution & Mot du Fondateur", category: "À Propos", url: "/institution", desc: "Gouvernance 3 rangs, Conseil académique & vision" },
   { title: "Actualités & Articles", category: "Presse", url: "/actualites", desc: "Toute l'actualité institutionnelle et académique de DigiSET Institute" },
-  { title: "Candidature Rentrée Septembre 2026", category: "Inscription", url: "/inscription/candidature", desc: "Formulaire d'inscription en ligne étudiants" },
+  { title: "Candidature Rentrée Octobre 2026", category: "Inscription", url: "/inscription/candidature", desc: "Formulaire d'inscription en ligne étudiants" },
 ];
 
 export function Header() {
@@ -77,18 +77,24 @@ export function Header() {
       <AnnouncementBanner />
       <div className="mx-auto flex max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8 h-16 sm:h-20 gap-2 sm:gap-3">
         
-        {/* Logo Officiel DigiSET */}
-        <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <div className="relative h-10 w-32 sm:h-14 sm:w-44 bg-transparent p-0.5 flex items-center justify-center transition-opacity hover:opacity-90">
+        {/* Logo Officiel DigiSET + Nom de l'Institut (mobile/tablette uniquement) */}
+        <Link href="/" className="flex items-center gap-1.5 shrink-0 group">
+          <div className="relative h-12 sm:h-14 w-auto bg-transparent p-0.5 flex items-center justify-center transition-opacity hover:opacity-90">
             <Image
               src="/brand/Digiset Logo officiel.png"
               alt="Logo Officiel DigiSET Institute"
               width={185}
               height={60}
-              className="max-h-full w-auto object-contain drop-shadow-xs"
+              className="h-full w-auto object-contain drop-shadow-xs"
               priority
             />
           </div>
+          {/* Visible uniquement sous le breakpoint desktop (lg), même seuil que la nav/CTA desktop */}
+          <span className="flex lg:hidden flex-col leading-none font-heading whitespace-nowrap">
+            <span className="text-[13px] sm:text-base font-extrabold text-brand-blue-dark tracking-tight">
+              DigiSET <span className="text-brand-orange">Institute</span>
+            </span>
+          </span>
         </Link>
 
         {/* Navigation Desktop */}
@@ -232,18 +238,18 @@ export function Header() {
         </nav>
 
         {/* BARRE DE RECHERCHE INTERACTIVE VISIBLE SUR MOBILE */}
-        <div className="lg:hidden flex items-center gap-2 flex-1 justify-end max-w-[190px] sm:max-w-xs">
+        <div className="lg:hidden flex items-center gap-2 flex-1 justify-end min-w-0 max-w-[190px] sm:max-w-xs">
           <button
             onClick={() => setSearchOpen(true)}
             type="button"
-            className="w-full flex items-center justify-between gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition-all shadow-2xs border bg-slate-100/90 text-slate-700 border-slate-300 hover:bg-slate-200 cursor-pointer active:scale-95"
+            className="flex items-center justify-center min-[420px]:justify-between gap-1.5 px-2.5 min-[420px]:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition-all shadow-2xs border bg-slate-100/90 text-slate-700 border-slate-300 hover:bg-slate-200 cursor-pointer active:scale-95 shrink-0 min-[420px]:w-full"
             title="Rechercher sur tout le site"
           >
             <div className="flex items-center gap-1.5 truncate">
               <Search className="h-4 w-4 text-brand-orange shrink-0" />
-              <span className="truncate text-[11px] font-bold text-slate-800">Rechercher...</span>
+              <span className="hidden min-[420px]:inline truncate text-[11px] font-bold text-slate-800">Rechercher...</span>
             </div>
-            <span className="text-[9px] uppercase tracking-wider font-extrabold text-white bg-brand-orange px-1.5 py-0.5 rounded shrink-0 shadow-2xs">
+            <span className="hidden min-[420px]:inline-block text-[9px] uppercase tracking-wider font-extrabold text-white bg-brand-orange px-1.5 py-0.5 rounded shrink-0 shadow-2xs">
               Go
             </span>
           </button>

@@ -1,8 +1,19 @@
 import { Metadata } from "next";
+import { permanentRedirect } from "next/navigation";
 import { getNewsBySlug } from "@/lib/news-store";
 import { ArticleClientView } from "@/components/public/article-client-view";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.digiset-gabon.com";
+
+/**
+ * Anciennes URLs d'articles renommées — redirection permanente explicite,
+ * indépendante de la tolérance floue de getNewsBySlug() (qui résoudrait déjà
+ * l'ancien slug par similarité de préfixe, mais donnerait un 200 implicite
+ * au lieu d'une vraie redirection 301/308).
+ */
+const SLUG_REDIRECTS: Record<string, string> = {
+  "lancement-officiel-activites-septembre-2026": "lancement-officiel-activites-octobre-2026",
+};
 
 export async function generateMetadata({
   params,
@@ -83,6 +94,11 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  if (SLUG_REDIRECTS[slug]) {
+    permanentRedirect(`/actualites/${SLUG_REDIRECTS[slug]}`);
+  }
+
   let article = getNewsBySlug(slug);
 
   if (!article) {

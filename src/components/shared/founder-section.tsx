@@ -64,7 +64,7 @@ export function FounderSection() {
               </div>
 
               <div className="inline-flex items-center gap-2 text-xs font-bold text-white bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20">
-                <span>Rentrée Septembre 2026</span>
+                <span>Rentrée Octobre 2026</span>
               </div>
             </div>
 

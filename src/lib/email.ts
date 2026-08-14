@@ -1,6 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
-import { getActiveNotificationEmail } from "@/app/api/admin/settings/route";
+import { getActiveNotificationEmail } from "@/lib/notification-email";
 
 /**
  * Envoi d'email transactionnel (notification interne DigiSET + confirmation au demandeur).
@@ -19,7 +19,7 @@ export async function sendNotificationEmail(params: {
 }) {
   const recipient =
     params.to ||
-    getActiveNotificationEmail() ||
+    (await getActiveNotificationEmail()) ||
     process.env.NOTIFICATION_EMAIL_TO ||
     process.env.ADMIN_NOTIFICATION_EMAIL ||
     "mediaboostia@gmail.com";

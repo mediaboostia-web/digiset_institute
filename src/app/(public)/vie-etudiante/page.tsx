@@ -10,7 +10,7 @@ import { Users, Award, BookOpen, Download, Calendar, Share2, Eye } from "lucide-
 const ARTICLES = [
   {
     slug: "lancement-inscriptions-rentree-2026",
-    title: "Lancement Officiel des Inscriptions pour la Rentrée de Septembre 2026",
+    title: "Lancement Officiel des Inscriptions pour la Rentrée d'Octobre 2026",
     date: "15 Juillet 2026",
     category: "Scolarité",
     image: "/images/img/Image_3.jpg",
@@ -234,7 +234,7 @@ export default function VieEtudiantePage() {
 
               <div className="p-3 bg-white rounded-lg border border-slate-200 flex items-center justify-between">
                 <div>
-                  <strong className="block text-slate-900 font-bold">Guide de la Rentrée Septembre 2026</strong>
+                  <strong className="block text-slate-900 font-bold">Guide de la Rentrée Octobre 2026</strong>
                   <span className="text-[10px] text-slate-500">PDF — 1.8 Mo</span>
                 </div>
                 <button className="text-brand-blue font-bold hover:underline cursor-pointer">Télécharger</button>

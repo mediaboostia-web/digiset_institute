@@ -47,19 +47,65 @@ export default function AdminSettingsPage() {
   });
 
   const [institutionSuccess, setInstitutionSuccess] = useState(false);
+  const [institutionSaving, setInstitutionSaving] = useState(false);
+  const [institutionSaveError, setInstitutionSaveError] = useState<string | null>(null);
 
-  const handleSaveInstitution = (e: React.FormEvent) => {
+  // Récupère les paramètres réellement persistés côté serveur (Supabase quand
+  // configuré) au chargement, pour que cet appareil reflète le dernier état
+  // enregistré ailleurs — le localStorage seul (useSiteSettings) ne suffit
+  // plus à faire autorité, cf. Feature 4.
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.ok && json.data) updateSiteSettings(json.data);
+      })
+      .catch(() => {
+        // Repli silencieux sur le cache localStorage déjà chargé par useSiteSettings.
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSaveInstitution = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentUserRole === "editor") return;
-    updateSiteSettings({
+
+    setInstitutionSaving(true);
+    setInstitutionSaveError(null);
+
+    const nextSettings = {
       institutionAddress: institutionForm.address,
       institutionPhone1: institutionForm.phone1,
       institutionPhone2: institutionForm.phone2,
       institutionEmail: institutionForm.email,
       notificationEmail: institutionForm.notificationEmail,
-    });
-    setInstitutionSuccess(true);
-    setTimeout(() => setInstitutionSuccess(false), 4000);
+      isAnnouncementEnabled: siteSettings.isAnnouncementEnabled,
+      announcementText: siteSettings.announcementText,
+      announcementCtaText: siteSettings.announcementCtaText,
+      announcementCtaHref: siteSettings.announcementCtaHref,
+    };
+
+    updateSiteSettings(nextSettings);
+
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nextSettings),
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || "Erreur d'enregistrement serveur.");
+      setInstitutionSuccess(true);
+      setTimeout(() => setInstitutionSuccess(false), 4000);
+    } catch (err) {
+      setInstitutionSaveError(
+        err instanceof Error
+          ? `Enregistré localement, mais la sauvegarde serveur a échoué : ${err.message}`
+          : "Enregistré localement, mais la sauvegarde serveur a échoué.",
+      );
+    } finally {
+      setInstitutionSaving(false);
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -284,6 +330,13 @@ export default function AdminSettingsPage() {
             </div>
           )}
 
+          {institutionSaveError && (
+            <div className="flex items-center gap-3 rounded-xl bg-red-50 p-4 border border-red-200 text-red-800 text-xs font-bold animate-in fade-in duration-300">
+              <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+              <span>{institutionSaveError}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSaveInstitution} className="space-y-6">
             {/* Identité Établissement */}
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs space-y-5">
@@ -440,7 +493,7 @@ export default function AdminSettingsPage() {
                     value={siteSettings.announcementText}
                     onChange={(e) => updateSiteSettings({ announcementText: e.target.value })}
                     className="text-xs font-medium"
-                    placeholder="ex: 🎓 Inscriptions ouvertes pour la Rentrée Académique Septembre 2026 !"
+                    placeholder="ex: 🎓 Inscriptions ouvertes pour la Rentrée Académique Octobre 2026 !"
                     required
                   />
                 </div>
@@ -498,8 +551,12 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" className="bg-brand-orange hover:bg-brand-orange-dark text-white font-bold text-xs gap-2 px-6 py-2.5 shadow-md">
-                <Save className="h-4 w-4" />
+              <Button
+                type="submit"
+                disabled={institutionSaving}
+                className="bg-brand-orange hover:bg-brand-orange-dark text-white font-bold text-xs gap-2 px-6 py-2.5 shadow-md disabled:opacity-50"
+              >
+                {institutionSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Enregistrer les modifications établissement
               </Button>
             </div>

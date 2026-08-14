@@ -5,6 +5,8 @@ import Image from "next/image";
 import { HeroSection } from "@/components/shared/hero-section";
 import { FounderSection } from "@/components/shared/founder-section";
 import { Globe, Mail, Phone, Loader2, UserCheck } from "lucide-react";
+import { mergeContentValues } from "@/lib/content-defaults";
+import type { ContentBlock } from "@/app/api/content-blocks/route";
 
 interface TeamMember {
   id?: string;
@@ -107,6 +109,19 @@ const LOCAL_STORAGE_MODIFIED_KEY = "digiset_team_is_user_modified_v5";
 export default function InstitutionPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [content, setContent] = useState<Record<string, string>>(() => mergeContentValues("institution", []));
+
+  useEffect(() => {
+    fetch("/api/content-blocks?page_key=institution")
+      .then((res) => res.json())
+      .then((json) => {
+        const blocks: ContentBlock[] = json.ok && Array.isArray(json.data) ? json.data : [];
+        setContent(mergeContentValues("institution", blocks));
+      })
+      .catch(() => {
+        // Repli silencieux sur les valeurs par défaut déjà en state.
+      });
+  }, []);
 
   useEffect(() => {
     async function loadTeam() {
@@ -207,9 +222,10 @@ export default function InstitutionPage() {
   return (
     <div>
       <HeroSection
-        badge="Stratégie & Institution"
-        title="Institution, Gouvernance & Partenaires"
-        subtitle="Découvrez la structure organisationnelle de DigiSET Institute, son équipe dirigeante en 3 rangs hiérarchiques et ses alliances technologiques internationales."
+        badge={content.hero_badge}
+        title={content.hero_title}
+        subtitle={content.hero_subtitle}
+        backgroundImageUrl={content.hero_image_url}
         breadcrumbs={[{ label: "Institution & Stratégie" }]}
       />
 

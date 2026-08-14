@@ -6,6 +6,14 @@
 export type SubmissionStatus = "nouveau" | "en_cours" | "traite" | "archive";
 export type LabType = "physique" | "informatique";
 export type ContentStatus = "draft" | "published";
+export type AttachmentField = "bulletin" | "diplome" | "cv" | "photo";
+
+export interface SubmissionAttachment {
+  field: AttachmentField;
+  name: string;
+  path: string;
+  size: number;
+}
 
 export interface SubmissionRegistration {
   id: string;
@@ -15,7 +23,7 @@ export interface SubmissionRegistration {
   email: string;
   last_diploma: string;
   program_title: string;
-  attachments: { name: string; url: string; size: string }[];
+  attachments: SubmissionAttachment[];
   status: SubmissionStatus;
   created_at: string;
 }
@@ -108,7 +116,7 @@ export const INITIAL_SUBMISSIONS: AnySubmission[] = [];
 export const INITIAL_NEWS: NewsItem[] = [
   {
     id: "news-1",
-    slug: "lancement-officiel-activites-septembre-2026",
+    slug: "lancement-officiel-activites-octobre-2026",
     title: "Ouverture des Inscriptions à DigiSET Institute pour la Rentrée Académique 2026",
     cover_image_url: "/brand/fondateur.png",
     excerpt:
@@ -247,7 +255,7 @@ Les entreprises privées comme les services publics connaissent une transformati
 - **[Licence Pro Cybersécurité](/programmes/licence-professionnelle/cybersecurite)** : Devenez un spécialiste de la sécurité opérationnelle et de l'audit de systèmes.
 - **[Classe Préparatoire MP2I](/programmes/classe-preparatoire)** : Le tremplin idéal pour viser les grandes écoles d'ingénieurs.
 
-Rejoignez les pionniers du numérique et préparez dès aujourd'hui votre intégration professionnelle pour septembre 2026.`,
+Rejoignez les pionniers du numérique et préparez dès aujourd'hui votre intégration professionnelle pour octobre 2026.`,
     status: "published",
     category: "Formations & Certifications",
     tags: ["IA", "Cybersécurité", "Métiers d'avenir", "Licence Pro", "Gabon"],

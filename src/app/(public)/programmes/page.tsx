@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { HeroSection } from "@/components/shared/hero-section";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { ProgramCard, type ProgramCardProps } from "@/components/shared/program-card";
 import Link from "next/link";
 import { HelpCircle, ArrowRight } from "lucide-react";
+import { mergeContentValues } from "@/lib/content-defaults";
+import type { ContentBlock } from "@/app/api/content-blocks/route";
 
 const ALL_PROGRAMS: (ProgramCardProps & { publicKey: string; domainKey: string; formatKey: string })[] = [
   {
@@ -138,6 +140,19 @@ export default function ProgrammesPage() {
   const [selectedPublic, setSelectedPublic] = useState("all");
   const [selectedDomain, setSelectedDomain] = useState("all");
   const [selectedFormat, setSelectedFormat] = useState("all");
+  const [content, setContent] = useState<Record<string, string>>(() => mergeContentValues("programmes", []));
+
+  useEffect(() => {
+    fetch("/api/content-blocks?page_key=programmes")
+      .then((res) => res.json())
+      .then((json) => {
+        const blocks: ContentBlock[] = json.ok && Array.isArray(json.data) ? json.data : [];
+        setContent(mergeContentValues("programmes", blocks));
+      })
+      .catch(() => {
+        // Repli silencieux sur les valeurs par défaut déjà en state.
+      });
+  }, []);
 
   const filteredPrograms = useMemo(() => {
     return ALL_PROGRAMS.filter((p) => {
@@ -158,9 +173,10 @@ export default function ProgrammesPage() {
     <div>
       {/* Hero Section */}
       <HeroSection
-        badge="Catalogue des Formations"
-        title="Explorez nos Cursus Académiques et Certifiants"
-        subtitle="De la Classe Préparatoire MP2I à nos Licences Professionnelles et Formations Continues, découvrez l'offre d'excellence de DigiSET Institute."
+        badge={content.hero_badge}
+        title={content.hero_title}
+        subtitle={content.hero_subtitle}
+        backgroundImageUrl={content.hero_image_url}
         breadcrumbs={[{ label: "Programmes" }]}
         primaryCtaText="Poser une candidature"
         primaryCtaHref="/inscription/candidature"

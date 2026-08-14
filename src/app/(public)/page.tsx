@@ -5,8 +5,13 @@ import { FounderSection } from "@/components/shared/founder-section";
 import { CertificationBanner } from "@/components/shared/certification-banner";
 import { ProgramCard } from "@/components/shared/program-card";
 import { HomeFormsSection } from "@/components/shared/home-forms-section";
+import { mergeContentValues } from "@/lib/content-defaults";
+import { getContentBlocks } from "@/lib/content-blocks";
 
-export default function AccueilPage() {
+export default async function AccueilPage() {
+  const blocks = await getContentBlocks("home");
+  const content = mergeContentValues("home", blocks);
+
   return (
     <div className="space-y-0 overflow-x-hidden w-full">
       {/* 1. Hero Principal — Badge de Bienvenue à DigiSET Institute, Image Hero_image1.jpg Grand Format Flottante avec Flou Bas */}
@@ -23,7 +28,7 @@ export default function AccueilPage() {
             <div className="md:col-span-7 space-y-4 sm:space-y-5">
               {/* Badge avec Texte de Bienvenue Visible en Blanc Puro */}
               <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white shadow-xs">
-                Bienvenue à DigiSET Institute — Akanda, Gabon
+                {content.hero_badge}
               </div>
 
               {/* Titre H1 avec trait légèrement courbé stylé designer uniquement sur "Métiers du Numérique" */}
@@ -50,7 +55,7 @@ export default function AccueilPage() {
 
               {/* Description claire et lisible sans soulignement */}
               <p className="text-xs sm:text-sm lg:text-base text-slate-200 leading-relaxed font-body max-w-2xl drop-shadow-2xs">
-                DigiSET Institute forme les futurs experts en Intelligence Artificielle, Cybersécurité et Systèmes de Paiement Électronique (Monétique).
+                {content.hero_subtitle}
               </p>
 
               {/* Boutons d'action avec arrondis 15px et effet de survol dynamique */}
@@ -94,7 +99,7 @@ export default function AccueilPage() {
             <div className="hidden md:block md:col-span-5 relative">
               <div className="relative w-full h-[460px] md:h-[500px] lg:h-[540px] animate-float rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-900 group">
                 <Image
-                  src="/images/img/Hero_image1.jpg"
+                  src={content.hero_image_url}
                   alt="DigiSET Institute Campus et Étudiants"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -149,11 +154,11 @@ export default function AccueilPage() {
                     Axe 1 — Rigueur
                   </span>
                   <h3 className="font-heading text-lg sm:text-xl font-extrabold text-white mt-1">
-                    Exigence Académique ECTS
+                    {content.mission_axis_1_title}
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-body">
-                  Des cursus rigoureux alignés sur les standards européens avec 60 ECTS par an, garantissant la transférabilité internationale du diplôme et les poursuites d&apos;études en cycle ingénieur.
+                  {content.mission_axis_1_text}
                 </p>
               </div>
 
@@ -178,11 +183,11 @@ export default function AccueilPage() {
                     Axe 2 — Pratique
                   </span>
                   <h3 className="font-heading text-lg sm:text-xl font-extrabold text-white mt-1">
-                    Laboratoires TP Haute Technologie
+                    {content.mission_axis_2_title}
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-100 leading-relaxed font-body">
-                  Des plateaux scientifiques de pointe équipés en optique, électricité, serveurs sous Linux/Python et bancs de cybersécurité SOC accessibles dès la 1ère année d&apos;études.
+                  {content.mission_axis_2_text}
                 </p>
               </div>
 
@@ -207,11 +212,11 @@ export default function AccueilPage() {
                     Axe 3 — Emploi
                   </span>
                   <h3 className="font-heading text-lg sm:text-xl font-extrabold text-white mt-1">
-                    Partenariats Certifiants
+                    {content.mission_axis_3_title}
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-body">
-                  Intégration directe des examens de certification mondiaux Cisco, Microsoft, AWS, Linux LPIC et CompTIA Security+ dans le cursus académique.
+                  {content.mission_axis_3_text}
                 </p>
               </div>
 

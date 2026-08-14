@@ -3,15 +3,49 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registrationSchema, type RegistrationInput } from "@/lib/validations/registration";
-import { Loader2, CheckCircle2, AlertCircle, Send, Upload, FileCheck, ChevronDown } from "lucide-react";
+import {
+  registrationSchema,
+  type RegistrationInput,
+  ATTACHMENT_FIELDS,
+  MAX_ATTACHMENT_SIZE_BYTES,
+  ALLOWED_ATTACHMENT_TYPES,
+} from "@/lib/validations/registration";
+import { Loader2, CheckCircle2, AlertCircle, Send, Upload, FileCheck, ChevronDown, X } from "lucide-react";
 import { SubmissionSuccessModal } from "./submission-success-modal";
+
+type AttachmentField = (typeof ATTACHMENT_FIELDS)[number];
+
+const ATTACHMENT_LABELS: Record<AttachmentField, string> = {
+  bulletin: "Bulletin / Relevé de notes",
+  diplome: "Diplôme obtenu (Bac, BTS, DUT...)",
+  cv: "CV",
+  photo: "Photo d'identité",
+};
+
+const EMPTY_ATTACHMENTS: Record<AttachmentField, File[]> = {
+  bulletin: [],
+  diplome: [],
+  cv: [],
+  photo: [],
+};
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} o`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
+}
 
 export function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [attachments, setAttachments] = useState<Record<AttachmentField, File[]>>(EMPTY_ATTACHMENTS);
+  const [attachmentErrors, setAttachmentErrors] = useState<Record<AttachmentField, string | null>>({
+    bulletin: null,
+    diplome: null,
+    cv: null,
+    photo: null,
+  });
   const [lastSubmitted, setLastSubmitted] = useState<{ email: string; phone: string } | null>(null);
 
   const {
@@ -30,16 +64,58 @@ export function RegistrationForm() {
     },
   });
 
+  const handleFilesSelected = (field: AttachmentField, fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+
+    const accepted: File[] = [];
+    let rejectionMessage: string | null = null;
+
+    for (const file of Array.from(fileList)) {
+      if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
+        rejectionMessage = `"${file.name}" dépasse 5 Mo et a été ignoré.`;
+        continue;
+      }
+      if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
+        rejectionMessage = `"${file.name}" n'est pas un PDF/PNG/JPG et a été ignoré.`;
+        continue;
+      }
+      accepted.push(file);
+    }
+
+    setAttachments((prev) => ({ ...prev, [field]: [...prev[field], ...accepted] }));
+    setAttachmentErrors((prev) => ({ ...prev, [field]: rejectionMessage }));
+  };
+
+  const removeFile = (field: AttachmentField, index: number) => {
+    setAttachments((prev) => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index),
+    }));
+  };
+
   const onSubmit = async (data: RegistrationInput) => {
     setIsSubmitting(true);
     setSubmitError(null);
     setSubmitSuccess(false);
 
     try {
+      const formData = new FormData();
+      formData.append("fullName", data.fullName);
+      formData.append("phone", data.phone);
+      formData.append("email", data.email);
+      formData.append("lastDiploma", data.lastDiploma);
+      formData.append("desiredProgramId", data.desiredProgramId ?? "");
+      formData.append("website", data.website ?? "");
+
+      for (const field of ATTACHMENT_FIELDS) {
+        for (const file of attachments[field]) {
+          formData.append(field, file);
+        }
+      }
+
       const response = await fetch("/api/submissions/registration", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       const result = await response.json();
@@ -51,7 +127,8 @@ export function RegistrationForm() {
       setLastSubmitted({ email: data.email, phone: data.phone });
       setSubmitSuccess(true);
       reset();
-      setSelectedFileName(null);
+      setAttachments(EMPTY_ATTACHMENTS);
+      setAttachmentErrors({ bulletin: null, diplome: null, cv: null, photo: null });
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Erreur de connexion.");
     } finally {
@@ -63,7 +140,7 @@ export function RegistrationForm() {
     <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm">
       <div className="mb-6">
         <h2 className="font-heading text-lg sm:text-xl font-extrabold text-slate-900">
-          Formulaire de Candidature Étudiant — Rentrée Septembre 2026
+          Formulaire de Candidature Étudiant — Rentrée Octobre 2026
         </h2>
         <p className="text-xs text-slate-600 mt-1">
           Déposez votre dossier d&apos;inscription en ligne. Notre secrétariat académique étudiera votre profil sous 48h.
@@ -182,40 +259,66 @@ export function RegistrationForm() {
             </div>
           </div>
 
-          {/* Upload de pièces jointes */}
-          <div className="pt-2">
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Pièce Jointe (Relevé de notes, Bac ou Bulletin - PDF/PNG/JPG)
+          {/* Upload de pièces jointes — 4 catégories, multi-fichiers */}
+          <div className="pt-2 space-y-4">
+            <label className="block text-xs font-bold text-slate-700">
+              Pièces Jointes (PDF, PNG ou JPG — 5 Mo max par fichier, plusieurs fichiers autorisés par catégorie)
             </label>
-            <div className="relative border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-brand-orange transition-colors bg-slate-50/50">
-              <input
-                type="file"
-                accept=".pdf,.png,.jpg,.jpeg"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    setSelectedFileName(e.target.files[0].name);
-                  }
-                }}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-              <div className="flex flex-col items-center justify-center space-y-1">
-                {selectedFileName ? (
-                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-600">
-                    <FileCheck className="h-5 w-5" />
-                    <span>Fichier sélectionné : {selectedFileName}</span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {ATTACHMENT_FIELDS.map((field) => (
+                <div key={field} className="space-y-2">
+                  <span className="block text-[11px] font-bold text-slate-600">{ATTACHMENT_LABELS[field]}</span>
+
+                  <div className="relative border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-brand-orange transition-colors bg-slate-50/50">
+                    <input
+                      type="file"
+                      multiple
+                      accept=".pdf,.png,.jpg,.jpeg"
+                      onChange={(e) => {
+                        handleFilesSelected(field, e.target.files);
+                        e.target.value = "";
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div className="flex flex-col items-center justify-center space-y-1">
+                      <Upload className="h-5 w-5 text-slate-400" />
+                      <span className="text-[11px] font-semibold text-slate-700">
+                        Cliquez ou glissez vos fichiers ici
+                      </span>
+                    </div>
                   </div>
-                ) : (
-                  <>
-                    <Upload className="h-6 w-6 text-slate-400" />
-                    <span className="text-xs font-semibold text-slate-700">
-                      Glissez votre fichier ici ou cliquez pour parcourir
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      Taille maximale : 5 Mo (PDF, PNG ou JPG)
-                    </span>
-                  </>
-                )}
-              </div>
+
+                  {attachmentErrors[field] && (
+                    <p className="text-[10px] font-medium text-red-600">{attachmentErrors[field]}</p>
+                  )}
+
+                  {attachments[field].length > 0 && (
+                    <ul className="space-y-1">
+                      {attachments[field].map((file, index) => (
+                        <li
+                          key={`${field}-${file.name}-${file.size}-${index}`}
+                          className="flex items-center justify-between gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-1.5"
+                        >
+                          <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-700 truncate">
+                            <FileCheck className="h-3.5 w-3.5 shrink-0" />
+                            <span className="truncate">{file.name}</span>
+                            <span className="text-emerald-500 font-medium shrink-0">({formatFileSize(file.size)})</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(field, index)}
+                            className="text-emerald-600 hover:text-red-600 transition-colors shrink-0 cursor-pointer"
+                            aria-label={`Retirer ${file.name}`}
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 

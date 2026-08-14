@@ -14,6 +14,7 @@ import {
   PlusCircle,
   X,
   LucideIcon,
+  FileText,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -66,6 +67,11 @@ export function AdminSidebar({
           href: "/admin/actualites",
           label: "Actualités & Articles",
           icon: Newspaper,
+        },
+        {
+          href: "/admin/pages",
+          label: "Contenu des Pages",
+          icon: FileText,
         },
         {
           href: "/admin/galerie",
