@@ -255,10 +255,10 @@ export default async function AccueilPage() {
                   Bacheliers & Étudiants
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Formation Initiale (Bac à Bac+3)
+                  {content.situation_1_title}
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Intégrez notre Classe Préparatoire MP2I (2 ans) ou notre Licence Professionnelle (1 an) avec nos 3 options d&apos;avenir en IA, Cybersécurité et Monétique.
+                  {content.situation_1_text}
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100">
@@ -281,10 +281,10 @@ export default async function AccueilPage() {
                   Entreprises & Administrations
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Formations Continues pour Entreprises
+                  {content.situation_2_title}
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Accélérez la montée en compétences de vos équipes avec nos programmes certifiants : en groupe dans nos salles DigiSET ou sur-mesure directement dans vos locaux d'entreprise.
+                  {content.situation_2_text}
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100">
@@ -307,10 +307,10 @@ export default async function AccueilPage() {
                   Organisations & DSI
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Consulting IT & Transformations
+                  {content.situation_3_title}
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Accompagnement stratégique, audit de sécurité des SI, mise en place de SOC et conseil en transformation numérique à haute valeur ajoutée.
+                  {content.situation_3_text}
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100">
@@ -351,9 +351,9 @@ export default async function AccueilPage() {
             
             {/* BLOC 1 : Formation Initiale (Englobe toute la formation diplômante) */}
             <ProgramCard
-              title="Formation Initiale Diplômante"
+              title={content.catalog_1_title}
               category="Initiale"
-              description="Regroupe l'ensemble de nos formations académiques initiales : la Classe Préparatoire MP2I (2 ans) et notre Licence Professionnelle (1 an) déclinée en 3 options spécialisées."
+              description={content.catalog_1_text}
               duration="1 à 2 ans (60 - 120 ECTS)"
               targetPublic="Bacheliers scientifiques & diplômés Bac+2"
               highlights={[
@@ -370,9 +370,9 @@ export default async function AccueilPage() {
 
             {/* BLOC 2 : Formation Continue (Formations Inter & Intra-Entreprises) */}
             <ProgramCard
-              title="Formations Continues & Sur-Mesure"
+              title={content.catalog_2_title}
               category="Continue"
-              description="Formations professionnelles courtes et certifiantes pour accélérer la montée en compétences de vos équipes. Dispensées dans nos centres DigiSET ou directement dans vos locaux d'entreprise."
+              description={content.catalog_2_text}
               duration="3 à 10 jours ou sur-mesure"
               targetPublic="Dirigeants, DSI, cadres, ingénieurs et collaborateurs"
               highlights={[
@@ -388,9 +388,9 @@ export default async function AccueilPage() {
 
             {/* BLOC 3 : Formations Online (DigiSET Online) */}
             <ProgramCard
-              title="Formations Online (DigiSET Online)"
+              title={content.catalog_3_title}
               category="Online"
-              description="Déclinaison en ligne de nos programmes diplômants et certifiants avec plateforme LMS interactive, classes virtuelles et suivi personnalisé par tuteur dédié."
+              description={content.catalog_3_text}
               duration="Rythme flexible / À distance"
               targetPublic="Professionnels en activité & étudiants éloignés"
               highlights={[
@@ -445,10 +445,10 @@ export default async function AccueilPage() {
                   Rang 1 — Stratégie
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Direction Générale & Présidence
+                  {content.pole_1_title}
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Supervisée par le Dr ABAGA ABESSOLO Michel Audrey. Pilotage stratégique, alliances institutionnelles et gouvernance globale de l&apos;Institut.
+                  {content.pole_1_text}
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">
@@ -466,10 +466,10 @@ export default async function AccueilPage() {
                   Rang 2 — Académique
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Pôle Formations & Conseil Scientifique
+                  {content.pole_2_title}
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Dirigé par la Direction des Études et le Conseil Académique. Conception des maquettes ECTS, accreditations et suivi pédagogique.
+                  {content.pole_2_text}
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">
@@ -487,10 +487,10 @@ export default async function AccueilPage() {
                   Rang 3 — Opérationnel
                 </span>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 mt-1">
-                  Pôle Services & Plateaux TP
+                  {content.pole_3_title}
                 </h3>
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                  Chefs de projets Cybersécurité (SOC), IA, Monétique PCI-DSS et responsable de la mise à disposition des laboratoires pour les lycées.
+                  {content.pole_3_text}
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">
@@ -528,7 +528,7 @@ export default async function AccueilPage() {
                   <MapPin className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                   <div>
                     <strong className="block text-slate-900 font-bold">Adresse Géographique :</strong>
-                    <span>Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon</span>
+                    <span>{content.location_address}</span>
                   </div>
                 </div>
 
@@ -536,7 +536,7 @@ export default async function AccueilPage() {
                   <Phone className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <strong className="block text-slate-900 font-bold">Téléphone & WhatsApp :</strong>
-                    <span>+241 (0) 74 00 00 00 / +241 (0) 66 00 00 00</span>
+                    <span>{content.location_phone}</span>
                   </div>
                 </div>
 
@@ -544,7 +544,7 @@ export default async function AccueilPage() {
                   <Mail className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                   <div>
                     <strong className="block text-slate-900 font-bold">Contact Email :</strong>
-                    <span>contact@digiset-gabon.com</span>
+                    <span>{content.location_email}</span>
                   </div>
                 </div>
               </div>

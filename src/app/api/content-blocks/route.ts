@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getContentBlocks } from "@/lib/content-blocks";
+import { requireSuperAdmin } from "@/lib/admin-auth";
 
 export interface ContentBlock {
   page_key: string;
@@ -44,6 +45,9 @@ export async function GET(request: NextRequest) {
  * Écrase (upsert) l'ensemble des blocs fournis pour cette page.
  */
 export async function PATCH(request: NextRequest) {
+  const { response: authError } = await requireSuperAdmin();
+  if (authError) return authError;
+
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
       { ok: false, error: "Supabase non configuré — le mini-CMS nécessite une base de données." },

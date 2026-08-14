@@ -1,10 +1,29 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { mergeContentValues } from "@/lib/content-defaults";
+import type { ContentBlock } from "@/app/api/content-blocks/route";
 
 export function FounderSection() {
+  const [content, setContent] = useState<Record<string, string>>(() => mergeContentValues("founder", []));
+
+  useEffect(() => {
+    fetch("/api/content-blocks?page_key=founder")
+      .then((res) => res.json())
+      .then((json) => {
+        const blocks: ContentBlock[] = json.ok && Array.isArray(json.data) ? json.data : [];
+        setContent(mergeContentValues("founder", blocks));
+      })
+      .catch(() => {
+        // Repli silencieux sur les valeurs par défaut déjà en state.
+      });
+  }, []);
+
   return (
     <section className="bg-brand-blue-dark text-white py-14 sm:py-20 border-y border-white/10 relative overflow-hidden">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
+
         {/* Titre avec soulignement stylé et professionnel uniquement sous le titre */}
         <div className="text-center mb-10 sm:mb-14">
           <div className="inline-block">
@@ -17,14 +36,14 @@ export function FounderSection() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* Portrait du Fondateur Dr ABAGA ABESSOLO Michel Audrey */}
+
+          {/* Portrait du Fondateur */}
           <div className="lg:col-span-5 flex justify-center order-2 lg:order-1">
             <div className="relative group w-full max-w-sm sm:max-w-md">
               <div className="relative h-[380px] sm:h-[460px] w-full overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
                 <Image
-                  src="/brand/fondateur.png"
-                  alt="Dr ABAGA ABESSOLO Michel Audrey - Fondateur de DigiSET Institute"
+                  src={content.photo_url}
+                  alt={`${content.full_name} - Fondateur de DigiSET Institute`}
                   fill
                   className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
                   sizes="(max-width: 1024px) 100vw, 420px"
@@ -43,23 +62,18 @@ export function FounderSection() {
             </div>
 
             <div className="text-slate-100 text-xs sm:text-sm lg:text-base leading-relaxed space-y-4 font-body -mt-4 text-justify sm:text-left">
-              <p>
-                La transformation numérique redéfinit profondément les économies, les administrations et les modes de vie. Au Gabon, comme dans l&apos;ensemble de l&apos;Afrique, elle constitue une priorité stratégique pour renforcer la compétitivité, stimuler l&apos;innovation et accélérer le développement durable. Dans cette dynamique, DigiSET Institute a été créé avec une ambition claire : contribuer au développement d&apos;un capital humain d&apos;excellence capable de relever les défis du numérique. Notre institut s&apos;inscrit pleinement dans les politiques nationales de transformation numérique du Gabon ainsi que dans les grandes orientations continentales en faveur d&apos;une Afrique plus connectée, plus innovante et davantage tournée vers l&apos;économie de la connaissance. À travers nos formations initiales, nous préparons une nouvelle génération de professionnels, d&apos;ingénieurs et de spécialistes dotés des compétences techniques, scientifiques et humaines nécessaires pour bâtir le numérique de demain.
-              </p>
-
-              <p>
-                La réussite de cette transformation repose également sur la montée en compétences des femmes et des hommes déjà engagés dans les entreprises et les administrations. C&apos;est pourquoi la formation professionnelle constitue le second pilier de notre stratégie de développement. DigiSET Institute accompagne les organisations publiques et privées à travers des formations continues, des certifications professionnelles et des prestations de consulting adaptées à leurs enjeux de modernisation, de cybersécurité, d&apos;intelligence artificielle, de gestion des données et de transformation digitale. Notre ambition est de faire de DigiSET Institute un partenaire de référence pour le développement des compétences numériques en Afrique, en créant des passerelles durables entre le monde académique, les entreprises et les institutions publiques afin d&apos;accélérer la transformation numérique du continent.
-              </p>
+              <p>{content.quote_paragraph_1}</p>
+              <p>{content.quote_paragraph_2}</p>
             </div>
 
             {/* Signature officielle */}
             <div className="pt-4 border-t border-white/15 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <div className="font-heading font-extrabold text-white text-sm sm:text-base">
-                  Dr ABAGA ABESSOLO Michel Audrey
+                  {content.full_name}
                 </div>
                 <div className="text-xs text-brand-orange font-semibold">
-                  Fondateur de DigiSET Institute
+                  {content.role_title}
                 </div>
               </div>
 

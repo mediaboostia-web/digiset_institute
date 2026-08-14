@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/admin-auth";
 
 const UUID_FOLDER_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\//i;
 
@@ -17,6 +18,9 @@ function isValidAttachmentPath(path: string): boolean {
  * dont la policy de lecture n'autorise que le client service-role (cf. migration 0002).
  */
 export async function GET(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   const path = request.nextUrl.searchParams.get("path");
 
   if (!path || !isValidAttachmentPath(path)) {

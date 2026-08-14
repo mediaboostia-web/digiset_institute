@@ -3,6 +3,8 @@ import { HeroSection } from "@/components/shared/hero-section";
 import { ContactForm } from "@/components/forms/contact-form";
 import { FaqSection } from "@/components/shared/faq-section";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { mergeContentValues } from "@/lib/content-defaults";
+import { getContentBlocks } from "@/lib/content-blocks";
 
 export const metadata: Metadata = {
   title: "Contact & Accès Campus Akanda — Foire Aux Questions (FAQ)",
@@ -10,13 +12,16 @@ export const metadata: Metadata = {
     "Contactez le secrétariat académique de DigiSET Institute à Akanda, Gabon. Formulaire de contact, numéros de téléphone, carte interactive Google Maps et FAQ.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const blocks = await getContentBlocks("contact");
+  const content = mergeContentValues("contact", blocks);
+
   return (
     <div>
       <HeroSection
-        badge="Accès & Secrétariat Académique"
-        title="Contactez DigiSET Institute"
-        subtitle="Nos conseillers académiques et responsables d'admission sont à votre disposition pour vous orienter et répondre à vos questions."
+        badge={content.hero_badge}
+        title={content.hero_title}
+        subtitle={content.hero_subtitle}
         breadcrumbs={[{ label: "Contact" }]}
       />
 
@@ -42,7 +47,7 @@ export default function ContactPage() {
                     <MapPin className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
                     <div>
                       <strong className="block text-slate-900 font-bold">Adresse Géographique :</strong>
-                      <span>Angondje, Carrefour Moussavou, Akanda — Libreville, Gabon</span>
+                      <span>{content.coord_address}</span>
                     </div>
                   </div>
 
@@ -50,7 +55,7 @@ export default function ContactPage() {
                     <Phone className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                     <div>
                       <strong className="block text-slate-900 font-bold">Téléphone & WhatsApp Scolarité :</strong>
-                      <span>+241 (0) 74 00 00 00 / +241 (0) 66 00 00 00</span>
+                      <span>{content.coord_phone}</span>
                     </div>
                   </div>
 
@@ -58,7 +63,7 @@ export default function ContactPage() {
                     <Mail className="h-5 w-5 text-brand-blue shrink-0 mt-0.5" />
                     <div>
                       <strong className="block text-slate-900 font-bold">Email de Contact :</strong>
-                      <span>contact@digiset-gabon.com</span>
+                      <span>{content.coord_email}</span>
                     </div>
                   </div>
 
@@ -66,8 +71,9 @@ export default function ContactPage() {
                     <Clock className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
                       <strong className="block text-slate-900 font-bold">Horaires d&apos;Ouverture Secrétariat :</strong>
-                      <span>Du Lundi au Vendredi : 08h00 – 17h00</span>
-                      <span className="block">Samedi : 08h30 – 12h30</span>
+                      {content.coord_hours.split("\n").map((line, idx) => (
+                        <span key={idx} className="block">{line}</span>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -106,8 +112,8 @@ export default function ContactPage() {
 
       {/* SECTION FAQ intégrée sur la page de contact */}
       <FaqSection
-        title="Foire Aux Questions — Admissions & Campus"
-        subtitle="Retrouvez les 5 questions essentielles posées fréquemment par les candidats et les établissements."
+        title={content.faq_title}
+        subtitle={content.faq_subtitle}
       />
     </div>
   );

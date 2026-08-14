@@ -238,13 +238,13 @@ export default function InstitutionPage() {
           
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-              Gouvernance & Équipe Dirigeante
+              {content.org_badge}
             </span>
             <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900">
-              Organigramme Structuré en 3 Rangs Hiérarchiques
+              {content.org_title}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600">
-              Présentation en temps réel de l&apos;équipe dirigeante, des responsables de pôles de formation et des plateaux techniques.
+              {content.org_subtitle}
             </p>
           </div>
 
@@ -323,13 +323,13 @@ export default function InstitutionPage() {
           
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-orange bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
-              Certifications & Partenariats
+              {content.partners_badge}
             </span>
             <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900">
-              Partenaires Technologiques Officiels
+              {content.partners_title}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600">
-              Nos cursus académiques préparent directement aux diplômes certifiants reconnus par les géants mondiaux du secteur.
+              {content.partners_subtitle}
             </p>
           </div>
 

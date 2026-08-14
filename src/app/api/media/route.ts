@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getGlobalMedia, addMediaItem, updateMediaItem, deleteMediaItem, MediaItem } from "@/lib/media-store";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export async function GET() {
   const cacheHeaders = {
@@ -40,6 +41,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     if (!body.url || !body.title) {
@@ -82,6 +86,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { id, ...updates } = body;
@@ -117,6 +124,9 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

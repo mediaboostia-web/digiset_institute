@@ -226,10 +226,10 @@ export default function ProgrammesPage() {
           <div className="mt-16 rounded-2xl bg-brand-blue-dark text-white p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
             <div className="space-y-2 text-center md:text-left">
               <h3 className="font-heading text-xl font-bold">
-                Vous hésitez sur le choix de votre programme ?
+                {content.cta_banner_title}
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-                Nos conseillers d&apos;orientation académique sont disponibles pour vous guider selon votre profil et votre projet professionnel.
+                {content.cta_banner_text}
               </p>
             </div>
             <Link

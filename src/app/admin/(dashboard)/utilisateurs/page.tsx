@@ -55,10 +55,10 @@ export default function AdminUsersPage() {
     full_name: "",
     email: "",
     password: "",
-    role: "editor" as "super_admin" | "editor" | "admin",
+    role: "editor" as "super_admin" | "editor",
   });
 
-  const [currentUserRole, setCurrentUserRole] = useState<"super_admin" | "editor" | "admin">("super_admin");
+  const [currentUserRole, setCurrentUserRole] = useState<"super_admin" | "editor">("super_admin");
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -271,11 +271,6 @@ export default function AdminUsersPage() {
                           <ShieldCheck className="h-3 w-3 text-purple-600" />
                           Super Administrateur
                         </Badge>
-                      ) : user.role === "admin" ? (
-                        <Badge className="bg-blue-100 text-blue-800 border-blue-200 gap-1 font-bold text-[10px]">
-                          <ShieldCheck className="h-3 w-3 text-brand-blue" />
-                          Administrateur
-                        </Badge>
                       ) : (
                         <Badge className="bg-slate-100 text-slate-700 border-slate-200 gap-1 font-bold text-[10px]">
                           <Users className="h-3 w-3 text-slate-500" />
@@ -405,7 +400,7 @@ export default function AdminUsersPage() {
                 value={formData.role}
                 onValueChange={(val) => {
                   if (val) {
-                    setFormData((prev) => ({ ...prev, role: val as "super_admin" | "editor" | "admin" }));
+                    setFormData((prev) => ({ ...prev, role: val as "super_admin" | "editor" }));
                   }
                 }}
               >
@@ -415,9 +410,6 @@ export default function AdminUsersPage() {
                 <SelectContent className="rounded-xl shadow-xl border-slate-200">
                   <SelectItem value="editor" className="rounded-lg text-xs sm:text-sm py-2.5">
                     Éditeur de Contenu (Publication & Rédaction)
-                  </SelectItem>
-                  <SelectItem value="admin" className="rounded-lg text-xs sm:text-sm py-2.5">
-                    Administrateur (Gestion des Contenus & Soumissions)
                   </SelectItem>
                   <SelectItem value="super_admin" className="rounded-lg text-xs sm:text-sm py-2.5">
                     Super Administrateur (Accès Total & Gestion Comptes)

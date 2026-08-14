@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { Resend } from "resend";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export async function POST(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const { recipient } = await request.json();
 

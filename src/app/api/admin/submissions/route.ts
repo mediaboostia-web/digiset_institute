@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AnySubmission } from "@/lib/admin-data";
+import { requireAdmin } from "@/lib/admin-auth";
 
 const TABLE_MAP: Record<string, string> = {
   registration: "submissions_registration",
@@ -14,6 +15,9 @@ const TABLE_MAP: Record<string, string> = {
  * Récupère l'ensemble des soumissions (candidatures, formations, labo, contact) depuis Supabase.
  */
 export async function GET() {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const admin = createAdminClient();
 
@@ -120,6 +124,9 @@ export async function GET() {
  * Met à jour le statut d'une soumission dans Supabase.
  */
 export async function PATCH(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const { id, type, status } = await request.json();
 
@@ -149,6 +156,9 @@ export async function PATCH(request: NextRequest) {
  * Supprime une soumission dans Supabase.
  */
 export async function DELETE(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

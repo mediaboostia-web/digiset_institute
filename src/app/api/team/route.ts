@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getGlobalTeam, addTeamMember, updateTeamMember, deleteTeamMember } from "@/lib/team-store";
 import { TeamMember } from "@/lib/admin-data";
 import { randomUUID } from "crypto";
+import { requireAdmin } from "@/lib/admin-auth";
 
 function isUUID(str: string): boolean {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -39,6 +40,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const rawId = body.id;
@@ -89,6 +93,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { id, ...updates } = body;
@@ -127,6 +134,9 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

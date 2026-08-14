@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { HeroSection } from "@/components/shared/hero-section";
 import { FlaskConical, Briefcase, Building2, ArrowRight, ShieldCheck, CheckCircle } from "lucide-react";
+import { mergeContentValues } from "@/lib/content-defaults";
+import { getContentBlocks } from "@/lib/content-blocks";
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const blocks = await getContentBlocks("services");
+  const content = mergeContentValues("services", blocks);
+
   return (
     <div>
       <HeroSection
-        badge="Offre B2B & Organisations"
-        title="Nos Services aux Entreprises & Administrations"
-        subtitle="DigiSET accompagne les entreprises et institutions à travers nos deux piliers stratégiques : le Consulting IT à haute valeur ajoutée et nos Formations professionnelles Inter et Intra-Entreprises."
+        badge={content.hero_badge}
+        title={content.hero_title}
+        subtitle={content.hero_subtitle}
         breadcrumbs={[{ label: "Services" }]}
       />
 
@@ -29,10 +34,10 @@ export default function ServicesPage() {
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-brand-orange">Service Expertise 1</span>
                 <h3 className="font-heading text-xl font-extrabold text-slate-900">
-                  Consulting IT & Transformations Digitales
+                  {content.card1_title}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Accompagnement stratégique et opérationnel des entreprises et institutions publiques dans leurs projets de transformation numérique, d&apos;audit de cybersécurité, de gouvernance SI et d&apos;ingénierie monétique.
+                  {content.card1_text}
                 </p>
                 <div className="space-y-2 pt-2 text-xs text-slate-700">
                   <div className="flex items-center gap-2">
@@ -72,10 +77,10 @@ export default function ServicesPage() {
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">Service Expertise 2</span>
                 <h3 className="font-heading text-xl font-extrabold text-slate-900">
-                  Formations Inter et Intra-Entreprises
+                  {content.card2_title}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Programmes de renforcement de compétences sur-mesure pour vos collaborateurs. Sessions organisées en format Inter-entreprises (dans nos centres de formation) ou Intra-entreprise (directement dans vos locaux).
+                  {content.card2_text}
                 </p>
                 <div className="space-y-2 pt-2 text-xs text-slate-700">
                   <div className="flex items-center gap-2">
@@ -113,10 +118,10 @@ export default function ServicesPage() {
                 <span>Service Partenaire Établissements</span>
               </div>
               <h4 className="font-heading text-lg font-bold text-slate-900">
-                Mise à disposition de nos Laboratoires de TP
+                {content.card3_title}
               </h4>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Mise à disposition de nos plateaux techniques de physique, d&apos;optique et d&apos;électronique pour les classes préparatoires et lycées partenaires de Libreville.
+                {content.card3_text}
               </p>
             </div>
             <Link

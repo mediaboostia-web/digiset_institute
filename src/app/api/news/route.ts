@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getGlobalNews, getNewsBySlug, addNewsItem, updateNewsItem, deleteNewsItem, slugify } from "@/lib/news-store";
 import type { NewsItem, ContentStatus } from "@/lib/admin-data";
+import { requireAdmin } from "@/lib/admin-auth";
 
 function encodeArticleBody(
   body: string,
@@ -120,6 +121,9 @@ export async function GET(request: NextRequest) {
  * Création d'un nouvel article depuis le backoffice
  */
 export async function POST(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { title, slug, category, excerpt, body: articleBody, cover_image_url, status, tags, cta_text, cta_url } = body;
@@ -185,6 +189,9 @@ export async function POST(request: NextRequest) {
  * PATCH /api/news
  */
 export async function PATCH(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { id, title, slug, category, excerpt, body: articleBody, cover_image_url, status, tags, cta_text, cta_url } = body;
@@ -238,6 +245,9 @@ export async function PATCH(request: NextRequest) {
  * DELETE /api/news?id=...
  */
 export async function DELETE(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

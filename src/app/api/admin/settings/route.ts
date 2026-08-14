@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DEFAULT_SITE_SETTINGS, SiteSettings } from "@/lib/site-settings";
+import { requireAdmin } from "@/lib/admin-auth";
 
 /**
  * Repli "mode sans Supabase" uniquement — dès que Supabase est configuré,
@@ -34,6 +35,9 @@ function rowToSettings(row: Record<string, unknown> | null): SiteSettings {
 }
 
 export async function GET() {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ ok: true, data: devFallbackStore });
   }
@@ -54,6 +58,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = (await request.json()) as Partial<SiteSettings>;
 

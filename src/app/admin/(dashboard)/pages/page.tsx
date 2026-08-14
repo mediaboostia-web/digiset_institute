@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
-import { Loader2, CheckCircle2, AlertCircle, Save, ImageIcon } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, Save, ImageIcon, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { MediaPickerModal } from "@/components/admin/media-picker-modal";
 import { PAGE_CONTENT_DEFS, type ContentBlockDef } from "@/lib/content-defaults";
 import type { ContentBlock } from "@/app/api/content-blocks/route";
@@ -20,6 +21,19 @@ export default function AdminPagesContentPage() {
   const [mediaPickerFor, setMediaPickerFor] = useState<string | null>(null);
 
   const pageDef = PAGE_CONTENT_DEFS.find((def) => def.pageKey === selectedPageKey)!;
+
+  const sections = useMemo(() => {
+    const order: string[] = [];
+    const grouped = new Map<string, ContentBlockDef[]>();
+    for (const block of pageDef.blocks) {
+      if (!grouped.has(block.section)) {
+        grouped.set(block.section, []);
+        order.push(block.section);
+      }
+      grouped.get(block.section)!.push(block);
+    }
+    return order.map((section) => ({ section, blocks: grouped.get(section)! }));
+  }, [pageDef]);
 
   const loadPage = useCallback(async (pageKey: string) => {
     setIsLoading(true);
@@ -69,7 +83,12 @@ export default function AdminPagesContentPage() {
       });
       const json = await res.json();
 
-      if (!json.ok) throw new Error(json.error || "Erreur d'enregistrement.");
+      if (!json.ok) {
+        if (res.status === 403) {
+          throw new Error("Réservé aux Super-Administrateurs — contactez la Direction pour modifier ce contenu.");
+        }
+        throw new Error(json.error || "Erreur d'enregistrement.");
+      }
       setSaveSuccess(true);
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : "Erreur de connexion.");
@@ -136,17 +155,22 @@ export default function AdminPagesContentPage() {
         <p className="text-xs text-gray-500 mt-1">
           Modifiez les textes et images clés du site public. Un champ laissé vide affiche le contenu par défaut.
         </p>
+        <div className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-amber-700">
+          <ShieldAlert className="h-3.5 w-3.5" />
+          <span>Enregistrement réservé aux comptes Super-Administrateur.</span>
+        </div>
       </div>
 
-      <div className="flex gap-2 border-b border-gray-200">
+      <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
         {PAGE_CONTENT_DEFS.map((def) => (
           <button
             key={def.pageKey}
+            type="button"
             onClick={() => setSelectedPageKey(def.pageKey)}
-            className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
+            className={`shrink-0 rounded-full px-4 py-2 text-xs sm:text-sm font-bold whitespace-nowrap border transition-colors cursor-pointer ${
               selectedPageKey === def.pageKey
-                ? "border-brand-orange text-brand-blue-dark"
-                : "border-transparent text-gray-500 hover:text-gray-800"
+                ? "bg-brand-blue-dark text-white border-brand-blue-dark shadow-sm"
+                : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-gray-900"
             }`}
           >
             {def.label}
@@ -173,12 +197,29 @@ export default function AdminPagesContentPage() {
             </div>
           )}
 
-          {pageDef.blocks.map((block) => (
-            <div key={block.key}>
-              <label className="block text-xs font-bold text-gray-700 mb-1.5">{block.label}</label>
-              {renderField(block)}
-            </div>
-          ))}
+          <Accordion multiple defaultValue={[sections[0]?.section]} className="space-y-2">
+            {sections.map(({ section, blocks }) => (
+              <AccordionItem
+                key={section}
+                value={section}
+                className="rounded-xl border border-gray-200 px-4 not-last:border-b-0"
+              >
+                <AccordionTrigger className="text-xs sm:text-sm font-bold text-gray-800 hover:no-underline">
+                  {section}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4 pt-1">
+                    {blocks.map((block) => (
+                      <div key={block.key}>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5">{block.label}</label>
+                        {renderField(block)}
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
 
           <div className="pt-2 flex justify-end">
             <Button onClick={handleSave} disabled={isSaving} className="gap-2">

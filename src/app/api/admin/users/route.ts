@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin, requireSuperAdmin } from "@/lib/admin-auth";
 
 export interface AdminUserAccount {
   id: string;
   email: string;
   full_name: string;
-  role: "super_admin" | "editor" | "admin";
+  role: "super_admin" | "editor";
   created_at: string;
   last_sign_in_at?: string;
   is_active: boolean;
@@ -26,6 +27,9 @@ const DEFAULT_SUPERADMIN: AdminUserAccount = {
  * Récupère tous les utilisateurs administrateurs depuis Supabase Auth + admin_users
  */
 export async function GET() {
+  const { response: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const admin = createAdminClient();
 
@@ -44,7 +48,7 @@ export async function GET() {
         id: u.id,
         email: u.email || "",
         full_name: nameMap.get(u.id) || (u.user_metadata?.full_name as string) || u.email?.split("@")[0] || "Administrateur",
-        role: (roleMap.get(u.id) as "super_admin" | "editor" | "admin") || "super_admin",
+        role: (roleMap.get(u.id) as "super_admin" | "editor") || "super_admin",
         created_at: u.created_at,
         last_sign_in_at: u.last_sign_in_at || undefined,
         is_active: true,
@@ -69,6 +73,9 @@ export async function GET() {
  * Création d'un nouvel utilisateur administrateur (par le Super Admin)
  */
 export async function POST(request: NextRequest) {
+  const { response: authError } = await requireSuperAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { email, password, full_name, role } = body;
@@ -132,6 +139,9 @@ export async function POST(request: NextRequest) {
  * Suppression d'un compte administrateur
  */
 export async function DELETE(request: NextRequest) {
+  const { response: authError } = await requireSuperAdmin();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { HeroSection } from "@/components/shared/hero-section";
 import { CheckCircle2, FileText, Calendar, GraduationCap, ArrowRight, Download } from "lucide-react";
+import { mergeContentValues } from "@/lib/content-defaults";
+import { getContentBlocks } from "@/lib/content-blocks";
 
-export default function InscriptionHubPage() {
+export default async function InscriptionHubPage() {
+  const blocks = await getContentBlocks("inscription");
+  const content = mergeContentValues("inscription", blocks);
+
   return (
     <div>
       <HeroSection
-        badge="Scolarité & Admission 2026-2027"
-        title="Rejoignez DigiSET Institute"
-        subtitle="Découvrez la procédure de candidature, les critères d'admissibilité et préparez votre dossier pour la rentrée d'Octobre 2026."
+        badge={content.hero_badge}
+        title={content.hero_title}
+        subtitle={content.hero_subtitle}
         breadcrumbs={[{ label: "Inscription" }]}
         primaryCtaText="Remplir le formulaire en ligne"
         primaryCtaHref="/inscription/candidature"
@@ -20,7 +25,7 @@ export default function InscriptionHubPage() {
           {/* Les 4 étapes d'admission */}
           <div className="space-y-6">
             <h2 className="font-heading text-2xl font-extrabold text-slate-900 text-center">
-              Les 4 Étapes de la Procédure d&apos;Admission
+              {content.process_title}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -54,10 +59,10 @@ export default function InscriptionHubPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
               <h2 className="font-heading text-2xl font-extrabold text-slate-900">
-                Pièces Justificatives à Préparer
+                {content.docs_title}
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Afin de garantir un traitement rapide de votre demande, assurez-vous d&apos;avoir numérisé les pièces suivantes avant de débuter votre candidature.
+                {content.docs_text}
               </p>
 
               <ul className="space-y-2.5 text-xs text-slate-700">
@@ -90,9 +95,9 @@ export default function InscriptionHubPage() {
 
             <div className="lg:col-span-5">
               <div className="rounded-2xl bg-brand-blue-dark text-white p-8 space-y-4">
-                <h3 className="font-heading text-xl font-bold">Prêt à poser votre candidature ?</h3>
+                <h3 className="font-heading text-xl font-bold">{content.cta_title}</h3>
                 <p className="text-xs text-slate-300">
-                  Remplissez directement notre formulaire en ligne sécurisé en moins de 5 minutes.
+                  {content.cta_text}
                 </p>
                 <div className="pt-2">
                   <Link
