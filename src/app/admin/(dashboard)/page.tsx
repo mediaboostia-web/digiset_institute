@@ -87,7 +87,13 @@ export default function AdminDashboardPage() {
         setIsLoading(false);
       }
     }
+
+    // Chargement initial, puis rafraîchissement automatique des cartes KPI
+    // pour refléter les nouvelles soumissions sans que l'admin ait à recharger
+    // la page (même intervalle que le badge de notifications de admin-header.tsx).
     loadData();
+    const interval = setInterval(loadData, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const kpis = calculateKPIs(submissions);

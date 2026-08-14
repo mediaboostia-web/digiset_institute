@@ -57,36 +57,51 @@ export async function POST(request: NextRequest) {
 
   try {
     if (formData) {
-    for (const field of ATTACHMENT_FIELDS) {
-      const files = formData.getAll(field);
+      // Passe 1 : valider tous les fichiers avant tout upload (aucun octet
+      // envoyé à Supabase si un fichier plus loin dans le formulaire est
+      // invalide — évite des uploads orphelins en cas de rejet tardif).
+      const filesToUpload: { field: string; index: number; file: File }[] = [];
 
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index];
-        if (!(file instanceof File) || file.size === 0) continue;
+      for (const field of ATTACHMENT_FIELDS) {
+        const files = formData.getAll(field);
 
-        if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
-          return NextResponse.json(
-            { ok: false, errors: { [field]: "Fichier trop volumineux (5 Mo maximum)." } },
-            { status: 400 },
-          );
+        for (let index = 0; index < files.length; index++) {
+          const file = files[index];
+          if (!(file instanceof File) || file.size === 0) continue;
+
+          if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
+            return NextResponse.json(
+              { ok: false, errors: { [field]: "Fichier trop volumineux (5 Mo maximum)." } },
+              { status: 400 },
+            );
+          }
+          if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
+            return NextResponse.json(
+              { ok: false, errors: { [field]: "Format de fichier non autorisé (PDF, JPG ou PNG uniquement)." } },
+              { status: 400 },
+            );
+          }
+
+          filesToUpload.push({ field, index, file });
         }
-        if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
-          return NextResponse.json(
-            { ok: false, errors: { [field]: "Format de fichier non autorisé (PDF, JPG ou PNG uniquement)." } },
-            { status: 400 },
-          );
-        }
-
-        const path = `${submissionFolder}/${field}-${index}-${file.name}`;
-        const { error: uploadError } = await admin.storage
-          .from("candidate-documents")
-          .upload(path, file, { contentType: file.type, upsert: false });
-
-        if (uploadError) throw uploadError;
-
-        attachments.push({ field, name: file.name, path, size: file.size });
       }
-    }
+
+      // Passe 2 : upload en parallèle (au lieu d'un par un) — le point le
+      // plus lent du formulaire vu que candidats joignent souvent 3-4 fichiers.
+      const uploadResults = await Promise.all(
+        filesToUpload.map(async ({ field, index, file }) => {
+          const path = `${submissionFolder}/${field}-${index}-${file.name}`;
+          const { error: uploadError } = await admin.storage
+            .from("candidate-documents")
+            .upload(path, file, { contentType: file.type, upsert: false });
+
+          if (uploadError) throw uploadError;
+
+          return { field, name: file.name, path, size: file.size };
+        }),
+      );
+
+      attachments.push(...uploadResults);
     }
 
     const PROGRAM_LABELS: Record<string, string> = {
@@ -114,26 +129,29 @@ export async function POST(request: NextRequest) {
 
     if (insertError) throw insertError;
 
-    await sendNotificationEmail({
-      subject: `Nouvelle candidature — ${data.fullName}`,
-      html: `<p>Nouvelle candidature reçue.</p>
-        <p><strong>Nom :</strong> ${data.fullName}<br/>
-        <strong>Téléphone :</strong> ${data.phone}<br/>
-        <strong>Email :</strong> ${data.email}<br/>
-        <strong>Filière souhaitée :</strong> ${programName}<br/>
-        <strong>Dernier diplôme :</strong> ${data.lastDiploma}<br/>
-        <strong>Pièces jointes :</strong> ${attachments.length}</p>
-        <p>Voir dans le back-office : /admin/soumissions</p>`,
-    });
-
-    await sendConfirmationEmail({
-      to: data.email,
-      subject: "Votre candidature a bien été reçue — DigiSET Institute",
-      html: `<p>Bonjour ${data.fullName},</p>
-        <p>Nous avons bien reçu votre candidature pour la formation : <strong>${programName}</strong>.</p>
-        <p>Notre secrétariat académique étudiera votre dossier sous 72h maximum.</p>
-        <p>L'équipe DigiSET Institute</p>`,
-    });
+    // Les deux emails sont indépendants — envoi en parallèle plutôt qu'en
+    // série pour ne pas doubler le temps de réponse perçu par le candidat.
+    await Promise.all([
+      sendNotificationEmail({
+        subject: `Nouvelle candidature — ${data.fullName}`,
+        html: `<p>Nouvelle candidature reçue.</p>
+          <p><strong>Nom :</strong> ${data.fullName}<br/>
+          <strong>Téléphone :</strong> ${data.phone}<br/>
+          <strong>Email :</strong> ${data.email}<br/>
+          <strong>Filière souhaitée :</strong> ${programName}<br/>
+          <strong>Dernier diplôme :</strong> ${data.lastDiploma}<br/>
+          <strong>Pièces jointes :</strong> ${attachments.length}</p>
+          <p>Voir dans le back-office : /admin/soumissions</p>`,
+      }),
+      sendConfirmationEmail({
+        to: data.email,
+        subject: "Votre candidature a bien été reçue — DigiSET Institute",
+        html: `<p>Bonjour ${data.fullName},</p>
+          <p>Nous avons bien reçu votre candidature pour la formation : <strong>${programName}</strong>.</p>
+          <p>Notre secrétariat académique étudiera votre dossier sous 72h maximum.</p>
+          <p>L'équipe DigiSET Institute</p>`,
+      }),
+    ]);
 
     return NextResponse.json({ ok: true });
   } catch (error) {

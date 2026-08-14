@@ -31,7 +31,11 @@ export async function GET(request: NextRequest) {
     const admin = createAdminClient();
     const { data, error } = await admin.storage
       .from("candidate-documents")
-      .createSignedUrl(path, 300);
+      // `download: true` force un Content-Disposition: attachment — sans ça,
+      // Supabase sert les images en "inline" et le navigateur les affiche au
+      // lieu de les télécharger (contrairement aux PDF, souvent interceptés
+      // par le lecteur PDF du navigateur qui masque le problème).
+      .createSignedUrl(path, 300, { download: true });
 
     if (error || !data) {
       throw error || new Error("URL signée introuvable.");
